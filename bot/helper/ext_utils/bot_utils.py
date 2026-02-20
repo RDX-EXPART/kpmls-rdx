@@ -217,32 +217,32 @@ def get_readable_message():
         elapsed = time() - download.message.date.timestamp()
         msg += BotTheme('STATUS_NAME', Name="Task is being Processed!" if config_dict['SAFE_MODE'] and elapsed >= config_dict['STATUS_UPDATE_INTERVAL'] else escape(f'{download.name()}'))
         if download.status() not in [MirrorStatus.STATUS_SPLITTING, MirrorStatus.STATUS_SEEDING]:
-            msg += BotTheme('BAR', Bar=f"{get_progress_bar_string(download.progress())} {download.progress()}")
-            msg += BotTheme('PROCESSED', Processed=f"{download.processed_bytes()} of {download.size()}")
-            msg += BotTheme('STATUS', Status=download.status(), Url=msg_link)
-            msg += BotTheme('ETA', Eta=download.eta())
-            msg += BotTheme('SPEED', Speed=download.speed())
-            msg += BotTheme('ELAPSED', Elapsed=get_readable_time(elapsed))
-            msg += BotTheme('ENGINE', Engine=download.eng())
-            msg += BotTheme('STA_MODE', Mode=download.upload_details['mode'])
-            if hasattr(download, 'seeders_num'):
-                try:
-                    msg += BotTheme('SEEDERS', Seeders=download.seeders_num())
-                    msg += BotTheme('LEECHERS', Leechers=download.leechers_num())
-                except Exception:
-                    pass
-        elif download.status() == MirrorStatus.STATUS_SEEDING:
-            msg += BotTheme('STATUS', Status=download.status(), Url=msg_link)
-            msg += BotTheme('SEED_SIZE', Size=download.size())
-            msg += BotTheme('SEED_SPEED', Speed=download.upload_speed())
-            msg += BotTheme('UPLOADED', Upload=download.uploaded_bytes())
-            msg += BotTheme('RATIO', Ratio=download.ratio())
-            msg += BotTheme('TIME', Time=download.seeding_time())
-            msg += BotTheme('SEED_ENGINE', Engine=download.eng())
-        else:
-            msg += BotTheme('STATUS', Status=download.status(), Url=msg_link)
-            msg += BotTheme('STATUS_SIZE', Size=download.size())
-            msg += BotTheme('NON_ENGINE', Engine=download.eng())
+            msg += BotTheme('BAR', Bar=f"📊 {get_progress_bar_string(download.progress())} {download.progress()}")
+msg += BotTheme('PROCESSED', Processed=f"📦 {download.processed_bytes()} of {download.size()}")
+msg += BotTheme('STATUS', Status=f"📌 {download.status()}", Url=msg_link)
+msg += BotTheme('ETA', Eta=f"⏳ {download.eta()}")
+msg += BotTheme('SPEED', Speed=f"⚡ {download.speed()}")
+msg += BotTheme('ELAPSED', Elapsed=f"🕒 {get_readable_time(elapsed)}")
+msg += BotTheme('ENGINE', Engine=f"🛠️ {download.eng()}")
+msg += BotTheme('STA_MODE', Mode=f"🔄 {download.upload_details['mode']}")
+if hasattr(download, 'seeders_num'):
+    try:
+        msg += BotTheme('SEEDERS', Seeders=f"🌱 {download.seeders_num()}")
+        msg += BotTheme('LEECHERS', Leechers=f"📥 {download.leechers_num()}")
+    except Exception:
+        pass
+elif download.status() == MirrorStatus.STATUS_SEEDING:
+    msg += BotTheme('STATUS', Status=f"📌 {download.status()}", Url=msg_link)
+    msg += BotTheme('SEED_SIZE', Size=f"📦 {download.size()}")
+    msg += BotTheme('SEED_SPEED', Speed=f"🚀 {download.upload_speed()}")
+    msg += BotTheme('UPLOADED', Upload=f"⬆️ {download.uploaded_bytes()}")
+    msg += BotTheme('RATIO', Ratio=f"📊 {download.ratio()}")
+    msg += BotTheme('TIME', Time=f"⏱️ {download.seeding_time()}")
+    msg += BotTheme('SEED_ENGINE', Engine=f"🛠️ {download.eng()}")
+else:
+    msg += BotTheme('STATUS', Status=f"📌 {download.status()}", Url=msg_link)
+    msg += BotTheme('STATUS_SIZE', Size=f"📦 {download.size()}")
+    msg += BotTheme('NON_ENGINE', Engine=f"🛠️ {download.eng()}")
 
         msg += BotTheme('USER',
                         User=download.message.from_user.mention(style="html"))
