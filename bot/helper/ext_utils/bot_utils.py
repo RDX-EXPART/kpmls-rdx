@@ -208,37 +208,51 @@ def get_readable_message():
     STATUS_LIMIT = config_dict['STATUS_LIMIT']
     tasks = len(download_dict)
     globals()['PAGES'] = (tasks + STATUS_LIMIT - 1) // STATUS_LIMIT
+
     if PAGE_NO > PAGES and PAGES != 0:
         globals()['STATUS_START'] = STATUS_LIMIT * (PAGES - 1)
         globals()['PAGE_NO'] = PAGES
-    for download in list(download_dict.values())[STATUS_START:STATUS_LIMIT+STATUS_START]:
+
+    for download in list(download_dict.values())[STATUS_START:STATUS_LIMIT + STATUS_START]:
         msg_link = download.message.link if download.message.chat.type in [
-            ChatType.SUPERGROUP, ChatType.CHANNEL] and not config_dict['DELETE_LINKS'] else ''
+            ChatType.SUPERGROUP, ChatType.CHANNEL
+        ] and not config_dict['DELETE_LINKS'] else ''
+
         elapsed = time() - download.message.date.timestamp()
-        msg += BotTheme('STATUS_NAME', Name="Task is being Processed!" if config_dict['SAFE_MODE'] and elapsed >= config_dict['STATUS_UPDATE_INTERVAL'] else escape(f'{download.name()}'))
+
+        msg += BotTheme(
+            'STATUS_NAME',
+            Name="Task is being Processed!" if config_dict['SAFE_MODE'] and elapsed >= config_dict['STATUS_UPDATE_INTERVAL']
+            else escape(f'{download.name()}')
+        )
+
         if download.status() not in [MirrorStatus.STATUS_SPLITTING, MirrorStatus.STATUS_SEEDING]:
             msg += BotTheme('BAR', Bar=f"📊 {get_progress_bar_string(download.progress())} {download.progress()}")
-msg += BotTheme('STATUS', Status=f"📌 {download.status()}", Url=msg_link)
-msg += BotTheme('SEED_SIZE', Size=f"📦 {download.size()}")
-msg += BotTheme('SEED_SPEED', Speed=f"🚀 {download.upload_speed()}")
-msg += BotTheme('UPLOADED', Upload=f"⬆️ {download.uploaded_bytes()}")
-msg += BotTheme('RATIO', Ratio=f"📊 {download.ratio()}")
-msg += BotTheme('TIME', Time=f"⏱️ {download.seeding_time()}")
-msg += BotTheme('SEED_ENGINE', Engine=f"🛠️ {download.eng()}")
-else:
-    msg += BotTheme('STATUS', Status=f"📌 {download.status()}", Url=msg_link)
-    msg += BotTheme('STATUS_SIZE', Size=f"📦 {download.size()}")
-    msg += BotTheme('NON_ENGINE', Engine=f"🛠️ {download.eng()}")
 
-msg += BotTheme('USER',
-                User=download.message.from_user.mention(style="html"))
-msg += BotTheme('ID', Id=download.message.from_user.id)
-if (download.eng()).startswith("qBit"):
-    msg += BotTheme('BTSEL', Btsel=f"/{BotCommands.BtSelectCommand}_{download.gid()}")
-msg += BotTheme('CANCEL', Cancel=f"/{BotCommands.CancelMirror}_{download.gid()}")
+        elif download.status() == MirrorStatus.STATUS_SEEDING:
+            msg += BotTheme('STATUS', Status=f"📌 {download.status()}", Url=msg_link)
+            msg += BotTheme('SEED_SIZE', Size=f"📦 {download.size()}")
+            msg += BotTheme('SEED_SPEED', Speed=f"🚀 {download.upload_speed()}")
+            msg += BotTheme('UPLOADED', Upload=f"⬆️ {download.uploaded_bytes()}")
+            msg += BotTheme('RATIO', Ratio=f"📊 {download.ratio()}")
+            msg += BotTheme('TIME', Time=f"⏱️ {download.seeding_time()}")
+            msg += BotTheme('SEED_ENGINE', Engine=f"🛠️ {download.eng()}")
 
-if len(msg) == 0:
-    return None, None
+        else:
+            msg += BotTheme('STATUS', Status=f"📌 {download.status()}", Url=msg_link)
+            msg += BotTheme('STATUS_SIZE', Size=f"📦 {download.size()}")
+            msg += BotTheme('NON_ENGINE', Engine=f"🛠️ {download.eng()}")
+
+        msg += BotTheme('USER', User=download.message.from_user.mention(style="html"))
+        msg += BotTheme('ID', Id=download.message.from_user.id)
+
+        if (download.eng()).startswith("qBit"):
+            msg += BotTheme('BTSEL', Btsel=f"/{BotCommands.BtSelectCommand}_{download.gid()}")
+
+        msg += BotTheme('CANCEL', Cancel=f"/{BotCommands.CancelMirror}_{download.gid()}")
+
+    if len(msg) == 0:
+        return None, None
 
     dl_speed = 0
 
