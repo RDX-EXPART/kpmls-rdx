@@ -247,7 +247,7 @@ def get_readable_message():
         user_mention = download.message.from_user.mention(style="html")
         uid = download.message.from_user.id
 
-        msg += "<b>╭────────────────────────</b>\n"
+        msg += "<b>╭──────────────────────</b>\n"
         msg += f"<b>│ Task By 👤</b> {user_mention} <b>( #ID{uid} )</b>\n"
 
         if download.status() not in [MirrorStatus.STATUS_SPLITTING, MirrorStatus.STATUS_SEEDING]:
@@ -290,7 +290,7 @@ def get_readable_message():
             msg += f"<b>│ Engine 🛵 »</b> {download.eng()}\n"
 
         msg += f"<b>│ Stop ⛔ »</b> /{BotCommands.CancelMirror}_{download.gid()}\n"
-        msg += "<b>╰────────────────────────</b>\n\n"
+        msg += "<b>╰──────────────────────</b>\n\n"
 
     if len(msg) == 0:
         return None, None
