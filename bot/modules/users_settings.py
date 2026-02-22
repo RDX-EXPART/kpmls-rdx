@@ -164,7 +164,7 @@ async def get_user_settings(from_user, key=None, edit_type=None, edit_mode=None)
         lcaption = 'Not Exists' if (val:=user_dict.get('lcaption', config_dict.get('LEECH_FILENAME_CAPTION', ''))) == '' else val
         buttons.ibutton(f"{'✅️' if lcaption != 'Not Exists' else ''} Leech Caption", f"userset {user_id} lcaption")
         lrename = 'Not Set' if (val := user_dict.get('lrename', '')) == '' else 'Set ✅'
-        buttons.ibutton(f"📝 Auto Rename : {lrename}", f"userset {user_id} lrename")
+        buttons.ibutton(f"Auto Rename : {lrename}", f"userset {user_id} lrename")
 
         lprefix = 'Not Exists' if (val:=user_dict.get('lprefix', config_dict.get('LEECH_FILENAME_PREFIX', ''))) == '' else val
         buttons.ibutton(f"{'✅️' if lprefix != 'Not Exists' else ''} Leech Prefix", f"userset {user_id} lprefix")
