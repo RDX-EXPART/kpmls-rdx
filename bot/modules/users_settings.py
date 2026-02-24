@@ -27,10 +27,10 @@ from bot.helper.themes import BotTheme
 
 handler_dict = {}
 desp_dict = {'rcc': ['RClone is a command-line program to sync files and directories to and from different cloud storage providers like GDrive, OneDrive...', 'Send rclone.conf. \n<b>Timeout:</b> 60 sec'],
-            'lprefix': ['Leech Filename Prefix is the Front Part attacted with the Filename of the Leech Files.', 'Send Leech Filename Prefix. Documentation Here : <a href="https://t.me/KPSBots/87">Click Me</a> \n<b>Timeout:</b> 60 sec'],
-            'lsuffix': ['Leech Filename Suffix is the End Part attached with the Filename of the Leech Files', 'Send Leech Filename Suffix. Documentation Here : <a href="https://t.me/KPSBots/87">Click Me</a> \n<b>Timeout:</b> 60 sec'],
-            'lremname': ['Leech Filename Remname is combination of Regex(s) used for removing or manipulating Filename of the Leech Files', 'Send Leech Filename Remname. Documentation Here : <a href="https://t.me/KPSBots/87">Click Me</a> \n<b>Timeout:</b> 60 sec'],
-            'lcaption': ['Leech Caption is the Custom Caption on the Leech Files Uploaded by the bot', 'Send Leech Caption. You can add HTML tags. Documentation Here : <a href="https://t.me/KPSBots/87">Click Me</a> \n<b>Timeout:</b> 60 sec'],
+            'lprefix': ['Leech Filename Prefix is the Front Part attacted with the Filename of the Leech Files.', 'Send Leech Filename Prefix. Documentation Here : <a href="https://t.me/leechsource">Click Me</a> \n<b>Timeout:</b> 60 sec'],
+            'lsuffix': ['Leech Filename Suffix is the End Part attached with the Filename of the Leech Files', 'Send Leech Filename Suffix. Documentation Here : <a href="https://t.me/leechsource">Click Me</a> \n<b>Timeout:</b> 60 sec'],
+            'lremname': ['Leech Filename Remname is combination of Regex(s) used for removing or manipulating Filename of the Leech Files', 'Send Leech Filename Remname. Documentation Here : <a href="https://t.me/leechsource">Click Me</a> \n<b>Timeout:</b> 60 sec'],
+            'lcaption': ['Leech Caption is the Custom Caption on the Leech Files Uploaded by the bot', 'Send Leech Caption. You can add HTML tags. Documentation Here : <a href="https://t.me/leechsource">Click Me</a> \n<b>Timeout:</b> 60 sec'],
             'ldump': ['Leech Files User Dump for Personal Use as a Storage.', 'Send Leech Dump Channel ID\n➲ <b>Format:</b> \ntitle chat_id/@username\ntitle2 chat_id2/@username2. \n\n<b>NOTE:</b>Make Bot Admin in the Channel else it will not accept\n<b>Timeout:</b> 60 sec'],
             'metadata': ['Your channel name that should be used while editing metadata of the file', 'Send File Metadata\n<b>Timeout:</b> 60 sec'],
             'lattachment': ['Attachment url, it will added in mkv as thumbnail or cover photo, whetever you say.', 'Send Telegraph photo url\n\n<b>Timeout:</b> 60 sec'],
