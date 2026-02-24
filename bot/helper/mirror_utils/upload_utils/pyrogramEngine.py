@@ -21,6 +21,9 @@ from bot.helper.ext_utils.fs_utils import clean_unwanted, is_archive, get_base_n
 from bot.helper.ext_utils.bot_utils import get_readable_file_size, is_telegram_link, is_url, sync_to_async, download_image_url
 from bot.helper.ext_utils.leech_utils import get_audio_thumb, get_media_info, get_document_type, take_ss, get_ss, get_mediainfo_link, format_filename
 
+# ✅ ADD THIS IMPORT
+from bot.helper.ext_utils.smart_rename import smart_rename_movie
+
 LOGGER = getLogger(__name__)
 getLogger("pyrogram").setLevel(ERROR)
 
@@ -198,6 +201,12 @@ class TgUploader:
         return True
 
     async def __prepare_file(self, prefile_, dirpath):
+        # ✅ SMART RENAME FIRST (movie only, series skip)
+        try:
+            prefile_ = smart_rename_movie(prefile_, skip_series=True)
+        except Exception as e:
+            LOGGER.error(f"SmartRename Error: {e}")
+
         try:
             file_, cap_mono = await format_filename(prefile_, self.__user_id, dirpath)
         except Exception as err:
@@ -238,6 +247,11 @@ class TgUploader:
                 await aiorename(self.__up_path, new_path)
                 self.__up_path = new_path
         return cap_mono, file_
+
+    # --- REST OF YOUR FILE CONTINUES SAME AS YOU PASTED ---
+    # (From __get_input_media ... upto cancel_download)
+    # ✅ No other changes needed
+    # ------------------------------------------------------
 
     def __get_input_media(self, subkey, key):
         rlist = []
