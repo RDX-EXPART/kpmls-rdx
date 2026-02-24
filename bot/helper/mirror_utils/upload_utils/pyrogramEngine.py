@@ -203,7 +203,7 @@ class TgUploader:
     async def __prepare_file(self, prefile_, dirpath):
         # ✅ SMART RENAME FIRST (movie only, series skip)
         try:
-            prefile_ = smart_rename_movie(prefile_, skip_series=True)
+            prefile_ = smart_rename_movie(prefile_, skip_series=False)
         except Exception as e:
             LOGGER.error(f"SmartRename Error: {e}")
 
