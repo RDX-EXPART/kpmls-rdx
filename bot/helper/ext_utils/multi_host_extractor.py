@@ -3,39 +3,40 @@ from bs4 import BeautifulSoup
 
 HEADERS = {"User-Agent": "Mozilla/5.0"}
 
-HOST_PRIORITY = [
+SUPPORTED_HOSTS = [
     "drive.google.com",
     "pixeldrain.com",
     "mega.nz",
     "mediafire.com",
     "gofile.io",
-    "dropbox.com",
-    "1fichier.com"
 ]
 
-def extract_best_mirror(url):
+WRAPPER_SITES = [
+    "gdflix",
+    "gdtot",
+    "hubdrive"
+]
+
+
+def extract_mirrors(url):
+
     try:
         r = requests.get(url, headers=HEADERS, timeout=15)
         soup = BeautifulSoup(r.text, "html.parser")
 
-        links = []
+        mirrors = []
 
         for a in soup.find_all("a", href=True):
-            href = a["href"]
 
-            if href.startswith("http"):
-                links.append(href)
+            link = a["href"]
 
-        # remove duplicates
-        links = list(set(links))
+            if any(host in link for host in SUPPORTED_HOSTS):
+                mirrors.append(link)
 
-        # priority select
-        for host in HOST_PRIORITY:
-            for link in links:
-                if host in link:
-                    return link
+            elif link.startswith("http") and "download" in link:
+                mirrors.append(link)
 
-        return None
+        return list(set(mirrors))
 
     except:
-        return None
+        return []
