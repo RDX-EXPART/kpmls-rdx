@@ -270,18 +270,17 @@ def get_readable_message():
         }
         status_icon = status_emoji_map.get(status_text, "⚙️")
 
-        msg += "<b>╭────────────────</b>\n"
-        msg += f"<b>│ Task By 👤</b> {user_mention} <b>( #ID{uid} )</b>\n"
-        msg += "<b>│ ✨ RDX STATUS PANEL ✨</b>\n"
+        msg += f"<b>┊ Task By 👤</b> {user_mention} <b>( #ID{uid} )</b>\n"
+        msg += "<b>┊ ✨ RDX STATUS PANEL ✨</b>\n"
 
-        msg += f"<b>│</b> {bar}\n"
-        msg += f"<b>│ Done ✅ »</b> {download.processed_bytes()}\n"
-        msg += f"<b>│ Total 😲 »</b> {download.size()}\n"
-        msg += f"<b>│ Status 🗿 »</b> <i>{status_icon} {status_text}</i>\n"
-        msg += f"<b>│ Speed 🚀 »</b> {download.speed()}\n"
-        msg += f"<b>│ ETA 📉 »</b> {download.eta()}\n"
-        msg += f"<b>│ Elapsed 📈 »</b> {elapsed}\n"
-        msg += f"<b>│ Engine 🛵 »</b> {download.eng()}\n"
+        msg += f"<b>┊</b> {bar}\n"
+        msg += f"<b>┊ Done ✅ »</b> {download.processed_bytes()}\n"
+        msg += f"<b>┊ Total 😲 »</b> {download.size()}\n"
+        msg += f"<b>┊ Status 🗿 »</b> <i>{status_icon} {status_text}</i>\n"
+        msg += f"<b>┊ Speed 🚀 »</b> {download.speed()}\n"
+        msg += f"<b>┊ ETA 📉 »</b> {download.eta()}\n"
+        msg += f"<b>┊ Elapsed 📈 »</b> {elapsed}\n"
+        msg += f"<b>┊ Engine 🛵 »</b> {download.eng()}\n"
 
         try:
             in_mode = download.upload_details.get("mode")
@@ -290,8 +289,7 @@ def get_readable_message():
         except Exception:
             pass
 
-        msg += f"<b>│ Stop ⛔ »</b> /{BotCommands.CancelMirror}_{download.gid()}\n"
-        msg += "<b>╰────────────────</b>\n\n"
+        msg += f"<b>┊ Stop ⛔ »</b> /{BotCommands.CancelMirror}_{download.gid()}\n"
 
     if len(msg) == 0:
         return None, None
