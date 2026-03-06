@@ -207,116 +207,96 @@ class EngineStatus:
 
 def get_readable_message():
     msg = "╭━━━〔 ⚡ RDX ULTIMATE STATUS ⚡ 〕━━━╮\n\n"
-    button = None
-    STATUS_LIMIT = config_dict['STATUS_LIMIT']
-    tasks = len(download_dict)
+button = None
+STATUS_LIMIT = config_dict['STATUS_LIMIT']
+tasks = len(download_dict)
 
-    globals()['PAGES'] = (tasks + STATUS_LIMIT - 1) // STATUS_LIMIT
-    if PAGE_NO > PAGES and PAGES != 0:
-        globals()['STATUS_START'] = STATUS_LIMIT * (PAGES - 1)
-        globals()['PAGE_NO'] = PAGES
+globals()['PAGES'] = (tasks + STATUS_LIMIT - 1) // STATUS_LIMIT
+if PAGE_NO > PAGES and PAGES != 0:
+    globals()['STATUS_START'] = STATUS_LIMIT * (PAGES - 1)
+    globals()['PAGE_NO'] = PAGES
 
-    def get_progress_bar_dots(pct, length: int = 8):
-        try:
-            p = float(str(pct).strip('%'))
-        except Exception:
-            p = 0.0
-        p = max(0.0, min(100.0, p))
-        filled = int(round((p / 100.0) * length))
-        filled = max(0, min(length, filled))
-        return f"[{'◆'*filled}{'◇'*(length-filled)}] {p:.2f}%"
+def get_progress_bar_dots(pct, length: int = 8):
+    try:
+        p = float(str(pct).strip('%'))
+    except Exception:
+        p = 0.0
+    p = max(0.0, min(100.0, p))
+    filled = int(round((p / 100.0) * length))
+    filled = max(0, min(length, filled))
+    return f"[{'◆'*filled}{'◇'*(length-filled)}] {p:.2f}%"
 
-    def convert_speed_to_bytes_per_second(spd: str) -> float:
-        try:
-            spd = str(spd).strip()
-            if 'K' in spd:
-                return float(spd.split('K')[0]) * 1024
-            if 'M' in spd:
-                return float(spd.split('M')[0]) * 1048576
-            if 'G' in spd:
-                return float(spd.split('G')[0]) * 1073741824
-            if 'T' in spd:
-                return float(spd.split('T')[0]) * 1099511627776
-        except Exception:
-            pass
-        return 0.0
+def convert_speed_to_bytes_per_second(spd: str) -> float:
+    try:
+        spd = str(spd).strip()
+        if 'K' in spd:
+            return float(spd.split('K')[0]) * 1024
+        if 'M' in spd:
+            return float(spd.split('M')[0]) * 1048576
+        if 'G' in spd:
+            return float(spd.split('G')[0]) * 1073741824
+        if 'T' in spd:
+            return float(spd.split('T')[0]) * 1099511627776
+    except Exception:
+        pass
+    return 0.0
 
-    task_list = list(download_dict.values())[STATUS_START:STATUS_LIMIT + STATUS_START]
+task_list = list(download_dict.values())[STATUS_START:STATUS_LIMIT + STATUS_START]
 
-    for i, download in enumerate(task_list, start=1):
+for i, download in enumerate(task_list, start=1):
 
-        name = escape(str(download.name()))
-        if len(name) > 85:
-            name = name[:82] + "..."
-        idx = STATUS_START + i
-        msg += f"<b>{idx}.</b> <i>{name}</i>\n"
+    name = escape(str(download.name()))
+    if len(name) > 85:
+        name = name[:82] + "..."
+    idx = STATUS_START + i
+    msg += f"<b>{idx}.</b> <i>{name}</i>\n"
 
-        elapsed_sec = time() - download.message.date.timestamp()
-        elapsed = get_readable_time(elapsed_sec)
+    elapsed_sec = time() - download.message.date.timestamp()
+    elapsed = get_readable_time(elapsed_sec)
 
-        bar = get_progress_bar_dots(download.progress(), length=12)
+    bar = get_progress_bar_dots(download.progress(), length=12)
 
-        user_mention = download.message.from_user.mention(style="html")
-        uid = download.message.from_user.id
+    user_mention = download.message.from_user.mention(style="html")
+    uid = download.message.from_user.id
 
-        status_text = str(download.status())
-        status_emoji_map = {
-            "Download": "📥",
-            "Upload": "📤",
-            "Clone": "🧬",
-            "Pause": "⏸️",
-            "Extract": "📂",
-            "Seed": "🌱",
-        }
-        status_icon = status_emoji_map.get(status_text, "⚙️")
-        
-        
-        msg += "╭━━━〔 ⚡ RDX ULTIMATE STATUS ⚡ 〕━━━╮\n"
-"
-        msg += f"<b>👤 Owner   »</b> {user_mention} <b>(#ID{uid})</b>
+    status_text = str(download.status())
+    status_emoji_map = {
+        "Download": "📥",
+        "Upload": "📤",
+        "Clone": "🧬",
+        "Pause": "⏸️",
+        "Extract": "📂",
+        "Seed": "🌱",
+    }
+    status_icon = status_emoji_map.get(status_text, "⚙️")
 
-"
-        msg += "<b>📊 Progress</b>
-"
-        msg += f"<b>┃</b> {bar} <b>┃</b>
+    msg += f"<b>👤 Owner »</b> {user_mention} <b>(#ID{uid})</b>\n\n"
 
-"
+    msg += "<b>📊 Progress</b>\n"
+    msg += f"┃ {bar} ┃\n\n"
 
-        msg += "<b>📦 FILE INFO</b>
-"
-        msg += f"<b>┣ 📁 Done     »</b> {download.processed_bytes()}
-"
-        msg += f"<b>┣ 📊 Total    »</b> {download.size()}
-"
-        msg += f"<b>┣ 📤 Status   »</b> <i>{status_icon} {status_text}</i>
-"
-        msg += f"<b>┣ ⚡ Speed    »</b> {download.speed()}
-"
-        msg += f"<b>┣ ⏳ ETA      »</b> {download.eta()}
+    msg += "<b>📦 FILE INFO</b>\n"
+    msg += f"<b>┣ 📁 Done »</b> {download.processed_bytes()}\n"
+    msg += f"<b>┣ 📊 Total »</b> {download.size()}\n"
+    msg += f"<b>┣ 📤 Status »</b> <i>{status_icon} {status_text}</i>\n"
+    msg += f"<b>┣ ⚡ Speed »</b> {download.speed()}\n"
+    msg += f"<b>┣ ⏳ ETA »</b> {download.eta()}\n\n"
 
-"
+    msg += "<b>⚙ ENGINE INFO</b>\n"
+    msg += f"<b>┣ 🔧 Engine »</b> {download.eng()}\n"
 
-        msg += "<b>⚙ ENGINE INFO</b>
-"
-        msg += f"<b>┣ 🔧 Engine   »</b> {download.eng()}
-"
-        try:
-            in_mode = download.upload_details.get("mode")
-            if in_mode:
-                msg += f"<b>┣ 📡 Mode     »</b> <code>#{escape(str(in_mode))}</code>
-"
-        except Exception:
-            pass
-        msg += f"<b>┣ ⏱ Elapsed  »</b> {elapsed}
+    try:
+        in_mode = download.upload_details.get("mode")
+        if in_mode:
+            msg += f"<b>┣ 📡 Mode »</b> <code>#{escape(str(in_mode))}</code>\n"
+    except Exception:
+        pass
 
-"
+    msg += f"<b>┣ ⏱ Elapsed »</b> {elapsed}\n\n"
 
-        msg += "
-<b>⛔ Cancel Task</b>
-"
-        msg += f"/{BotCommands.CancelMirror}_{download.gid()}
-"
-        msg += "╰━━━━━━━━━━━━━━━━╯
+    msg += "<b>⛔ Cancel Task</b>\n"
+    msg += f"/{BotCommands.CancelMirror}_{download.gid()}\n"
+    msg += "╰━━━━━━━━━━━━━━━━╯\n\n"
 "
 "
 
