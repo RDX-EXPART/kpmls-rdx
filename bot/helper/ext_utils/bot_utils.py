@@ -270,7 +270,7 @@ def get_readable_message():
         }
         status_icon = status_emoji_map.get(status_text, "⚙️")
         
-        msg += "╭━━━〔 ⚡ RDX ULTIMATE STATUS ⚡ 〕━━━╮\n\n"
+        msg += "╭━━━〔 ⚡ RDX STATUS ⚡ 〕━━━╮\n\n"
         msg += f"<b>👤 Owner »</b> {user_mention} <b>(#ID{uid})</b>\n\n"
         msg += "<b>📊 Progress</b>\n"
         msg += f"┃ {bar} ┃\n\n"
