@@ -297,12 +297,12 @@ for i, download in enumerate(task_list, start=1):
     msg += "<b>⛔ Cancel Task</b>\n"
     msg += f"/{BotCommands.CancelMirror}_{download.gid()}\n"
     msg += "╰━━━━━━━━━━━━━━━━╯\n\n"
-"
-"
 
+if len(msg) == 0:
+    return None, None
 
-    if len(msg) == 0:
-        return None, None
+dl_speed = 0.0
+up_speed = 0.0
 
     dl_speed = 0.0
     up_speed = 0.0
