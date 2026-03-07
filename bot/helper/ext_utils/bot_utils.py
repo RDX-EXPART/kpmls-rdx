@@ -270,14 +270,12 @@ def get_readable_message():
         }
         status_icon = status_emoji_map.get(status_text, "⚙️")
         
-        msg += "╭━━━━━━━━━━━━━━━━╮\n"
-        msg += f"👤 {user_mention} (#ID{uid})\n\n"
-        msg += f"📊 {bar}\n\n"
-        msg += f"📁 Done   » {download.processed_bytes()}\n"
-        msg += f"📦 Total  » {download.size()}\n"
-        msg += f"🗿 Status » {status_icon} {status_text}\n"
-        msg += f"⚡ Speed  » {download.speed()}\n"
-        msg += f"⏳ ETA    » {download.eta()}\n"
+        msg += f"╭ Task By 👤 {user_mention} (#ID{uid})\n"
+        msg += f"┊ {bar}\n"
+        msg += f"┊ Done ✔ » {download.processed_bytes()}\n"
+        msg += f"┊ Total » {download.size()}\n"
+        msg += f"┊ Status » {status_text}\n"
+        msg += f"┊ 🚀 {download.speed()} | ⏳ {download.eta()}\n"
 
         try:
             seeders = download.seeders_num()
