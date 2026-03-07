@@ -298,12 +298,7 @@ def get_readable_message():
             if in_mode:
                 msg += f"┊ In Mode » {escape(str(in_mode))}\n"
                 msg += f"┊ Out Mode » Leech\n"
-        except Exception:
-            pass
-
-        msg += "\n"
-        msg += f"╰ Stop » /{BotCommands.CancelMirror}_{download.gid()}\n\n"
-        
+                msg += f"╰ Stop » /{BotCommands.CancelMirror}_{download.gid()}\n\n"
 
     if len(msg) == 0:
         return None, None
