@@ -696,8 +696,7 @@ def gofile(url, auth):
             "contents": [],
             "title": data.get("name", "gofile"),
             "total_size": 0,
-            "header": "Referer: https://gofile.io/
-User-Agent: Mozilla/5.0"
+            "header": "Referer: https://gofile.io/\\nUser-Agent: Mozilla/5.0"
         }
 
         children = data.get("children", {})
