@@ -359,8 +359,7 @@ def debrid_link(url):
     cget = create_scraper().request
     resp = cget(
         "POST",
-        f"https://debrid-link.com/api/v2/downloader/add?access_token={Config.DEBRID_LINK_API}",
-        data={"url": url},
+        f"https://debrid-link.com/api/v2/downloader/add?access_token={config_dict.get('DEBRID_LINK_API')}"
     ).json()
     if resp["success"] != True:
         raise DirectDownloadLinkException(
