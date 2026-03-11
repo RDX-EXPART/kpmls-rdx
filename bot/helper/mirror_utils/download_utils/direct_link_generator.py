@@ -11,13 +11,13 @@ from re import findall, match, search
 from requests.adapters import HTTPAdapter
 from urllib3.util.retry import Retry
 from lxml.etree import HTML
-from requests import Session, session as req_session, post
+from requests import Session, session as req_session, post, get
 from urllib.parse import parse_qs, quote, unquote, urlparse, urljoin
 from cloudscraper import create_scraper
 from lk21 import Bypass
 from http.cookiejar import MozillaCookieJar
 
-from bot import LOGGER, config_dict
+from bot import LOGGER, config_dict, FSUB_API
 from bot.helper.ext_utils.bot_utils import get_readable_time, is_share_link, is_index_link, is_magnet
 from bot.helper.ext_utils.exceptions import DirectDownloadLinkException
 from bot.helper.ext_utils.help_messages import PASSWORD_ERROR_MESSAGE
@@ -672,7 +672,65 @@ def terabox(url):
     return details
 
 
+def gofile_gk(url):
+    try:
+        data = get(f"{FSUB_API}/api/gofile?url={url}").json()
+    except Exception as e:
+        raise DirectDownloadLinkException(f"ERROR: {e.__class__.__name__}")
+
+    if not data or data.get("status") not in ("success", "ok"):
+        raise DirectDownloadLinkException("Failed to bypass GoFile URL")
+
+    file_list = data.get("downloadLinks", [])
+    if not file_list:
+        raise DirectDownloadLinkException("No files found in GoFile link")
+
+    total_files = data.get("fileCount", len(file_list))
+
+    # ───────────── SINGLE FILE ─────────────
+    if total_files == 1 and len(file_list) == 1:
+        file_ = file_list[0]
+        return file_.get("downloadUrl")
+
+    # ───────────── FOLDER / MULTI FILE ─────────────
+    details = {
+        "contents": [],
+        "title": "",
+        "total_size": 0,
+    }
+
+    for file_ in file_list:
+        link = file_.get("downloadUrl")
+        if not link:
+            continue
+
+        name = file_.get("name") or "GoFile_File"
+        size = file_.get("bytes") or 0
+
+        if isinstance(size, str) and size.isdigit():
+            size = int(size)
+
+        details["contents"].append({
+            "path": "",
+            "filename": name,
+            "url": link,
+        })
+
+        details["total_size"] += int(size)
+
+    details["title"] = "GoFile_Folder"
+
+    if data.get("zip_download_link"):
+        details["zip_url"] = data["zip_download_link"]
+
+    if not details["contents"]:
+        raise DirectDownloadLinkException("No downloadable files found")
+
+    return details
+
+
 def gofile(url):
+    return gofile_gk(url)
     try:
         if "::" in url:
             _password = url.split("::")[-1]

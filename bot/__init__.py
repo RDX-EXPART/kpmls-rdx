@@ -38,6 +38,8 @@ getLogger("aiohttp").setLevel(ERROR)
 getLogger("httpx").setLevel(ERROR)
 
 LOGGER = getLogger(__name__)
+FSUB_API = 'http://79.133.51.78:8002'.rstrip('/')
+
 
 load_dotenv('config.env', override=True)
 
