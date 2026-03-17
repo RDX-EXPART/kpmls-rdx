@@ -286,33 +286,33 @@ def get_readable_message():
         }
         status_icon = status_emoji_map.get(status_text, "⚙️")
         
-        msg += f"╭ Task By 👤 {user_mention} (#ID{uid})\n"
+        msg += f"╭ Task By 👤 {user_mention} (#ID{uid})</b>\n"
         msg += f"┊ {bar}\n"
-        msg += f"┊ Done ✔ » {download.processed_bytes()}\n"
-        msg += f"┊ Total » {download.size()}\n"
-        msg += f"┊ Status » {status_text}\n"
-        msg += f"┊ 🚀 {download.speed()} | ⏳ {download.eta()}\n"
+        msg += f"┊ Done ✔ » {download.processed_bytes()}</b>\n"
+        msg += f"┊ Total » {download.size()}</b>\n"
+        msg += f"┊ Status » {status_text}</b>\n"
+        msg += f"┊ 🚀 {download.speed()} | ⏳ {download.eta()}</b>\n"
 
         
         try:
             seeders = download.seeders_num()
             leechers = download.leechers_num()
             if seeders is not None and leechers is not None:
-                msg += f"┊ 🌱 {seeders} | 💬 {leechers}\n"
+                msg += f"┊ 🌱 {seeders} | 💬 {leechers}</b>\n"
         except Exception:
             pass
 
 
-        msg += f"┊ Engine » {download.eng()}\n"
+        msg += f"┊ Engine » {download.eng()}</b>\n"
 
         try:
             in_mode = download.upload_details.get("mode")
             if in_mode:
-                msg += f"┊ In Mode » {escape(str(in_mode))}\n┊ Out Mode » Leech\n"
+                msg += f"┊ In Mode » {escape(str(in_mode))}</b>\n┊ Out Mode » Leech</b>\n"
         except Exception:
             pass
 
-        msg += f"╰ Stop » /{BotCommands.CancelMirror}_{download.gid()}\n\n"
+        msg += f"╰ Stop » /{BotCommands.CancelMirror}_{download.gid()}</b>\n\n"
         
 
     if len(msg) == 0:
