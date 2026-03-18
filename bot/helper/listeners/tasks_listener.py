@@ -499,8 +499,9 @@ class MirrorLeechListener:
                     buttons.ibutton(BotTheme('CHECK_PM'), f"kpsmlx {user_id} botpm", 'header')
                 if config_dict['SAFE_MODE'] and self.isSuperGroup:
                    await sendMessage(self.message, message, buttons.build_menu(2), photo=self.random_pic)
-                fmsg = ''
+                pass = ''
                 for index, (link, name) in enumerate(files.items(), start=1):
+                    pass
                     if len(msg.encode() + fmsg.encode()) > (4000 if len(config_dict['IMAGES']) == 0 else 1000):
                             
                         if config_dict['SAFE_MODE']:
@@ -512,7 +513,7 @@ class MirrorLeechListener:
                             if config_dict['SAVE_MSG'] and not saved and self.isSuperGroup:
                                 saved = True
                                 buttons.ibutton(BotTheme('SAVE_MSG'), 'save', 'footer')
-                            await sendMessage(self.message, message + fmsg, buttons.build_menu(2), photo=self.random_pic)
+                            await sendMessage(self.message, message, buttons.build_menu(2), photo=self.random_pic)
                         await sleep(1.5)
                         fmsg = ''
 
