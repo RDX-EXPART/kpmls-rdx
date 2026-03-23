@@ -265,7 +265,7 @@ def get_readable_message():
         if len(name) > 85:
             name = name[:82] + "..."
         idx = STATUS_START + i
-        msg += f"<b>{idx}. 📁{name}</b>\n\n"
+        msg += f"<b>{idx}. {name}</b>\n\n"
 
         elapsed_sec = time() - download.message.date.timestamp()
         elapsed = get_readable_time(elapsed_sec)
@@ -288,31 +288,31 @@ def get_readable_message():
         
         msg += f"╭ Task By 👤 {user_mention} (#ID{uid})</b>\n"
         msg += f"┊ {bar}\n"
-        msg += f"┊ Done ✅ » {download.processed_bytes()}</b>\n"
-        msg += f"┊ Total 📦 » {download.size()}</b>\n"
-        msg += f"┊ Status 🌀 » {status_text}</b>\n"
-        msg += f"┊ 🚀 {download.speed()} | ⏳ {download.eta()}</b>\n"
+        msg += f"┊ Done 🔸 » {download.processed_bytes()}</b>\n"
+        msg += f"┊ Total 🔸 » {download.size()}</b>\n"
+        msg += f"┊ Status 🔸 » {status_text}</b>\n"
+        msg += f"┊ 🔸 {download.speed()} | 🔸 {download.eta()}</b>\n"
 
         
         try:
             seeders = download.seeders_num()
             leechers = download.leechers_num()
             if seeders is not None and leechers is not None:
-                msg += f"┊ 🍃 {seeders} | 🧑‍🤝‍🧑 {leechers}</b>\n"
+                msg += f"┊ 🌱 {seeders} | 🧑‍🤝‍🧑 {leechers}</b>\n"
         except Exception:
             pass
 
 
-        msg += f"┊ Engine 🛠 » {download.eng()}</b>\n"
+        msg += f"┊ Engine 🔸 » {download.eng()}</b>\n"
 
         try:
             in_mode = download.upload_details.get("mode")
             if in_mode:
-                msg += f"┊ In Mode 🎭 » {escape(str(in_mode))}</b>\n┊ Out Mode » Leech</b>\n"
+                msg += f"┊ In Mode 🔸 » {escape(str(in_mode))}</b>\n┊ Out Mode 🔸 » Leech</b>\n"
         except Exception:
             pass
 
-        msg += f"╰ Stop 🛑 » /{BotCommands.CancelMirror}_{download.gid()}</b>\n\n"
+        msg += f"╰ Stop 📛 » /{BotCommands.CancelMirror}_{download.gid()}</b>\n\n"
         
 
     if len(msg) == 0:
@@ -332,9 +332,9 @@ def get_readable_message():
 
     buttons = ButtonMaker()
     if tasks > STATUS_LIMIT:
-        buttons.ibutton("⬅️ Prev", "status pre")
-        buttons.ibutton(f"🔄 {PAGE_NO}/{PAGES}", "status ref")
-        buttons.ibutton("Next ➡️", "status nex")
+        buttons.ibutton("◀️ Prev", "status pre")
+        buttons.ibutton(f"🔁 {PAGE_NO}/{PAGES}", "status ref")
+        buttons.ibutton("Next ▶️", "status nex")
         button = buttons.build_menu(3)
     else:
         buttons.ibutton("🔄 Refresh", "status ref")
