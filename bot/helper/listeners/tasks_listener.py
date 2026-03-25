@@ -502,8 +502,7 @@ class MirrorLeechListener:
                     buttons.ibutton(BotTheme('CHECK_PM'), f"kpsmlx {user_id} botpm", 'header')
                 if config_dict['SAFE_MODE'] and self.isSuperGroup:
                     await sendMessage(self.message, message, buttons.build_menu(2), photo=self.random_pic)
-                fmsg = '
-'
+
                 # link list removed
 
                 # removed condition
