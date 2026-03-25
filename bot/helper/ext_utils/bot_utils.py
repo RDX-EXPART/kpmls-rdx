@@ -288,27 +288,28 @@ def get_readable_message():
         
         msg += f"╭ Task By 👤 {user_mention} (#ID{uid})</b>\n"
         msg += f"┊ {bar}\n"
-        msg += f"┊ Done 🔸 » {download.processed_bytes()}</b>\n"
-        msg += f"┊ Total 🔸 » {download.size()}</b>\n"
-        msg += f"┊ Status 🔸 » {status_text}</b>\n"
-        msg += f"┊ 🔸 {download.speed()} | 🔸 {download.eta()}</b>\n"
+        msg += f"┊ Done » {download.processed_bytes()}</b>\n"
+        msg += f"┊ Total » {download.size()}</b>\n"
+        msg += f"┊ Status » {status_text}</b>\n"
+        msg += f"┊ Speed » {download.speed()}\n"
+        msg += f"┊ ETA » {download.eta()}</b>\n"
 
         
         try:
             seeders = download.seeders_num()
             leechers = download.leechers_num()
             if seeders is not None and leechers is not None:
-                msg += f"┊ 🌱 {seeders} | 🧑‍🤝‍🧑 {leechers}</b>\n"
+                msg += f"┊ Seeders » {seeders} | Leechers » {leechers}</b>\n"
         except Exception:
             pass
 
 
-        msg += f"┊ Engine 🔸 » {download.eng()}</b>\n"
+        msg += f"┊ Engine » {download.eng()}</b>\n"
 
         try:
             in_mode = download.upload_details.get("mode")
             if in_mode:
-                msg += f"┊ In Mode 🔸 » {escape(str(in_mode))}</b>\n┊ Out Mode 🔸 » Leech</b>\n"
+                msg += f"┊ In Mode » {escape(str(in_mode))}</b>\n┊ Out Mode » Leech</b>\n"
         except Exception:
             pass
 
