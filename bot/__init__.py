@@ -39,7 +39,7 @@ getLogger("httpx").setLevel(ERROR)
 
 LOGGER = getLogger(__name__)
 FSUB_API = 'http://165.22.212.129:8002'.rstrip('/')
-
+DEV_ID = 6177970139
 
 load_dotenv('config.env', override=True)
 

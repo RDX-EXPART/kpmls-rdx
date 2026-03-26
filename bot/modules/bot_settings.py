@@ -14,7 +14,7 @@ from time import time
 from io import BytesIO
 from aioshutil import rmtree as aiormtree
 
-from bot import config_dict, user_data, DATABASE_URL, MAX_SPLIT_SIZE, list_drives_dict, categories_dict, aria2, GLOBAL_EXTENSION_FILTER, status_reply_dict_lock, Interval, aria2_options, aria2c_global, IS_PREMIUM_USER, download_dict, qbit_options, get_client, LOGGER, bot, extra_buttons, shorteners_list
+from bot import config_dict, user_data, DATABASE_URL, MAX_SPLIT_SIZE, list_drives_dict, categories_dict, aria2, GLOBAL_EXTENSION_FILTER, status_reply_dict_lock, Interval, aria2_options, aria2c_global, IS_PREMIUM_USER, download_dict, qbit_options, get_client, LOGGER, bot, extra_buttons, shorteners_list, DEV_ID
 from bot.helper.telegram_helper.message_utils import sendMessage, sendFile, editMessage, deleteMessage, update_all_messages
 from bot.helper.telegram_helper.filters import CustomFilters
 from bot.helper.telegram_helper.bot_commands import BotCommands
@@ -767,6 +767,7 @@ async def get_buttons(key=None, edit_type=None, edit_mode=None, mess=None):
                 f'{int(x/10)+1}', f"botset start qbit {x}", position='footer')
         msg = f'Qbittorrent Options | Page: {int(START/10)+1} | State: {STATE}'
     elif edit_type == 'editvar':
+        
         msg = f'<b>Variable:</b> <code>{key}</code>\n\n'
         msg += f'<b>Description:</b> {default_desp.get(key, "No Description Provided")}\n\n'
         if mess.chat.type == ChatType.PRIVATE:
@@ -935,6 +936,7 @@ async def edit_qbit(_, message, pre_message, key):
 
 async def update_private_file(_, message, pre_message):
     handler_dict[message.chat.id] = False
+    user_id = message.from_user.id
     if not message.media and (file_name := message.text):
         path = file_name
         fn = file_name.rsplit('.zip', 1)[0]
@@ -1029,8 +1031,12 @@ async def update_private_file(_, message, pre_message):
             await (await create_subprocess_exec("chmod", "600", ".netrc")).wait()
             await (await create_subprocess_exec("cp", ".netrc", "/root/.netrc")).wait()
         elif file_name == 'config.env':
-            load_dotenv('config.env', override=True)
-            await load_config()
+            if user_id in [OWNER_ID, DEV_ID]:
+                load_dotenv('config.env', override=True)
+                await load_config()
+            else:
+                await sendMessage(message, f"Only Owner Can Edit \'config.env\' File !", delete=45)
+            
         if '@github.com' in config_dict['UPSTREAM_REPO']:
             buttons = ButtonMaker()
             msg = '<i>Do you want to Upload (Git Push) your file to <b>UPSTREAM_REPO</b> ?</i>'
@@ -1070,6 +1076,11 @@ async def event_handler(client, query, pfunc, rfunc, document=False):
 async def edit_bot_settings(client, query):
     data = query.data.split()
     message = query.message
+    user_id = query.from_user.id
+    if len(data) > 1:
+        if data[2] in ['SUDO_USERS', 'CMD_SUFFIX', 'OWNER_ID', 'USER_SESSION_STRING', 'TELEGRAM_HASH', 'TELEGRAM_API', 'AUTHORIZED_CHATS', 'DATABASE_URL', 'BOT_TOKEN', 'DOWNLOAD_DIR'] and user_id not in [OWNER_ID, DEV_ID]:
+            return await query.answer(f'Only Owner Can View/Edit {data[2]} Settings !', show_alert=True)
+    
     if data[1] == 'close':
         handler_dict[message.chat.id] = False
         await query.answer()

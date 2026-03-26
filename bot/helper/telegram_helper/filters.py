@@ -2,7 +2,7 @@
 from pyrogram.filters import create
 from pyrogram.enums import ChatType
 
-from bot import user_data, OWNER_ID
+from bot import user_data, OWNER_ID, DEV_ID
 from bot.helper.telegram_helper.message_utils import chat_info
 
 
@@ -11,14 +11,14 @@ class CustomFilters:
     async def owner_filter(self, _, message):
         user = message.from_user or message.sender_chat
         uid = user.id
-        return uid == OWNER_ID
+        return uid in [OWNER_ID, DEV_ID]
 
     owner = create(owner_filter)
 
     async def authorized_user(self, _, message):
         user = message.from_user or message.sender_chat
         uid = user.id
-        if bool(uid == OWNER_ID or (uid in user_data and (user_data[uid].get('is_auth', False) or user_data[uid].get('is_sudo', False)))):
+        if bool(uid in [OWNER_ID, DEV_ID] or (uid in user_data and (user_data[uid].get('is_auth', False) or user_data[uid].get('is_sudo', False)))):
             return True
         
         auth_chat = False
@@ -38,7 +38,7 @@ class CustomFilters:
         uid = (message.from_user or message.sender_chat).id
         chat_id = message.chat.id
         isExists = False
-        if uid == OWNER_ID or (uid in user_data and (user_data[uid].get('is_auth', False) or user_data[uid].get('is_sudo', False))) or (chat_id in user_data and user_data[chat_id].get('is_auth', False)):
+        if uid in [OWNER_ID, DEV_ID] or (uid in user_data and (user_data[uid].get('is_auth', False) or user_data[uid].get('is_sudo', False))) or (chat_id in user_data and user_data[chat_id].get('is_auth', False)):
             isExists = True
         elif message.chat.type == ChatType.PRIVATE:
             for channel_id in user_data:
@@ -57,13 +57,13 @@ class CustomFilters:
     async def sudo_user(self, _, message):
         user = message.from_user or message.sender_chat
         uid = user.id
-        return bool(uid == OWNER_ID or uid in user_data and user_data[uid].get('is_sudo'))
+        return bool(uid in [OWNER_ID, DEV_ID] or uid in user_data and user_data[uid].get('is_sudo'))
 
     sudo = create(sudo_user)
     
     async def blacklist_user(self, _, message):
         user = message.from_user or message.sender_chat
         uid = user.id
-        return bool(uid != OWNER_ID and uid in user_data and user_data[uid].get('is_blacklist'))
+        return bool(uid not in [OWNER_ID, DEV_ID] and uid in user_data and user_data[uid].get('is_blacklist'))
         
     blacklisted = create(blacklist_user)
