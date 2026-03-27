@@ -5,20 +5,19 @@ WORKDIR /usr/src/app
 # Permission
 RUN chmod 777 /usr/src/app
 
-# System packages (VERY IMPORTANT)
+# System packages
 RUN apt-get update && apt-get install -y mediainfo
 
-# Copy requirements first (cache optimization)
+# Copy requirements
 COPY requirements.txt .
 
-# Upgrade pip tools (safe)
-RUN pip3 install --upgrade pip wheel
+# Install critical build deps FIRST
+RUN pip3 install --upgrade pip wheel setuptools_scm vcs_versioning
 
-# Install dependencies
+# Install باقي packages
 RUN pip3 install --no-cache-dir -r requirements.txt
 
-# Copy project files
+# Copy project
 COPY . .
 
-# Start bot
 CMD ["bash", "start.sh"]
