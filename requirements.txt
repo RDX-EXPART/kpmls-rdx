@@ -1,3 +1,5 @@
+setuptools_scm
+vcs_versioning
 aiohttp
 aiofiles
 aioshutil
@@ -44,5 +46,3 @@ uvloop==0.21.0
 xattr
 yt-dlp
 pymediainfo==5.0.3
-vcs_versioning
-setuptools_scm
