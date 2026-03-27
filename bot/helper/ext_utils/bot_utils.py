@@ -347,7 +347,7 @@ def get_readable_message():
     ram = virtual_memory().percent
     up = get_readable_time(time() - botStartTime)
 
-    msg += "\n\n⌬  <b>🔸 𝗥𝗗𝗫 𝗣𝗔𝗡𝗘𝗟 🔹</b>\n"
+    msg += "\n\n<b>🔸 𝗥𝗗𝗫 𝗦𝗧𝗔𝗧𝗦 🔹</b>\n"
     msg += "┄┄┄┄┄┄┄┄┄┄┄\n"
     
     msg += f"<b>🖥️CPU »</b> {cpu}% ┃ <b>💿FREE »</b> {free_gb}\n"
