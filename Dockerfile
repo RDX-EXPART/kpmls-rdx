@@ -2,22 +2,19 @@ FROM nanthakps/kpsmlx:heroku_v2
 
 WORKDIR /usr/src/app
 
-# Permission
 RUN chmod 777 /usr/src/app
 
-# System packages
+# mediainfo fix
 RUN apt-get update && apt-get install -y mediainfo
 
-# Copy requirements
 COPY requirements.txt .
 
-# Install critical build deps FIRST
+# install build deps আগে
 RUN pip3 install --upgrade pip wheel setuptools_scm vcs_versioning
 
-# Install باقي packages
-RUN pip3 install --no-cache-dir -r requirements.txt
+# 🔥 MAIN FIX HERE
+RUN pip3 install --no-cache-dir --no-build-isolation -r requirements.txt
 
-# Copy project
 COPY . .
 
 CMD ["bash", "start.sh"]
