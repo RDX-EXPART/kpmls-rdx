@@ -4,7 +4,6 @@ aioshutil
 anytree==2.8.0
 apscheduler
 aria2p
-asyncio
 requests
 beautifulsoup4
 cinemagoer
@@ -36,7 +35,6 @@ pyrofork==2.2.11
 python-dotenv
 python-magic
 qbittorrent-api
-requests
 speedtest-cli
 telegraph
 tenacity
@@ -45,4 +43,4 @@ uv
 uvloop==0.21.0
 xattr
 yt-dlp
-setuptools
+pymediainfo==5.0.3
