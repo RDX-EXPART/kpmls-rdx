@@ -12,7 +12,7 @@ from pyrogram.types import CallbackQuery
 
 from bot import VID_MODE, VT_TIMEOUT, LOGGER
 from bot.helper.ext_utils.bot_utils import new_thread
-from bot.helper.ext_utils.status_utils import get_readable_file_size, get_readable_time
+from bot.helper.utils import get_readable_file_size, get_readable_time
 from bot.helper.telegram_helper.button_maker import ButtonMaker
 from bot.helper.telegram_helper.message_utils import send_message, edit_message, delete_message
 from bot.helper.ext_utils.files_utils import get_path_size
