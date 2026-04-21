@@ -70,7 +70,7 @@ async def _mirror_leech(client, message, isQbit=False, isLeech=False, sameDir=No
     multi = int(args['-i']) if args['-i'].isdigit() else 0
 
     link          = args['link']
-    folder_name   = args['-m'] or args['-sd'] or args['-samedir']
+    folder_name   = f"/{args["-m"]}".rstrip("/") if len(args["-m"]) > 0 else ""
     seed          = args['-d'] or args['-seed']
     join          = args['-j'] or args['-join']
     select        = args['-s'] or args['-select']
@@ -90,6 +90,7 @@ async def _mirror_leech(client, message, isQbit=False, isLeech=False, sameDir=No
     thumb         = args['-t'] or args['-thumb']
     vidTool       = args['-vt']
     sshots        = int(ss) if (ss := (args['-ss'] or args['-screenshots'])).isdigit() else 0
+    
     bulk_start    = 0
     bulk_end      = 0
     ratio         = None
@@ -105,27 +106,46 @@ async def _mirror_leech(client, message, isQbit=False, isLeech=False, sameDir=No
         if len(dargs) == 2:
             seed_time = dargs[1] or None
         seed = True
-
-    if not isinstance(isBulk, bool):
-        dargs = isBulk.split(':')
-        bulk_start = dargs[0] or None
+    
+    
+    
+    if not isinstance(is_bulk, bool):
+        dargs = is_bulk.split(":")
+        bulk_start = dargs[0] or 0
         if len(dargs) == 2:
-            bulk_end = dargs[1] or None
-        isBulk = True
+            bulk_end = dargs[1] or 0
+        is_bulk = True
+
+    if not is_bulk:
+        if multi > 0:
+            if folder_name:
+                async with task_dict_lock:
+                    if folder_name in sameDir:
+                        sameDir[folder_name]["tasks"].add(message.id)
+                        for fd_name in sameDir:
+                            if fd_name != folder_name:
+                                sameDir[fd_name]["total"] -= 1
+                    elif sameDir:
+                        sameDir[folder_name] = {
+                            "total": multi,
+                            "tasks": {message.id},
+                        }
+                        for fd_name in sameDir:
+                            if fd_name != folder_name:
+                                sameDir[fd_name]["total"] -= 1
+                    else:
+                        sameDir = {
+                            folder_name: {
+                                "total": multi,
+                                "tasks": {message.id},
+                            }
+                        }
+            elif sameDir:
+                async with task_dict_lock:
+                    for fd_name in sameDir:
+                        sameDir[fd_name]["total"] -= 1
         
-    if drive_id and is_gdrive_link(drive_id):
-        drive_id = GoogleDriveHelper.getIdFromUrl(drive_id)
-
-    if folder_name and not isBulk:
-        seed = False
-        ratio = None
-        seed_time = None
-        folder_name = f'/{folder_name}'
-        if sameDir is None:
-            sameDir = {'total': multi, 'tasks': set(), 'name': folder_name}
-        sameDir['tasks'].add(message.id)
-
-    if isBulk:
+    else:
         if vidTool and not vidMode and sameDir:
             vidMode = await SelectMode(message.id, message.from_user.id, client, message).get_buttons()
             if not vidMode:
@@ -146,6 +166,9 @@ async def _mirror_leech(client, message, isQbit=False, isLeech=False, sameDir=No
         _mirror_leech(client, nextmsg, isQbit, isLeech, sameDir, bulk, vidMode=vidMode)
         return
     
+    if drive_id and is_gdrive_link(drive_id):
+        drive_id = GoogleDriveHelper.getIdFromUrl(drive_id)
+
     if vidTool and (not vidMode or not sameDir):
         vidMode = await SelectMode(message.id, message.from_user.id, client, message).get_buttons()
         if not vidMode:

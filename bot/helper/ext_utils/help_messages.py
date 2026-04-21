@@ -10,7 +10,7 @@ YT_HELP_MESSAGE = ["""<i>Send links/files along with cmd or reply to cmd to mirr
 3.  <b>-up or -upload :</b> Upload to your Drive or RClone or DDL
 4.  <b>-b or -bulk :</b> Download bulk links.
 5.  <b>-i :</b> Download multi links by reply
-6.  <b>-m or -sd or -samedir :</b> Download multi links within same upload directory.
+6.  <b>-m :</b> Download multi links within same upload directory.
 7.  <b>-opt or -options :</b> Attach Custom yt-dlp options to link
 8.  <b>-s or -select :</b> Select files from yt-dlp links even if qual is specified
 9.  <b>-rcf :</b> RClone additional Flags
@@ -56,7 +56,7 @@ You can add tuple and dict also. Use double quotes inside dict.
 ➲ <b><i>Multi links only by replying to first link</i></b>: -i
 <code>/cmd</code> -i 10(number of links)
 
-➲ <b><i>Multi links within same upload directory only by replying to first link</i></b>: -m or -sd or -samedir
+➲ <b><i>Multi links within same upload directory only by replying to first link</i></b>: -m
 <code>/cmd</code> -i 10(number of links) -m folder name
 
 ➲ <b><i>Upload Custom Drive:</i></b> -id & -index(Optional)
@@ -173,7 +173,7 @@ To specify ratio and seed time add -d ratio:time. Ex: -d 0.7:10 (ratio and time)
 ➲ <b><i>Multi links only by replying to first link/file</i></b>: -i
 <code>/cmd</code> -i 10(number of links/files)
 
-➲ <b><i>Multi links within same upload directory only by replying to first link/file</i></b>: -m or -sd or -samedir
+➲ <b><i>Multi links within same upload directory only by replying to first link/file</i></b>: -m
 <code>/cmd</code> -i 10(number of links/files) -m folder name (multi message)
 <code>/cmd</code> -b -m folder name (bulk-message/file)
 

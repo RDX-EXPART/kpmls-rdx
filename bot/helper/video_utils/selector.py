@@ -1,6 +1,6 @@
 from aiofiles.os import path as aiopath
 from ast import literal_eval
-from asyncio import Event, wait_for, wrap_future, gather, sleep
+from asyncio import Event, wait_for, wrap_future, gather
 from functools import partial
 from os import path as ospath
 from PIL import Image
@@ -39,8 +39,7 @@ class SelectMode():
         self.client = client
         self.message = message
         self.prefix = f"vidtool{mid}"
-        self.loaded = False 
-
+    
     @new_thread
     async def _event_handler(self):
         pfunc = partial(cb_vidtools, obj=self)
@@ -75,7 +74,7 @@ class SelectMode():
 
 
     def _captions(self, mode: str=None):
-        lines = ['╭──[<b>Torrent Bot - X</b>](https://t.me/+JPvvW8ZjWuYwY2I5)', '┊ {<b> DJ Pannel </b>} { <b>Premium</b> }', '┊ <b>Video Tools Settings</b>\n┊']
+        lines = ['╭── <b>Video Tools Settings</b>\n┊']
     
         if vidmode := VID_MODE.get(self.mode):
             lines.append(f'┊ Mode: <b>{vidmode}</b>')
@@ -144,12 +143,6 @@ class SelectMode():
         return '\n'.join(lines)
         
     async def list_buttons(self, mode: str=''):
-        if not self.loaded:
-            
-            await self._send_message('╭── Please Wait\n┊Loading DJ Video Tools\n╰── Panel . . .', None)
-            self.loaded = True 
-            await sleep(3)
-            
         bMaker, bnum = ButtonMaker(), 2
         if not mode:
             vid_modes = dict(list(VID_MODE.items())[4:]) if self._isLink else VID_MODE
