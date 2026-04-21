@@ -28,13 +28,13 @@ class ExtraSelect:
         self.is_cancelled = False
         self.extension: list[str] = [None, None, 'mkv']
         self.status = ''
-        self.prefix = f'extra{executor.listener.mid}'
+        self.prefix = f'extra{executor.listener.uid}'
     
     
     @new_thread
     async def _event_handler(self):
         pfunc = partial(cb_extra, obj=self)
-        handler = self._listener.client.add_handler(CallbackQueryHandler(pfunc, filters=regex(f'^{self.prefix}') & user(self._listener.user_id)), group=-1)
+        handler = self._listener.client.add_handler(CallbackQueryHandler(pfunc, filters=regex(f'^{self.prefix}') & user(self._listener.message.from_user.id)), group=-1)
         try:
             await wait_for(self.event.wait(), timeout=VT_TIMEOUT)
         except Exception:

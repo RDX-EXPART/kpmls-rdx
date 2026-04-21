@@ -92,6 +92,7 @@ class MirrorLeechListener:
         )
         self.newDir = f'{self.dir}10000'
         self.vidMode = vidMode
+        self._subprocess = None
         self.source_msg = ''
         self.__setModeEng()
         self.__parseSource()

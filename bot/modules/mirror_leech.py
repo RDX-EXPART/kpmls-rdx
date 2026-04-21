@@ -97,6 +97,7 @@ async def _mirror_leech(client, message, isQbit=False, isLeech=False, sameDir=No
     reply_to      = None
     file_         = None
     session       = ''
+    LOGGER.info(vidTool)
         
     if not isinstance(seed, bool):
         dargs = seed.split(':')
@@ -145,7 +146,7 @@ async def _mirror_leech(client, message, isQbit=False, isLeech=False, sameDir=No
         _mirror_leech(client, nextmsg, isQbit, isLeech, sameDir, bulk, vidMode=vidMode)
         return
     
-    if vidTool and not vidMode and sameDir:
+    if vidTool and (not vidMode or not sameDir):
         vidMode = await SelectMode(message.id, message.from_user.id, client, message).get_buttons()
         if not vidMode:
             if (
