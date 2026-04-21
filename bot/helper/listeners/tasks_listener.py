@@ -41,14 +41,16 @@ from bot.helper.telegram_helper.message_utils import sendCustomMsg, sendMessage,
 from bot.helper.telegram_helper.button_build import ButtonMaker
 from bot.helper.ext_utils.db_handler import DbManger
 from bot.helper.themes import BotTheme
+from bot.helper.video_utils.executor import VidEcxecutor
 
 
 class MirrorLeechListener:
     def __init__(self, message, compress=False, extract=False, isQbit=False, isLeech=False, tag=None, select=False, seed=False, sameDir=None, rcFlags=None, upPath=None, isClone=False, 
-                join=False, drive_id=None, index_link=None, isYtdlp=False, source_url=None, logMessage=None, leech_utils={}):
+                join=False, drive_id=None, index_link=None, isYtdlp=False, source_url=None, logMessage=None, leech_utils={}, vidMode=None):
         if sameDir is None:
             sameDir = {}
         self.message = message
+        self.client = message._client
         self.uid = message.id
         self.excep_chat = bool(str(message.chat.id) in config_dict['EXCEP_CHATS'].split())
         self.extract = extract
@@ -61,7 +63,6 @@ class MirrorLeechListener:
         self.isYtdlp = isYtdlp
         self.tag = tag
         self.seed = seed
-        self.newDir = ""
         self.dir = f"{DOWNLOAD_DIR}{self.uid}"
         self.select = select
         self.isSuperGroup = message.chat.type in [ChatType.SUPERGROUP, ChatType.CHANNEL]
@@ -89,6 +90,8 @@ class MirrorLeechListener:
             if source_url
             else message.link
         )
+        self.newDir = f'{self.dir}10000'
+        self.vidMode = vidMode
         self.source_msg = ''
         self.__setModeEng()
         self.__parseSource()
@@ -276,7 +279,14 @@ class MirrorLeechListener:
                 LOGGER.info("Not any valid archive, uploading file as it is.")
                 self.newDir = ""
                 up_path = dl_path
-
+        
+        if self.vidMode:
+            up_path = up_path or dl_path
+            up_path = await VidEcxecutor(self, up_path, gid).execute()
+            if not up_path:
+                return
+            self.seed = False
+        
         if metadata := self.user_dict.get('metadata') or config_dict['METADATA']:
             meta_path = up_path or dl_path
             self.newDir = f'{self.dir}10000'
@@ -657,7 +667,7 @@ class MirrorLeechListener:
             await start_from_queued()
             await delete_links(self.message)
         except Exception as e:
-            logger.error('Hm', exc_info=True)
+            LOGGER.error('Hm', exc_info=True)
 
     async def onDownloadError(self, error, button=None):
         async with download_dict_lock:

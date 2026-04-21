@@ -43,6 +43,40 @@ PAGES        = 1
 PAGE_NO      = 1
 
 
+
+class MirrorStatus:
+    STATUS_UPLOAD = "Upload"
+    STATUS_DOWNLOAD = "Download"
+    STATUS_CLONE = "Clone"
+    STATUS_QUEUEDL = "QueueDl"
+    STATUS_QUEUEUP = "QueueUp"
+    STATUS_PAUSED = "Pause"
+    STATUS_ARCHIVE = "Archive"
+    STATUS_EXTRACT = "Extract"
+    STATUS_SPLIT = "Split"
+    STATUS_CHECK = "CheckUp"
+    STATUS_SEED = "Seed"
+    STATUS_SAMVID = "SamVid"
+    STATUS_CONVERT = "Convert"
+    STATUS_FFMPEG = "FFmpeg"
+    STATUS_YT = "YouTube"
+    STATUS_METADATA = "Metadata"
+    STATUS_HARDSUB = 'HardSub'
+    STATUS_ADVANCE_CONVERT = 'Advance Convert'
+    STATUS_AI_SUBTITLE = 'AI Subtitle'
+    STATUS_STREAM_SWAP = 'Stream Swap'
+    STATUS_STREAM_REMOVE = 'Stream Remove'
+    STATUS_ENCODE = 'Encode'
+    STATUS_EXTRACT = 'Extract'
+    STATUS_TRIM = 'Trim'
+    STATUS_SUB_SYNC = 'Sub Sync'
+    STATUS_WATERMARK = 'Watermark'
+    STATUS_VID_VID = 'Video + Video'
+    STATUS_VID_AUD = 'Video + Audio'
+    STATUS_VID_SUB = 'Video + Subtitle'
+    STATUS_WAIT = 'Wait'
+
+
 class MirrorStatus:
     STATUS_UPLOADING   = "Upload"
     STATUS_DOWNLOADING = "Download"
@@ -57,6 +91,18 @@ class MirrorStatus:
     STATUS_SEEDING     = "Seed"
     STATUS_METADATA    = "Metadata"
     STATUS_ATTACHMENT  = "Attachment"
+    STATUS_HARDSUB = 'HardSub'
+    STATUS_STREAM_SWAP = 'Stream Swap'
+    STATUS_STREAM_REMOVE = 'Stream Remove'
+    STATUS_ENCODE = 'Encode'
+    STATUS_EXTRACT = 'Extract'
+    STATUS_TRIM = 'Trim'
+    STATUS_SUB_SYNC = 'Sub Sync'
+    STATUS_WATERMARK = 'Watermark'
+    STATUS_VID_VID = 'Video + Video'
+    STATUS_VID_AUD = 'Video + Audio'
+    STATUS_VID_SUB = 'Video + Subtitle'
+    STATUS_WAIT = 'Wait'
 
 
 class setInterval:
@@ -74,6 +120,16 @@ class setInterval:
         self.task.cancel()
 
 
+async def remove_from_same_dir(self):
+    async with download_dict_lock:
+        if (
+            self.folder_name
+            and self.same_dir
+            and self.mid in self.same_dir[self.folder_name]["tasks"]
+        ):
+            self.same_dir[self.folder_name]["tasks"].remove(self.mid)
+            self.same_dir[self.folder_name]["total"] -= 1
+    
 def get_readable_file_size(size_in_bytes):
     if size_in_bytes is None:
         return '0B'
@@ -427,7 +483,7 @@ def get_mega_link_type(url):
 def arg_parser(items, arg_base):
     if not items:
         return arg_base
-    bool_arg_set = {'-b', '-e', '-z', '-s', '-j', '-d'}
+    bool_arg_set = {'-b', '-e', '-z', '-s', '-j', '-d', '-vt'}
     t = len(items)
     i = 0
     arg_start = -1

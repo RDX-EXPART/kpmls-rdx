@@ -56,7 +56,7 @@ class YoutubeDLHelper:
         self.is_playlist = False
         self.playlist_count = 0
         self.opts = {'progress_hooks': [self.__onDownloadProgress],
-                     'logger': MyLogger(self),
+                     'LOGGER': MyLogger(self),
                      'usenetrc': True,
                      'cookiefile': 'cookies.txt',
                      'allow_multiple_video_streams': True,

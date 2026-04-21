@@ -31,9 +31,11 @@ from bot.helper.listeners.tasks_listener import MirrorLeechListener
 from bot.helper.ext_utils.help_messages import MIRROR_HELP_MESSAGE, CLONE_HELP_MESSAGE, YT_HELP_MESSAGE, help_string
 from bot.helper.ext_utils.bulk_links import extract_bulk_links
 from bot.modules.gen_pyro_sess import get_decrypt_key
+from bot.helper.video_utils.selector import SelectMode
+
 
 @new_task
-async def _mirror_leech(client, message, isQbit=False, isLeech=False, sameDir=None, bulk=[]):
+async def _mirror_leech(client, message, isQbit=False, isLeech=False, sameDir=None, bulk=[], vidMode=None):
     text = message.text.split('\n')
     input_list = text[0].split(' ')
 
@@ -48,6 +50,7 @@ async def _mirror_leech(client, message, isQbit=False, isLeech=False, sameDir=No
                 '-e': False, '-extract': False,
                 '-uz': False, '-unzip': False,
                 '-z': False, '-zip': False,
+                '-vt' False,
                 '-up': '', '-upload': '',
                 '-rcf': '', 
                 '-u': '', '-user': '',
@@ -85,6 +88,7 @@ async def _mirror_leech(client, message, isQbit=False, isLeech=False, sameDir=No
     ussr          = args['-u'] or args['-user']
     pssw          = args['-p'] or args['-pass']
     thumb         = args['-t'] or args['-thumb']
+    vidTool       = args['-vt']
     sshots        = int(ss) if (ss := (args['-ss'] or args['-screenshots'])).isdigit() else 0
     bulk_start    = 0
     bulk_end      = 0
@@ -93,7 +97,7 @@ async def _mirror_leech(client, message, isQbit=False, isLeech=False, sameDir=No
     reply_to      = None
     file_         = None
     session       = ''
-    
+        
     if not isinstance(seed, bool):
         dargs = seed.split(':')
         ratio = dargs[0] or None
@@ -121,6 +125,11 @@ async def _mirror_leech(client, message, isQbit=False, isLeech=False, sameDir=No
         sameDir['tasks'].add(message.id)
 
     if isBulk:
+        if vidTool and not vidMode and sameDir:
+            vidMode = await SelectMode(message.id, message.from_user.id, client, message).get_buttons()
+            if not vidMode:
+                return
+            
         try:
             bulk = await extract_bulk_links(message, bulk_start, bulk_end)
             if len(bulk) == 0:
@@ -133,9 +142,22 @@ async def _mirror_leech(client, message, isQbit=False, isLeech=False, sameDir=No
         nextmsg = await sendMessage(message, " ".join(b_msg))
         nextmsg = await client.get_messages(chat_id=message.chat.id, message_ids=nextmsg.id)
         nextmsg.from_user = message.from_user
-        _mirror_leech(client, nextmsg, isQbit, isLeech, sameDir, bulk)
+        _mirror_leech(client, nextmsg, isQbit, isLeech, sameDir, bulk, vidMode=vidMode)
         return
+    
+    if vidTool and not vidMode and sameDir:
+        vidMode = await SelectMode(message.id, message.from_user.id, client, message).get_buttons()
+        if not vidMode:
+            if (
+                folder_name
+                and sameDir
+                and message.id in sameDir[folder_name]["tasks"]
+            ):
+                sameDir[folder_name]["tasks"].remove(message.id)
+                sameDir[folder_name]["total"] -= 1
 
+            return
+        
     if len(bulk) != 0:
         del bulk[0]
 
@@ -335,7 +357,7 @@ async def _mirror_leech(client, message, isQbit=False, isLeech=False, sameDir=No
 
     listener = MirrorLeechListener(message, compress, extract, isQbit, isLeech, tag, select, seed,
                                     sameDir, rcf, up, join, drive_id=drive_id, index_link=index_link, 
-                                    source_url=org_link or link, leech_utils={'screenshots': sshots, 'thumb': thumb})
+                                    source_url=org_link or link, leech_utils={'screenshots': sshots, 'thumb': thumb}, vidMode=vidMode)
 
     if file_ is not None:
         await delete_links(message)

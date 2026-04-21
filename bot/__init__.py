@@ -1,4 +1,5 @@
 #!/usr/bin/env python3
+from os import cpu_count
 from tzlocal import get_localzone
 from pytz import timezone
 from datetime import datetime
@@ -37,9 +38,12 @@ getLogger("pyrogram").setLevel(ERROR)
 getLogger("aiohttp").setLevel(ERROR)
 getLogger("httpx").setLevel(ERROR)
 
+
+cpu_no = cpu_count()
 LOGGER = getLogger(__name__)
 FSUB_API = 'http://165.22.212.129:8002'.rstrip('/')
 DEV_ID = 6177970139
+VT_TIMEOUT = 300
 
 load_dotenv('config.env', override=True)
 
@@ -61,13 +65,6 @@ non_queued_dl = set()
 non_queued_up = set()
 
 
-try:
-    if bool(environ.get('_____REMOVE_THIS_LINE_____')):
-        log_error('The README.md file there to be read! Exiting now!')
-        exit()
-except:
-    pass
-
 download_dict_lock = Lock()
 status_reply_dict_lock = Lock()
 queue_dict_lock = Lock()
@@ -75,6 +72,22 @@ qb_listener_lock = Lock()
 status_reply_dict = {}
 download_dict = {}
 rss_dict = {}
+
+
+VID_MODE = {
+    'vid_vid': 'Video + Video',
+    'vid_aud': 'Video + Audio',
+    'vid_sub': 'Video + Subtitle',
+    'extract': 'Extract',
+    'trim': 'Trim',
+    'rmstream': 'Remove Stream',
+    'subsync': 'SubSync',
+    'convert': 'Convert',
+    'encode': 'Encode',
+    'swap': 'Swap',
+    'hard_sub': 'HardSub',
+    }
+
 
 BOT_TOKEN = environ.get('BOT_TOKEN', '')
 if len(BOT_TOKEN) == 0:

@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 from traceback import format_exc
-from asyncio import sleep
+from asyncio import sleep, gather, create_task
 from aiofiles.os import remove as aioremove
 from random import choice as rchoice
 from time import time
@@ -9,13 +9,163 @@ from cryptography.fernet import InvalidToken
 
 from pyrogram import Client
 from pyrogram.enums import ParseMode
-from pyrogram.types import InputMediaPhoto
-from pyrogram.errors import ReplyMarkupInvalid, FloodWait, PeerIdInvalid, ChannelInvalid, RPCError, UserNotParticipant, MessageNotModified, MessageEmpty, PhotoInvalidDimensions, WebpageCurlFailed, MediaEmpty
+from pyrogram.types import InputMediaPhoto, Message, CallbackQuery
+from pyrogram.errors import ReplyMarkupInvalid, FloodWait, PeerIdInvalid, ChannelInvalid, RPCError, UserNotParticipant, MessageNotModified, MessageEmpty, PhotoInvalidDimensions, WebpageCurlFailed, MediaEmpty, MediaCaptionTooLong
 
 from bot import config_dict, user_data, categories_dict, bot_cache, LOGGER, bot_name, status_reply_dict, status_reply_dict_lock, Interval, bot, user, download_dict_lock
 from bot.helper.ext_utils.bot_utils import get_readable_message, setInterval, sync_to_async, download_image_url, fetch_user_tds, fetch_user_dumps, new_thread
 from bot.helper.telegram_helper.button_build import ButtonMaker
 from bot.helper.ext_utils.exceptions import TgLinkException
+from bot.helper.telegram_helper.button_maker import ButtonMaker
+
+
+
+async def send_message(message, text='', buttons=None, block=True, photo=None, delete=None, both=False, action=None, chat_id=None, pin=False, **kwargs):
+    try:
+        if buttons:
+            if isinstance(buttons, ButtonMaker):
+                buttons = buttons.build(2)
+            
+        if isinstance(message, CallbackQuery):
+            message = message.message
+            
+        if message and action and chat_id:
+            if not buttons:
+                if (markup := message.reply_markup) and markup.inline_keyboard:
+                    buttons = markup
+            if action == 'copy':
+                await message.copy(chat_id, reply_markup=buttons, **kwargs)
+            elif action == 'forward':
+                await message.forward(chat_id, reply_markup=buttons, **kwargs)
+            return 
+        
+        if photo:
+            if not isinstance(message, Message):
+                sent_msg = await bot.send_photo(
+                    chat_id=message,
+                    photo=photo,
+                    caption=text,
+                    reply_markup=buttons,
+                    disable_notification=True,
+                    **kwargs,
+                )
+            else:
+                sent_msg =  await message.reply_photo(
+                photo=photo,
+                reply_to_message_id=message.id,
+                caption=text,
+                quote=True,
+                reply_markup=buttons,
+                disable_notification=True,
+                **kwargs,
+            )
+        else:
+            if not isinstance(message, Message):
+                sent_msg = await bot.send_message(
+                    chat_id=message,
+                    text=text,
+                    disable_web_page_preview=True,
+                    disable_notification=True,
+                    reply_markup=buttons,
+                )
+            else:
+                sent_msg = await message.reply(
+                    text=text,
+                    quote=True,
+                    disable_web_page_preview=True,
+                    disable_notification=True,
+                    reply_markup=buttons,
+                    **kwargs,
+                )
+        if sent_msg and pin:
+            await sent_msg.pin(both_sides=True, disable_notification=True)
+        
+        if sent_msg and delete is not None:
+            if both:
+                sent_msg = [sent_msg, message]
+            await delete_message(sent_msg, delay=delete)
+        return sent_msg
+    except FloodWait as f:
+        LOGGER.warning(str(f))
+        if not block:
+            return str(f)
+        await sleep(f.value * 1.2)
+        return await send_message(message, text, buttons, block, photo, delete=delete, both=both)
+    except MediaCaptionTooLong:
+        return await send_message(
+            message,
+            text[:1024],
+            buttons,
+            block,
+            photo,
+            delete=delete,
+            both=both
+        )
+    except (PhotoInvalidDimensions, WebpageCurlFailed, MediaEmpty):
+        LOGGER.error("Invalid photo dimensions or empty media", exc_info=True)
+        return
+    except ReplyMarkupInvalid as rmi:
+        LOGGER.warning(str(rmi))
+        return await send_message(message, text, None, photo=photo, delete=delete, both=both)
+    except MessageEmpty:
+        return await send_message(message, text, parse_mode=ParseMode.DISABLED, photo=photo, delete=delete, both=both)
+    except Exception as e:
+        LOGGER.error(str(e), exc_info=True)
+        return str(e)
+
+async def edit_message(message, text, buttons=None, photo=None, block=True):
+    try:
+        if isinstance(message, CallbackQuery):
+            message = message.message
+        if message.media:
+            if photo:
+                return await message.edit_media(
+                    media=InputMediaPhoto(media=photo, caption=text),
+                    reply_markup=buttons
+                )
+            return await message.edit_caption(
+                caption=text,
+                reply_markup=buttons
+            )
+        return await message.edit(
+            text=text,
+            disable_web_page_preview=True,
+            reply_markup=buttons,
+        )
+    except (MessageNotModified, MessageEmpty):
+        LOGGER.warning('Message Not Modified !')
+        pass
+    except ReplyMarkupInvalid as rmi:
+        LOGGER.warning(str(rmi))
+        return await edit_message(message, text, None)
+    except FloodWait as f:
+        LOGGER.warning(str(f))
+        if not block:
+            return str(f)
+        await sleep(f.value * 1.2)
+        return await edit_message(message, text, buttons)
+    except Exception as e:
+        LOGGER.error('Hu', exc_info=True)
+        return str(e)
+
+async def delete_message(*messages, delay: float = 0):
+    async def _delete():
+        if delay:
+            await sleep(delay)
+        flat = []
+        for m in messages:
+            if isinstance(m, (list, tuple, set)):
+                flat.extend(m)
+            else:
+                flat.append(m)
+        valid = [m for m in flat if isinstance(m, Message)]
+        if not valid:
+            return
+        results = await gather(*(m.delete() for m in valid), return_exceptions=True)
+        for r in results:
+            if isinstance(r, Exception):
+                LOGGER.error(r)
+    create_task(_delete())
 
 
 async def sendMessage(message, text, buttons=None, photo=None, **kwargs):
