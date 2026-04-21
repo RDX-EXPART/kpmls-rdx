@@ -18,8 +18,8 @@ from bot.helper.ext_utils.fs_utils import get_path_size, clean_target
 from bot.helper.ext_utils.links_utils import get_url_name
 from bot.helper.ext_utils.media_utils import get_document_type, get_media_info, get_subtitle_streams, FFMpegNew
 from bot.helper.ext_utils.task_manager import is_queued
-from bot.helper.mirror_leech_utils.status_utils.ffmpeg_status import FfmpegStatus
-from bot.helper.mirror_leech_utils.status_utils.queue_status import QueueStatus
+from bot.helper.mirror_utils.status_utils.ffmpeg_status import FfmpegStatus
+from bot.helper.mirror_utils.status_utils.queue_status import QueueStatus
 from bot.helper.telegram_helper.message_utils import update_all_messages
 from bot.helper.video_utils.extra_selector import ExtraSelect
 from bot.core.config_manager import Config, BinConfig
