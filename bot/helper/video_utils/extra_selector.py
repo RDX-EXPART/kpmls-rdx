@@ -15,7 +15,7 @@ from bot.helper.ext_utils.bot_utils import new_thread
 from bot.helper.utils import get_readable_file_size, get_readable_time
 from bot.helper.telegram_helper.button_maker import ButtonMaker
 from bot.helper.telegram_helper.message_utils import send_message, edit_message, delete_message
-from bot.helper.ext_utils.files_utils import get_path_size
+from bot.helper.ext_utils.fs_utils import get_path_size
 from bot.helper.utils.gk_utils import cb_merge_text
 
 
