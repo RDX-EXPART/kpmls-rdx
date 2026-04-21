@@ -70,7 +70,7 @@ async def _mirror_leech(client, message, isQbit=False, isLeech=False, sameDir=No
     multi = int(args['-i']) if args['-i'].isdigit() else 0
 
     link          = args['link']
-    folder_name   = f"/{args["-m"]}".rstrip("/") if len(args["-m"]) > 0 else ""
+    folder_name   = f"/{args['-m']}".rstrip('/') if len(args['-m']) > 0 else ""
     seed          = args['-d'] or args['-seed']
     join          = args['-j'] or args['-join']
     select        = args['-s'] or args['-select']
