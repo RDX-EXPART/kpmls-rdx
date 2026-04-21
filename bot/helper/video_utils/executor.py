@@ -1277,18 +1277,12 @@ class VidEcxecutor:
         if len(file_list) <= 1:
             return self._up_path
         
-        LOGGER.info(Config.BOT_TOKEN)
-        if Config.BOT_TOKEN == '8316188783:AAGW18gxWeAQInjkuzCWeoNyNWELh_anugc':
-            await ExtraSelect(self).merge_entry(file_list)
-            if self.is_cancelled or not self.data or not self.data.get('instructions'):
-                return self._up_path
-        else:
-            self.data = self.data or {}
-            self.data['instructions'] = [{
-                'files': file_list,
-                'name': self.name or ospath.basename(file_list[0]),
-                'copy_only': False,
-            }]
+        self.data = self.data or {}
+        self.data['instructions'] = [{
+            'files': file_list,
+            'name': self.name or ospath.basename(file_list[0]),
+            'copy_only': False,
+        }]
     
         await self._get_newDir()
     

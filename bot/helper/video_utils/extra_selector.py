@@ -16,7 +16,6 @@ from bot.helper.utils import get_readable_file_size, get_readable_time
 from bot.helper.telegram_helper.button_maker import ButtonMaker
 from bot.helper.telegram_helper.message_utils import send_message, edit_message, delete_message
 from bot.helper.ext_utils.fs_utils import get_path_size
-from bot.helper.utils.gk_utils import cb_merge_text
 
 
 class ExtraSelect:
@@ -49,114 +48,6 @@ class ExtraSelect:
         else:
             await edit_message(self._reply, text, buttons)
     
-    async def merge_entry(self, file_list: list):
-        sorted_files = natsorted(file_list)
-    
-        self.executor.data = {
-            'files': sorted_files,
-            'instructions': None,
-        }
-    
-        total_size = sum([await get_path_size(f) for f in sorted_files])
-        folder_name = ospath.basename(ospath.dirname(sorted_files[0]))
-    
-        msg = (
-            f'<b>MERGE PANEL ~ {self._listener.tag}</b>\n\n'
-            f'<b>Folder:</b> <code>{folder_name}</code>\n'
-            f'<b>Total Files:</b> {len(sorted_files)}\n'
-            f'<b>Total Size:</b> {get_readable_file_size(total_size)}\n\n'
-            f'<i>Choose how to proceed.\n'
-            f'Auto-merging on timeout.</i>\n\n'
-            f'<i>Time Out: {get_readable_time(VT_TIMEOUT)}</i>'
-        )
-    
-        bMaker = ButtonMaker()
-        bMaker.ibutton('📜 Send Instructions', f'{self.prefix} merge_start')
-        bMaker.ibutton('⚡ Skip', f'{self.prefix} merge_skip')
-        #bMaker.ibutton('❌ Cancel', f'{self.prefix} cancel', 'footer')
-    
-        self._reply = await send_message(self._listener.message, msg, bMaker.build())
-    
-        # ✅ SINGLE EVENT
-        self.event = Event()
-    
-        handler = self._listener.client.add_handler(
-            CallbackQueryHandler(
-                partial(cb_extra, obj=self),
-                filters=regex(f'^{self.prefix}') & user(self._listener.user_id)
-            ),
-            group=-1
-        )
-    
-        try:
-            await wait_for(self.event.wait(), timeout=VT_TIMEOUT)
-    
-        except TimeoutError:
-            files = self.executor.data.get('files') or []
-            if files and not self.executor.data.get('instructions'):
-                self.executor.data['instructions'] = [{
-                    'files': files,
-                    'name': self.executor.name or ospath.basename(files[0]),
-                    'copy_only': False,
-                }]
-    
-        finally:
-            self._listener.client.remove_handler(*handler)
-    
-            try:
-                if self._reply:
-                    await delete_message(self._reply)
-                    self._reply = None
-            except:
-                pass
-    
-        self.data = self.executor.data
-    
-    async def merge_select(self, file_list: list):
-        sorted_files = natsorted(file_list)
-    
-        # DO NOT reset event
-        self.executor.data['files'] = sorted_files
-    
-        file_lines = []
-        for i, f in enumerate(sorted_files, 1):
-            size = await get_path_size(f)
-            file_lines.append(
-                f'<b>{i}.</b> <code>{ospath.basename(f)}</code>\n'
-                f'    <i>{get_readable_file_size(size)}</i>'
-            )
-    
-        msg = (
-            f'<b>MERGE SELECTOR ~ {self._listener.tag}</b>\n\n'
-            f'<code>COUNT|NAME.mkv</code>\n\n'
-            f'<i>Send instructions or /skip</i>\n\n'
-            + '\n'.join(file_lines)
-        )
-    
-        bMaker = ButtonMaker()
-        bMaker.ibutton('❌ Cancel', f'{self.prefix} cancel', 'footer')
-    
-        if self._reply:
-            try:
-                await delete_message(self._reply)
-            except:
-                pass
-    
-        self._reply = await send_message(
-            self._listener.message, msg, bMaker.build()
-        )
-    
-        # ✅ ONLY attach handler, no wait
-        pfunc = partial(cb_merge_text, obj=self)
-    
-        self._handler = self._listener.client.add_handler(
-            MessageHandler(
-                pfunc,
-                filters=incoming & user(self._listener.user_id)
-            ),
-            group=-1
-        )
-        
     async def hard_sub_select(self, streams: dict = None):
         """HardSub selector - select subtitle to burn into video"""
         bMaker = ButtonMaker()
