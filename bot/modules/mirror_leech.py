@@ -63,6 +63,7 @@ async def _mirror_leech(client, message, isQbit=False, isLeech=False, sameDir=No
                 '-ss': '0', '-screenshots': '',
                 '-t': '', '-thumb': '',
     }
+    
 
     args = arg_parser(input_list[1:], arg_base)
     cmd = input_list[0].split('@')[0]
@@ -119,7 +120,7 @@ async def _mirror_leech(client, message, isQbit=False, isLeech=False, sameDir=No
     if not isBulk:
         if multi > 0:
             if folder_name:
-                async with task_dict_lock:
+                async with download_dict_lock:
                     if folder_name in sameDir:
                         sameDir[folder_name]["tasks"].add(message.id)
                         for fd_name in sameDir:
@@ -141,7 +142,7 @@ async def _mirror_leech(client, message, isQbit=False, isLeech=False, sameDir=No
                             }
                         }
             elif sameDir:
-                async with task_dict_lock:
+                async with download_dict_lock:
                     for fd_name in sameDir:
                         sameDir[fd_name]["total"] -= 1
         
