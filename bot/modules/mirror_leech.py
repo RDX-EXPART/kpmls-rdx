@@ -109,14 +109,14 @@ async def _mirror_leech(client, message, isQbit=False, isLeech=False, sameDir=No
     
     
     
-    if not isinstance(is_bulk, bool):
-        dargs = is_bulk.split(":")
+    if not isinstance(isBulk, bool):
+        dargs = isBulk.split(":")
         bulk_start = dargs[0] or 0
         if len(dargs) == 2:
             bulk_end = dargs[1] or 0
-        is_bulk = True
+        isBulk = True
 
-    if not is_bulk:
+    if not isBulk:
         if multi > 0:
             if folder_name:
                 async with task_dict_lock:
