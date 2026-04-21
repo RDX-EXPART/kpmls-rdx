@@ -14,7 +14,7 @@ from pyrogram.enums import ButtonStyle
 
 from bot import VID_MODE, VT_TIMEOUT, LOGGER
 from bot.helper.ext_utils.bot_utils import new_task, new_thread, sync_to_async
-from bot.helper.ext_utils.files_utils import clean_target
+from bot.helper.ext_utils.fs_utils import clean_target
 from bot.helper.utils import is_media, encode_dict, get_readable_time
 from bot.helper.telegram_helper.button_maker import ButtonMaker
 from bot.helper.telegram_helper.filters import CustomFilters
