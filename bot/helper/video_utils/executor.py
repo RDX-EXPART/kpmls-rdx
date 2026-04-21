@@ -14,7 +14,7 @@ from json import loads as jloads
 
 from bot import download_dict, download_dict_lock, queue_dict_lock, non_queued_dl, LOGGER, VID_MODE, cpu_no, bot_loop
 from bot.helper.ext_utils.bot_utils import sync_to_async, cmd_exec, new_task, MirrorStatus
-from bot.helper.ext_utils.files_utils import get_path_size, clean_target
+from bot.helper.ext_utils.fs_utils import get_path_size, clean_target
 from bot.helper.ext_utils.links_utils import get_url_name
 from bot.helper.ext_utils.media_utils import get_document_type, get_media_info, get_subtitle_streams, FFMpegNew
 from bot.helper.ext_utils.task_manager import is_queued
