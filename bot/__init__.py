@@ -64,7 +64,7 @@ bot_cache = {}
 non_queued_dl = set()
 non_queued_up = set()
 
-
+same_directory_lock + Lock()
 download_dict_lock = Lock()
 status_reply_dict_lock = Lock()
 queue_dict_lock = Lock()

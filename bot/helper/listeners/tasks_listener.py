@@ -13,11 +13,11 @@ from aioshutil import move
 from asyncio import create_subprocess_exec, sleep, Event
 from pyrogram.enums import ChatType
 
-from bot import OWNER_ID, Interval, aria2, DOWNLOAD_DIR, download_dict, download_dict_lock, LOGGER, bot_name, DATABASE_URL, \
+from bot import same_directory_lock, OWNER_ID, Interval, aria2, DOWNLOAD_DIR, download_dict, download_dict_lock, LOGGER, bot_name, DATABASE_URL, \
     MAX_SPLIT_SIZE, config_dict, status_reply_dict_lock, user_data, non_queued_up, non_queued_dl, queued_up, \
     queued_dl, queue_dict_lock, bot, GLOBAL_EXTENSION_FILTER
 from bot.helper.ext_utils.bot_utils import extra_btns, sync_to_async, get_readable_file_size, get_readable_time, is_mega_link, is_gdrive_link
-from bot.helper.ext_utils.fs_utils import get_base_name, get_path_size, clean_download, clean_target, \
+from bot.helper.ext_utils.fs_utils import get_base_name, get_path_size, clean_download, clean_target, move_and_merge, \
     is_first_archive_split, is_archive, is_archive_split, join_files
 from bot.helper.ext_utils.ffmpeg import edit_metadata, edit_attachment
 from bot.helper.ext_utils.leech_utils import split_file, format_filename, get_document_type
@@ -46,7 +46,7 @@ from bot.helper.video_utils.executor import VidEcxecutor
 
 class MirrorLeechListener:
     def __init__(self, message, compress=False, extract=False, isQbit=False, isLeech=False, tag=None, select=False, seed=False, sameDir=None, rcFlags=None, upPath=None, isClone=False, 
-                join=False, drive_id=None, index_link=None, isYtdlp=False, source_url=None, logMessage=None, leech_utils={}, vidMode=None):
+                join=False, drive_id=None, index_link=None, isYtdlp=False, source_url=None, logMessage=None, leech_utils={}, folder_name=None, vidMode=None):
         if sameDir is None:
             sameDir = {}
         self.message = message
@@ -92,6 +92,7 @@ class MirrorLeechListener:
         )
         self.newDir = f'{self.dir}10000'
         self.vidMode = vidMode
+        self.folder_name = folder_name
         self._subprocess = None
         self.source_msg = ''
         self.__setModeEng()
@@ -154,34 +155,46 @@ class MirrorLeechListener:
             await DbManger().add_incomplete_task(self.message.chat.id, self.message.link, self.tag, self.source_url, self.message.text)
 
     async def onDownloadComplete(self):
+        await sleep(2)
         multi_links = False
-        while True:
-            if self.sameDir:
-                if self.sameDir['total'] in [1, 0] or self.sameDir['total'] > 1 and len(self.sameDir['tasks']) > 1:
-                    break
-            else:
-                break
-            await sleep(0.2)
+        if (
+            self.folder_name
+            and self.sameDir
+            and self.uid in self.sameDir[self.folder_name]["tasks"]
+        ):
+            async with same_directory_lock:
+                while True:
+                    async with download_dict_lock:
+                        if self.uid not in self.sameDir[self.folder_name]["tasks"]:
+                            return
+                        if (
+                            self.sameDir[self.folder_name]["total"] <= 1
+                            or len(self.sameDir[self.folder_name]["tasks"]) > 1
+                        ):
+                            if self.sameDir[self.folder_name]["total"] > 1:
+                                self.sameDir[self.folder_name]["tasks"].remove(
+                                    self.uid
+                                )
+                                self.sameDir[self.folder_name]["total"] -= 1
+                                spath = f"{self.dir}{self.folder_name}"
+                                des_id = list(self.sameDir[self.folder_name]["tasks"])[
+                                    0
+                                ]
+                                des_path = f"{DOWNLOAD_DIR}{des_id}{self.folder_name}"
+                                #logger.info(f"Moving files from {self.uid} to {des_id}")
+                                await move_and_merge(spath, des_path, self.uid)
+                                multi_links = True
+                            break
+                    await sleep(1)
+                    
         async with download_dict_lock:
-            if self.sameDir and self.sameDir['total'] > 1:
-                self.sameDir['tasks'].remove(self.uid)
-                self.sameDir['total'] -= 1
-                folder_name = self.sameDir['name']
-                spath = f"{self.dir}/{folder_name}"
-                des_path = f"{DOWNLOAD_DIR}{list(self.sameDir['tasks'])[0]}/{folder_name}"
-                await makedirs(des_path, exist_ok=True)
-                for item in await listdir(spath):
-                    if item.endswith(('.aria2', '.!qB')):
-                        continue
-                    item_path = f"{self.dir}/{folder_name}/{item}"
-                    if item in await listdir(des_path):
-                        await move(item_path, f'{des_path}/{self.uid}-{item}')
-                    else:
-                        await move(item_path, f'{des_path}/{item}')
-                multi_links = True
+            if self.uid not in download_dict:
+                return
+            
             download = download_dict[self.uid]
             name = str(download.name()).replace('/', '')
             gid = download.gid()
+            
         LOGGER.info(f"Download Completed: {name}")
         if multi_links:
             await self.onUploadError('Downloaded! Starting other part of the Task...')

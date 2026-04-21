@@ -190,6 +190,71 @@ async def _mirror_leech(client, message, isQbit=False, isLeech=False, sameDir=No
         del bulk[0]
 
     @new_task
+    async def run_multi(self, input_list, obj):
+        try:
+            await sleep(7)
+            if not self.multi_tag and self.multi > 1:
+                self.multi_tag = token_hex(3)
+                multi_tags.add(self.multi_tag)
+            elif self.multi <= 1:
+                if self.multi_tag in multi_tags:
+                    multi_tags.discard(self.multi_tag)
+                return
+            if self.multi_tag and self.multi_tag not in multi_tags:
+                await send_message(
+                    self.message, f"{self.tag} Multi Task has been cancelled!"
+                )
+                await send_status_message(self.message)
+                async with task_dict_lock:
+                    for fd_name in self.same_dir:
+                        self.same_dir[fd_name]["total"] -= self.multi
+                return
+            if len(self.bulk) != 0:
+                msg = input_list[:1]
+                msg.append(f"{self.bulk[0]} -i {self.multi - 1} {self.options}")
+                msgts = " ".join(msg)
+                if self.multi > 2:
+                    msgts += f"\n• <b>Cancel Multi:</b> <i>/{BotCommands.CancelTaskCommand[1]}_{self.multi_tag}</i>"
+                nextmsg = await send_message(self.message, msgts)
+                self.delete_msgs.append(pack_message(nextmsg))
+            else:
+                msg = [s.strip() for s in input_list]
+                index = msg.index("-i")
+                msg[index + 1] = f"{self.multi - 1}"
+                nextmsg = await self.client.get_messages(
+                    chat_id=self.message.chat.id,
+                    message_ids=self.message.reply_to_message_id + 1,
+                )
+                msgts = " ".join(msg)
+                if self.multi > 2:
+                    msgts += f"\n• <b>Cancel Multi:</b> <i>/{BotCommands.CancelTaskCommand[1]}_{self.multi_tag}</i>"
+                nextmsg = await send_message(nextmsg, msgts)
+                self.delete_msgs.append(pack_message(nextmsg))
+            nextmsg = await self.client.get_messages(chat_id=self.message.chat.id, message_ids=nextmsg.id)
+            if self.message.from_user:
+                nextmsg.from_user = self.user
+            else:
+                nextmsg.sender_chat = self.user
+            if intervals["stopAll"]:
+                return
+            await obj(
+                self.client,
+                nextmsg,
+                self.is_qbit,
+                self.is_leech,
+                self.is_jd,
+                self.is_nzb,
+                self.vidMode,
+                self.same_dir,
+                self.bulk,
+                self.multi_tag,
+                self.options,
+            ).new_event()
+        except Exception as e:
+            await send_message(self.message, str(e))
+            return 
+    
+    
     async def __run_multi():
         if multi <= 1:
             return
@@ -383,9 +448,11 @@ async def _mirror_leech(client, message, isQbit=False, isLeech=False, sameDir=No
             await delete_links(message)
             return
 
-    listener = MirrorLeechListener(message, compress, extract, isQbit, isLeech, tag, select, seed,
-                                    sameDir, rcf, up, join, drive_id=drive_id, index_link=index_link, 
-                                    source_url=org_link or link, leech_utils={'screenshots': sshots, 'thumb': thumb}, vidMode=vidMode)
+    listener = MirrorLeechListener(
+        message, compress, extract, isQbit, isLeech, tag, select, seed,
+        sameDir, rcf, up, join, drive_id=drive_id, index_link=index_link, 
+        source_url=org_link or link, leech_utils={'screenshots': sshots, 'thumb': thumb}, folder_name=folder_name, vidMode=vidMode
+    )
 
     if file_ is not None:
         await delete_links(message)

@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 from os import walk, path as ospath
 from aiofiles.os import remove as aioremove, path as aiopath, listdir, rmdir, makedirs
-from aioshutil import rmtree as aiormtree
+from aioshutil import rmtree as aiormtree, move
 from shutil import rmtree, disk_usage
 from magic import Magic
 from re import split as re_split, I, search as re_search
@@ -20,6 +20,27 @@ ARCH_EXT = [".tar.bz2", ".tar.gz", ".bz2", ".gz", ".tar.xz", ".tar", ".tbz2", ".
 FIRST_SPLIT_REGEX = r'(\.|_)part0*1\.rar$|(\.|_)7z\.0*1$|(\.|_)zip\.0*1$|^(?!.*(\.|_)part\d+\.rar$).*\.rar$'
 
 SPLIT_REGEX = r'\.r\d+$|\.7z\.\d+$|\.z\d+$|\.zip\.\d+$'
+
+
+
+async def move_and_merge(source, destination, mid):
+    if not await aiopath.exists(destination):
+        await makedirs(destination, exist_ok=True)
+    for item in await listdir(source):
+        item = item.strip()
+        src_path = f"{source}/{item}"
+        dest_path = f"{destination}/{item}"
+        if await aiopath.isdir(src_path):
+            if await aiopath.exists(dest_path):
+                await move_and_merge(src_path, dest_path, mid)
+            else:
+                await move(src_path, dest_path)
+        else:
+            if item.endswith((".aria2", ".!qB")):
+                continue
+            if await aiopath.exists(dest_path):
+                dest_path = f"{destination}/{mid}-{item}"
+            await move(src_path, dest_path)
 
 
 def is_first_archive_split(file):
