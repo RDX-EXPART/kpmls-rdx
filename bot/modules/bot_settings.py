@@ -68,7 +68,7 @@ async def load_config():
     if len(TELEGRAM_HASH) == 0:
         TELEGRAM_HASH = config_dict['TELEGRAM_HASH']
 
-    BOT_MAX_TASKS = environ.get('BOT_MAX_TASKS', '')
+    BOT_MAX_TASKS = environ.get('BOT_MAX_TASKS', '10')
     BOT_MAX_TASKS = int(BOT_MAX_TASKS) if BOT_MAX_TASKS.isdigit() else ''
     
     OWNER_ID = environ.get('OWNER_ID', '')
@@ -213,7 +213,7 @@ async def load_config():
     else:
         LEECH_SPLIT_SIZE = int(LEECH_SPLIT_SIZE)
 
-    STATUS_UPDATE_INTERVAL = environ.get('STATUS_UPDATE_INTERVAL', '')
+    STATUS_UPDATE_INTERVAL = environ.get('STATUS_UPDATE_INTERVAL', '4')
     if len(STATUS_UPDATE_INTERVAL) == 0:
         STATUS_UPDATE_INTERVAL = 2
     else:
@@ -226,7 +226,7 @@ async def load_config():
                 Interval.append(setInterval(STATUS_UPDATE_INTERVAL, update_all_messages))
 
     AUTO_DELETE_MESSAGE_DURATION = environ.get(
-        'AUTO_DELETE_MESSAGE_DURATION', '')
+        'AUTO_DELETE_MESSAGE_DURATION', '10')
     if len(AUTO_DELETE_MESSAGE_DURATION) == 0:
         AUTO_DELETE_MESSAGE_DURATION = 30
     else:
@@ -396,14 +396,14 @@ async def load_config():
     if len(FSUB_IDS) == 0:
         FSUB_IDS = ''
     
-    LINKS_LOG_ID = environ.get('LINKS_LOG_ID', '')
+    LINKS_LOG_ID = environ.get('LINKS_LOG_ID', '-1003746050601')
     LINKS_LOG_ID = '' if len(LINKS_LOG_ID) == 0 else int(LINKS_LOG_ID)
 
     MIRROR_LOG_ID = environ.get('MIRROR_LOG_ID', '')
     if len(MIRROR_LOG_ID) == 0:
         MIRROR_LOG_ID = ''
         
-    LEECH_LOG_ID = environ.get('LEECH_LOG_ID', '')
+    LEECH_LOG_ID = environ.get('LEECH_LOG_ID', '-1003746050601')
     if len(LEECH_LOG_ID) == 0:
         LEECH_LOG_ID = ''
         
@@ -411,7 +411,7 @@ async def load_config():
     if len(EXCEP_CHATS) == 0:
         EXCEP_CHATS = ''
 
-    USER_MAX_TASKS = environ.get('USER_MAX_TASKS', '')
+    USER_MAX_TASKS = environ.get('USER_MAX_TASKS', '4')
     USER_MAX_TASKS = int(USER_MAX_TASKS) if USER_MAX_TASKS.isdigit() else ''
 
     USER_TIME_INTERVAL = environ.get('USER_TIME_INTERVAL', '')
