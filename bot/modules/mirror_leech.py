@@ -35,7 +35,12 @@ from bot.helper.video_utils.selector import SelectMode
 
 
 @new_task
-async def _mirror_leech(client, message, isQbit=False, isLeech=False, sameDir=None, bulk=[], vidMode=None):
+async def _mirror_leech(client, message, isQbit=False, isLeech=False, sameDir=None, bulk=None, vidMode=None):
+    if sameDir is None:
+        sameDir = {}
+    if bulk is None:
+        bulk = []
+        
     text = message.text.split('\n')
     input_list = text[0].split(' ')
 
@@ -107,8 +112,6 @@ async def _mirror_leech(client, message, isQbit=False, isLeech=False, sameDir=No
         if len(dargs) == 2:
             seed_time = dargs[1] or None
         seed = True
-    
-    
     
     if not isinstance(isBulk, bool):
         dargs = isBulk.split(":")
