@@ -205,8 +205,6 @@ async def _mirror_leech(client, message, isQbit=False, isLeech=False, sameDir=No
             nextmsg = await client.get_messages(chat_id=message.chat.id, message_ids=message.reply_to_message_id + 1)
             nextmsg = await sendMessage(nextmsg, " ".join(msg))
         nextmsg = await client.get_messages(chat_id=message.chat.id, message_ids=nextmsg.id)
-        if folder_name:
-            sameDir['tasks'].add(nextmsg.id)
         nextmsg.from_user = message.from_user
         await sleep(5)
         _mirror_leech(client, nextmsg, isQbit, isLeech, sameDir, bulk)
