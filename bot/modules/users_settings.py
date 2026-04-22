@@ -176,10 +176,16 @@ async def get_user_settings(from_user, key=None, edit_type=None, edit_mode=None)
         ldump = 'Not Exists' if (val:=user_dict.get('ldump', '')) == '' else len(val)
 
         lattachment = 'Not Exists' if (val:=user_dict.get('lattachment', config_dict.get('ATTACHMENT', ''))) == '' else val
-        buttons.ibutton(f"{'✅️' if lattachment != 'Not Exists' else ''} Leech Attachment", f"userset {user_id} lattachment")
+        buttons.ibutton(f"{'✅️' if lattachment != 'Not Exists' else ''} Leech Attachment", f"userset {user_id} lattachment")       
 
         metadata = 'Not Exists' if (val:=user_dict.get('metadata', config_dict.get('METADATA', ''))) == '' else val
         buttons.ibutton(f"{'✅️' if metadata != 'Not Exists' else ''} Leech Metadata", f"userset {user_id} metadata")
+                
+        auto_start = "Enabled" if user_dict.get('auto_start', False) else "Disabled"
+buttons.ibutton(
+    f"{'✅️' if auto_start == 'Enabled' else ''} {'Disable Auto Start' if auto_start == 'Enabled' else 'Enable Auto Start'}",
+    f"userset {user_id} auto_start"
+)
 
         text = BotTheme('LEECH', NAME=name, DL=f"{dailyll} / {dailytlle}",
                 LTYPE=ltype, THUMB=thumbmsg, SPLIT_SIZE=split_size,
