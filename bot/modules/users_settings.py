@@ -183,7 +183,7 @@ async def get_user_settings(from_user, key=None, edit_type=None, edit_mode=None)
                 
         auto_start = "Enabled" if user_dict.get('auto_start', False) else "Disabled"
         buttons.ibutton(
-            f"{'✅️' if auto_start == 'Enabled' else ''} ⚡ 𝗔𝗨𝗧𝗢 𝗦𝗧𝗔𝗥𝗧",
+            f"{'✅️' if auto_start == 'Enabled' else ''} 𝗔𝗨𝗧𝗢 𝗦𝗧𝗔𝗥𝗧",
             f"userset {user_id} auto_start"
         )
         text = BotTheme('LEECH', NAME=name, DL=f"{dailyll} / {dailytlle}",
