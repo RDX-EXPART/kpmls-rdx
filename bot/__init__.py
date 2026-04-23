@@ -72,7 +72,7 @@ qb_listener_lock = Lock()
 status_reply_dict = {}
 download_dict = {}
 rss_dict = {}
-
+multi_tags = set()
 
 VID_MODE = {
     'vid_vid': 'Video + Video',

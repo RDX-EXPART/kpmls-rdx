@@ -3,7 +3,7 @@ from asyncio import sleep
 from pyrogram.handlers import MessageHandler, CallbackQueryHandler
 from pyrogram.filters import command, regex
 
-from bot import download_dict, bot, bot_name, download_dict_lock, OWNER_ID, user_data
+from bot import download_dict, bot, bot_name, download_dict_lock, OWNER_ID, user_data, multi_tags
 from bot.helper.telegram_helper.bot_commands import BotCommands
 from bot.helper.telegram_helper.filters import CustomFilters
 from bot.helper.telegram_helper.message_utils import sendMessage, deleteMessage, auto_delete_message
@@ -19,6 +19,10 @@ async def cancel_mirror(_, message):
         if len(cmd_data) > 1 and cmd_data[1].strip() != bot_name:
             return
         gid = cmd_data[0]
+        if len(gid) == 6:
+            multi_tags.discard(gid)
+            return
+
         dl = await getDownloadByGid(gid)
         if dl is None:
             await sendMessage(message, f"GID: <code>{gid}</code> Not Found.")

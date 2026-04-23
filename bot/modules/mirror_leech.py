@@ -1,6 +1,7 @@
 from pyrogram.handlers import MessageHandler, CallbackQueryHandler
 from pyrogram.filters import command, regex
 from html import escape
+from secrets import token_hex
 from traceback import format_exc
 from base64 import b64encode
 from re import match as re_match
@@ -32,10 +33,11 @@ from bot.helper.ext_utils.help_messages import MIRROR_HELP_MESSAGE, CLONE_HELP_M
 from bot.helper.ext_utils.bulk_links import extract_bulk_links
 from bot.modules.gen_pyro_sess import get_decrypt_key
 from bot.helper.video_utils.selector import SelectMode
+from bot.helper.common import init_bulk, run_multi
 
 
 @new_task
-async def _mirror_leech(client, message, isQbit=False, isLeech=False, sameDir=None, bulk=None, vidMode=None):
+async def _mirror_leech(client, message, isQbit=False, isLeech=False, sameDir=None, bulk=None, vidMode=None, multi_tag=None, options=""):
     if sameDir is None:
         sameDir = {}
     if bulk is None:
@@ -119,7 +121,8 @@ async def _mirror_leech(client, message, isQbit=False, isLeech=False, sameDir=No
         if len(dargs) == 2:
             bulk_end = dargs[1] or 0
         isBulk = True
-
+    
+    
     if not isBulk:
         if multi > 0:
             if folder_name:
@@ -154,20 +157,8 @@ async def _mirror_leech(client, message, isQbit=False, isLeech=False, sameDir=No
             vidMode = await SelectMode(message.id, message.from_user.id, client, message).get_buttons()
             if not vidMode:
                 return
-            
-        try:
-            bulk = await extract_bulk_links(message, bulk_start, bulk_end)
-            if len(bulk) == 0:
-                raise ValueError('Bulk Empty!')
-        except:
-            await sendMessage(message, 'Reply to text file or tg message that have links seperated by new line!')
-            return
-        b_msg = input_list[:1]
-        b_msg.append(f'{bulk[0]} -i {len(bulk)}')
-        nextmsg = await sendMessage(message, " ".join(b_msg))
-        nextmsg = await client.get_messages(chat_id=message.chat.id, message_ids=nextmsg.id)
-        nextmsg.from_user = message.from_user
-        _mirror_leech(client, nextmsg, isQbit, isLeech, sameDir, bulk, vidMode=vidMode)
+        
+        await init_bulk(client, message, _mirror_leech, input_list, isQbit, isLeech, sameDir, bulk, vidMode, multi_tag, options, bulk_start, bulk_end):
         return
     
     if drive_id and is_gdrive_link(drive_id):
@@ -188,29 +179,10 @@ async def _mirror_leech(client, message, isQbit=False, isLeech=False, sameDir=No
         
     if len(bulk) != 0:
         del bulk[0]
-
-    @new_task
-    async def __run_multi():
-        if multi <= 1:
-            return
-        await sleep(5)
-        if len(bulk) != 0:
-            msg = input_list[:1]
-            msg.append(f'{bulk[0]} -i {multi - 1}')
-            nextmsg = await sendMessage(message, " ".join(msg))
-        else:
-            msg = [s.strip() for s in input_list]
-            index = msg.index('-i')
-            msg[index+1] = f"{multi - 1}"
-            nextmsg = await client.get_messages(chat_id=message.chat.id, message_ids=message.reply_to_message_id + 1)
-            nextmsg = await sendMessage(nextmsg, " ".join(msg))
-        nextmsg = await client.get_messages(chat_id=message.chat.id, message_ids=nextmsg.id)
-        nextmsg.from_user = message.from_user
-        await sleep(5)
-        _mirror_leech(client, nextmsg, isQbit, isLeech, sameDir, bulk)
-
-    __run_multi()
-
+    
+    await run_multi(client, message, obj, input_list, isQbit, isLeech, sameDir, bulk, vidMode, multi_tag, options, multi):
+    
+    
     path = f'{DOWNLOAD_DIR}{message.id}{folder_name}'
 
     if len(text) > 1 and text[1].startswith('Tag: '):
