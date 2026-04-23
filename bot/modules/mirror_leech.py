@@ -158,7 +158,7 @@ async def _mirror_leech(client, message, isQbit=False, isLeech=False, sameDir=No
             if not vidMode:
                 return
         
-        await init_bulk(client, message, _mirror_leech, input_list, isQbit, isLeech, sameDir, bulk, vidMode, multi_tag, options, bulk_start, bulk_end):
+        await init_bulk(client, message, _mirror_leech, input_list, isQbit, isLeech, sameDir, bulk, vidMode, multi_tag, options, bulk_start, bulk_end)
         return
     
     if drive_id and is_gdrive_link(drive_id):
@@ -180,7 +180,7 @@ async def _mirror_leech(client, message, isQbit=False, isLeech=False, sameDir=No
     if len(bulk) != 0:
         del bulk[0]
     
-    await run_multi(client, message, obj, input_list, isQbit, isLeech, sameDir, bulk, vidMode, multi_tag, options, multi):
+    await run_multi(client, message, obj, input_list, isQbit, isLeech, sameDir, bulk, vidMode, multi_tag, options, multi)
     
     
     path = f'{DOWNLOAD_DIR}{message.id}{folder_name}'
