@@ -1,5 +1,8 @@
 from pyrogram.types import InlineKeyboardMarkup, InlineKeyboardButton
 
+from bot.core.config_manager import BinConfig
+
+
 class ButtonMaker:
     def __init__(self):
         self._buttons = []
@@ -15,10 +18,10 @@ class ButtonMaker:
         if data:
             kwargs["callback_data"] = data
 
-        if emoji_id is not None:
+        if emoji_id is not None and BinConfig.PYRO_NAME == 'kurigram':
             kwargs["icon_custom_emoji_id"] = emoji_id
 
-        if style is not None:
+        if style is not None and BinConfig.PYRO_NAME == 'kurigram':
             kwargs["style"] = style
 
         return InlineKeyboardButton(**kwargs)

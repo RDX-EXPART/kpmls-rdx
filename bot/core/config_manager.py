@@ -11,3 +11,4 @@ class Config:
     
 class BinConfig:
     FFMPEG_NAME = 'ffmpeg'
+    PYRO_NAME = 'pyroblack'
