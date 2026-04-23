@@ -171,8 +171,8 @@ async def get_user_settings(from_user, key=None, edit_type=None, edit_mode=None)
         lsuffix = 'Not Exists' if (val:=user_dict.get('lsuffix', config_dict.get('LEECH_FILENAME_SUFFIX', ''))) == '' else val
         buttons.ibutton(f"{'✅️' if lsuffix != 'Not Exists' else ''} Leech Suffix", f"userset {user_id} lsuffix")
 
-        lremname = 'Not Exists' if (val:=user_dict.get('lremname', config_dict.get('LEECH_FILENAME_REMNAME', ''))) == '' else val
-        buttons.ibutton(f"{'✅️' if lremname != 'Not Exists' else ''} Leech Remname", f"userset {user_id} lremname")
+        auto_rename = 'Not Exists' if (val:=user_dict.get('auto_rename', '')) == '' else val
+        buttons.ibutton(f"{'✅️' if auto_rename != 'Not Exists' else ''} Auto Rename", f"userset {user_id} auto_rename")
 
         buttons.ibutton("Leech Dump", f"userset {user_id} ldump")
         ldump = 'Not Exists' if (val:=user_dict.get('ldump', '')) == '' else len(val)
@@ -187,7 +187,7 @@ async def get_user_settings(from_user, key=None, edit_type=None, edit_mode=None)
                 LTYPE=ltype, THUMB=thumbmsg, SPLIT_SIZE=split_size,
                 EQUAL_SPLIT=equal_splits, MEDIA_GROUP=media_group,
                 LCAPTION=escape(lcaption), LPREFIX=escape(lprefix),
-                LSUFFIX=escape(lsuffix), LREMNAME=escape(lremname), 
+                LSUFFIX=escape(lsuffix), LREMNAME=escape(auto_rename), 
                 LDUMP=ldump, METADATA=escape(metadata),
                 ATTACHMENT=escape(lattachment))
 
