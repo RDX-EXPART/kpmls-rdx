@@ -1,3 +1,6 @@
+from bot import bot_cache
+
+
 class Config:
     DISABLE_MULTI_VIDTOOLS: str = ""
     LIB264_PRESET: str = "faster"
@@ -10,5 +13,5 @@ class Config:
     
     
 class BinConfig:
-    FFMPEG_NAME = 'ffmpeg'
+    FFMPEG_NAME = bot_cache['pkgs'][2]
     PYRO_NAME = 'pyroblack'
