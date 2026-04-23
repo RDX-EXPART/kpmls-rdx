@@ -96,7 +96,7 @@ class VidEcxecutor:
             if add_to_queue:
                 async with download_dict_lock:
                     download_dict[self.listener.uid] = QueueStatus(self.listener.name, self.size, self._gid, self.listener, 'dl')
-                await self.listener.on_download_start()
+                await self.listener.onDownloadStart()
                 if update:
                     await sendStatusMessage(self.listener.message)
                 await event.wait()
@@ -117,7 +117,7 @@ class VidEcxecutor:
                 self.size = int(self._metadata[1]['size'])
             except Exception as e:
                 LOGGER.error(e)
-                await self.listener.on_download_error('Invalid data, check the link!')
+                await self.listener.onDownloadError('Invalid data, check the link!')
                 return
             
         if not self.name:

@@ -95,6 +95,7 @@ class MirrorLeechListener:
         self.vidMode = vidMode
         self.folder_name = folder_name
         self._subprocess = None
+        self.ffmpeg = None
         self.source_msg = ''
         self.__setModeEng()
         self.__parseSource()
