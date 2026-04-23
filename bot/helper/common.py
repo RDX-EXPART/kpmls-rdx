@@ -23,8 +23,8 @@ async def run_multi(client, message, obj, input_list, isQbit=False, isLeech=Fals
                 )
                 await sendStatusMessage(message)
                 async with download_dict_lock:
-                    for fd_name in same_dir:
-                        same_dir[fd_name]["total"] -= multi
+                    for fd_name in sameDir:
+                        sameDir[fd_name]["total"] -= multi
                 return
             if len(bulk) != 0:
                 msg = input_list[:1]
@@ -55,7 +55,7 @@ async def run_multi(client, message, obj, input_list, isQbit=False, isLeech=Fals
                 nextmsg,
                 isQbit,
                 isLeech,
-                same_dir,
+                sameDir,
                 bulk,
                 vidMode=vidMode,
                 multi_tag=multi_tag,
@@ -98,7 +98,7 @@ async def init_bulk(client, message, obj, input_list, isQbit=False, isLeech=Fals
                 nextmsg,
                 isQbit,
                 isLeech,
-                same_dir,
+                sameDir,
                 bulk,
                 vidMode=vidMode,
                 multi_tag=multi_tag,
