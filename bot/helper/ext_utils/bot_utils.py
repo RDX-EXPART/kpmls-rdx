@@ -309,11 +309,11 @@ def get_readable_message():
         try:
             in_mode = download.upload_details.get("mode")
             if in_mode:
-                msg += f"<b>┊ In Mode » {escape(str(in_mode))}</b>\n┊ Out Mode » Leech</b>\n"
+                msg += f"<b>╰ In Mode » {escape(str(in_mode))}</b>\n┊ Out Mode » Leech</b>\n"
         except Exception:
             pass
 
-        msg += f"<b>╰ Stop 📛 » /{BotCommands.CancelMirror}_{download.gid()}</b>\n\n"
+        msg += f"<b>⋗ Stop 📛 » /{BotCommands.CancelMirror}_{download.gid()}</b>\n\n"
         
 
     if len(msg) == 0:
