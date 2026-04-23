@@ -53,8 +53,8 @@ async def run_multi(client, message, obj, input_list, isQbit=False, isLeech=Fals
             await obj(
                 client,
                 nextmsg,
-                is_qbit,
-                is_leech,
+                isQbit,
+                isLeech,
                 same_dir,
                 bulk,
                 vidMode=vidMode,
@@ -96,8 +96,8 @@ async def init_bulk(client, message, obj, input_list, isQbit=False, isLeech=Fals
             obj(
                 client,
                 nextmsg,
-                is_qbit,
-                is_leech,
+                isQbit,
+                isLeech,
                 same_dir,
                 bulk,
                 vidMode=vidMode,
