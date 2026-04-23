@@ -10,7 +10,6 @@ from time import time
 from pyrogram.filters import regex, user
 from pyrogram.handlers import MessageHandler, CallbackQueryHandler
 from pyrogram.types import Message, CallbackQuery
-from pyrogram.enums import ButtonStyle
 
 from bot import VID_MODE, VT_TIMEOUT, LOGGER
 from bot.helper.ext_utils.bot_utils import new_task, new_thread, sync_to_async
@@ -148,26 +147,26 @@ class SelectMode():
             vid_modes = dict(list(VID_MODE.items())[4:]) if self._isLink else VID_MODE
             for key, value in vid_modes.items():
                 if self.mode == key:
-                    bMaker.ibutton(f"✓ {value}", f'{self.prefix} {key}', style=ButtonStyle.SUCCESS)
+                    bMaker.ibutton(f"✓ {value}", f'{self.prefix} {key}')
                 else:
                     bMaker.ibutton(value, f'{self.prefix} {key}')
             
-            bMaker.ibutton(f'{"✓ " if self.newname else ""}Rename', f'{self.prefix} rename', position='header', style=ButtonStyle.PRIMARY)
-            bMaker.ibutton('Cancel', f'{self.prefix} cancel', 'footer', style=ButtonStyle.DANGER)
+            bMaker.ibutton(f'{"✓ " if self.newname else ""}Rename', f'{self.prefix} rename', position='header')
+            bMaker.ibutton('Cancel', f'{self.prefix} cancel', 'footer')
             if self.mode:
-                bMaker.ibutton('Start', f'{self.prefix} done', 'footer', style=ButtonStyle.SUCCESS)
+                bMaker.ibutton('Start', f'{self.prefix} done', 'footer')
             if self.mode in ('vid_sub', 'watermark') and await CustomFilters.sudo('', self.message):
                 hardsub = self.extra_data.get('hardsub')
-                bMaker.ibutton(f"{'✓ ' if hardsub else ''}Hardsub", f'{self.prefix} hardsub', 'header', style=ButtonStyle.PRIMARY)
+                bMaker.ibutton(f"{'✓ ' if hardsub else ''}Hardsub", f'{self.prefix} hardsub', 'header')
                 if hardsub:
                     if self.mode == 'watermark':
-                        bMaker.ibutton(f"{'✓ ' if await aiopath.exists(self.extra_data.get('subfile', '')) else ''}Sub File", f'{self.prefix} subfile', 'header', style=ButtonStyle.PRIMARY)
-                    bMaker.ibutton('Font Style', f'{self.prefix} fontstyle', 'header', style=ButtonStyle.PRIMARY)
+                        bMaker.ibutton(f"{'✓ ' if await aiopath.exists(self.extra_data.get('subfile', '')) else ''}Sub File", f'{self.prefix} subfile', 'header')
+                    bMaker.ibutton('Font Style', f'{self.prefix} fontstyle', 'header')
 
             if self.mode in ('compress', 'watermark') or self.extra_data.get('hardsub'):
-                bMaker.ibutton('Quality', f'{self.prefix} quality', 'header', style=ButtonStyle.PRIMARY)
+                bMaker.ibutton('Quality', f'{self.prefix} quality', 'header')
             if self.mode == 'watermark':
-                bMaker.ibutton('Popup', f'{self.prefix} popupwm', 'header', style=ButtonStyle.PRIMARY)
+                bMaker.ibutton('Popup', f'{self.prefix} popupwm', 'header')
         else:
             def _buttons_style(name=True, size=True, colour=True, position='header', cb='fontstyle'):
                 if name:
@@ -191,7 +190,7 @@ class SelectMode():
                 case 'popupwm':
                     bnum, popupwm = 5, self.extra_data.get('popupwm', 0)
                     if popupwm:
-                        bMaker.ibutton('Reset', f'{self.prefix} popupwm 0', 'header', style=ButtonStyle.PRIMARY)
+                        bMaker.ibutton('Reset', f'{self.prefix} popupwm 0', 'header')
                     [bMaker.ibutton(f"{'✓ ' if popupwm == key else ''}{key}", f'{self.prefix} popupwm {key}') for key in range(2, 21, 2)]
                     bMaker.ibutton('<<', f'{self.prefix} back', 'footer')
                     bMaker.ibutton('Done', f'{self.prefix} done', 'footer')
@@ -201,7 +200,7 @@ class SelectMode():
                 case 'fontstyle':
                     bnum = 3
                     _buttons_style(position=None, cb='back')
-                    bMaker.ibutton(f"{'✓ ' if self.extra_data.get('boldstyle') else ''}Bold Style", f"{self.prefix} fontstyle boldstyle {self.extra_data.get('boldstyle', False)}", 'header', style=ButtonStyle.PRIMARY)
+                    bMaker.ibutton(f"{'✓ ' if self.extra_data.get('boldstyle') else ''}Bold Style", f"{self.prefix} fontstyle boldstyle {self.extra_data.get('boldstyle', False)}", 'header')
                 case 'fontname':
                     _buttons_style(name=False)
                     [bMaker.ibutton(f"{'✓ ' if btn == self.extra_data.get('fontname') else ''}{btn.replace('_', ' ')}", f'{self.prefix} fontstyle fontname {btn}')
