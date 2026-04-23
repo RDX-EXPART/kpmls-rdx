@@ -42,6 +42,7 @@ from bot.helper.telegram_helper.button_build import ButtonMaker
 from bot.helper.ext_utils.db_handler import DbManger
 from bot.helper.themes import BotTheme
 from bot.helper.video_utils.executor import VidEcxecutor
+from bot.helper.common import remove_from_same_dir
 
 
 class MirrorLeechListener:
