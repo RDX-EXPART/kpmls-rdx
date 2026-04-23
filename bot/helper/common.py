@@ -7,6 +7,18 @@ from bot.helper.telegram_helper.bot_commands import BotCommands
 from bot.helper.telegram_helper.message_utils import send_message, sendStatusMessage
 
 
+
+async def remove_from_same_dir(mid, sameDir, folder_name):
+        async with download_dict_lock:
+            if (
+                folder_name
+                and sameDir
+                and mid in sameDir[folder_name]["tasks"]
+            ):
+                sameDir[folder_name]["tasks"].remove(mid)
+                sameDir[folder_name]["total"] -= 1
+            return sameDir
+
 async def run_multi(client, message, obj, input_list, isQbit=False, isLeech=False, sameDir=None, bulk=None, vidMode=None, multi_tag=None, options="", multi=1):
         try:
             await sleep(7)

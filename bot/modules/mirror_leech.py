@@ -33,7 +33,7 @@ from bot.helper.ext_utils.help_messages import MIRROR_HELP_MESSAGE, CLONE_HELP_M
 from bot.helper.ext_utils.bulk_links import extract_bulk_links
 from bot.modules.gen_pyro_sess import get_decrypt_key
 from bot.helper.video_utils.selector import SelectMode
-from bot.helper.common import init_bulk, run_multi
+from bot.helper.common import init_bulk, run_multi, remove_from_same_dir
 
 
 @new_task
@@ -213,6 +213,7 @@ async def _mirror_leech(client, message, isQbit=False, isLeech=False, sameDir=No
                 reply_to, session = await get_tg_link_content(link, message.from_user.id, decrypter)
         except Exception as e:
             LOGGER.info(format_exc())
+            await remove_from_same_dir(message.id, sameDir, folder_name)
             await sendMessage(message, f'<b>ERROR:</b> <i>{e}</i>')
             await delete_links(message)
             return
@@ -230,6 +231,7 @@ async def _mirror_leech(client, message, isQbit=False, isLeech=False, sameDir=No
     if not is_url(link) and not is_magnet(link) and not await aiopath.exists(link) and not is_rclone_path(link) and file_ is None:
         btn = ButtonMaker()
         btn.ibutton('Cʟɪᴄᴋ Hᴇʀᴇ Tᴏ Rᴇᴀᴅ Mᴏʀᴇ ...', f'kpsmlx {message.from_user.id} help MIRROR')
+        await remove_from_same_dir(message.id, sameDir, folder_name)
         await sendMessage(message, MIRROR_HELP_MESSAGE[0], btn.build_menu(1))
         await delete_links(message)
         return
@@ -246,6 +248,7 @@ async def _mirror_leech(client, message, isQbit=False, isLeech=False, sameDir=No
             final_msg += f'\n<b>{__i}</b>: {__msg}\n'
         if error_button is not None:
             error_button = error_button.build_menu(2)
+        await remove_from_same_dir(message.id, sameDir, folder_name)
         await sendMessage(message, final_msg, error_button)
         await delete_links(message)
         return
@@ -276,6 +279,7 @@ async def _mirror_leech(client, message, isQbit=False, isLeech=False, sameDir=No
                 if 'This link requires a password!' not in e:
                     LOGGER.info(e)
                 if str(e).startswith('ERROR:'):
+                    await remove_from_same_dir(message.id, sameDir, folder_name)
                     await editMessage(process_msg, str(e))
                     await delete_links(message)
                     return
