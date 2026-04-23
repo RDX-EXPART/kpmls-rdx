@@ -19,7 +19,7 @@ async def remove_from_same_dir(mid, sameDir, folder_name):
                 sameDir[folder_name]["total"] -= 1
             return sameDir
 
-async def run_multi(client, message, obj, input_list, isQbit=False, isLeech=False, sameDir=None, bulk=None, vidMode=None, multi_tag=None, options="", multi=1):
+async def run_multi(client, message, obj, input_list, isQbit, isLeech, sameDir, bulk, vidMode, multi_tag, options, multi):
         try:
             await sleep(7)
             if not multi_tag and multi > 1:
@@ -77,7 +77,7 @@ async def run_multi(client, message, obj, input_list, isQbit=False, isLeech=Fals
             await send_message(message, str(e))
             return 
     
-async def init_bulk(client, message, obj, input_list, isQbit=False, isLeech=False, sameDir=None, bulk=None, vidMode=None, multi_tag=None, options="", bulk_start=None, bulk_end=None):
+async def init_bulk(client, message, obj, input_list, isQbit, isLeech, sameDir, bulk, vidMode, multi_tag, options, bulk_start, bulk_end):
         try:
             bulk = await extract_bulk_links(message, bulk_start, bulk_end)
             if len(bulk) == 0:
