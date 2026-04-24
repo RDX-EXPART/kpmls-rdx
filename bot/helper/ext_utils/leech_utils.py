@@ -490,8 +490,8 @@ async def format_filename(file_, user_id, dirpath=None, isMirror=False):
                     if qual:
                         _meta["resolution"] = qual
                     if lang:
-                        _meta["languages"] = lang
                         _langs = [x.strip() for x in lang.split(",") if x.strip()]
+                        _meta["languages"] = ' '.join(_langs)
                         if len(_langs) == 1:
                             _meta["shortlang"] = _langs[0]
                         elif len(_langs) == 2:
