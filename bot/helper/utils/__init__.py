@@ -94,6 +94,7 @@ def time_to_seconds(time_duration):
     except Exception:
         return 0
 
+SIZE_UNITS = ['B', 'KB', 'MB', 'GB', 'TB', 'PB']
 def get_readable_file_size(size_in_bytes):
     if not size_in_bytes:
         return "0B"
