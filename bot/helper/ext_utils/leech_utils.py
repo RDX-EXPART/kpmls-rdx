@@ -358,7 +358,7 @@ def _rdx_parse_fields(raw_filename: str) -> dict:
     for k, v in lang_map.items():
         if re_search(rf'\b{k}\b', search_text, IGNORECASE) and v not in langs:
             langs.append(v)
-    languages = ', '.join(langs)
+    languages = ' '.join(langs)
 
     if len(langs) == 1:
         shortlang = langs[0]
