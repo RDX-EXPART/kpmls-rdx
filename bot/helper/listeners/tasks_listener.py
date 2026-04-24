@@ -98,6 +98,8 @@ class MirrorLeechListener:
         self.ffmpeg = None
         self.is_cancelled = False
         self.source_msg = ''
+        self.name = ''
+        self.keep_source = False
         self.__setModeEng()
         self.__parseSource()
 
@@ -196,6 +198,7 @@ class MirrorLeechListener:
             
             download = download_dict[self.uid]
             name = str(download.name()).replace('/', '')
+            self.name = name
             gid = download.gid()
             
         LOGGER.info(f"Download Completed: {name}")
@@ -211,7 +214,8 @@ class MirrorLeechListener:
             name = files[-1]
             if name == "yt-dlp-thumb":
                 name = files[0]
-
+            self.name = name
+            
         dl_path = f"{self.dir}/{name}"
         up_path = ''
         size = await get_path_size(dl_path)
