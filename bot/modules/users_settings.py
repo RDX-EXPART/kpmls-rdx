@@ -30,6 +30,7 @@ desp_dict = {'rcc': ['RClone is a command-line program to sync files and directo
             'lprefix': ['Leech Filename Prefix is the Front Part attacted with the Filename of the Leech Files.', 'Send Leech Filename Prefix. Documentation Here : <a href="https://t.me/leechsource">Click Me</a> \n<b>Timeout:</b> 60 sec'],
             'lsuffix': ['Leech Filename Suffix is the End Part attached with the Filename of the Leech Files', 'Send Leech Filename Suffix. Documentation Here : <a href="https://t.me/leechsource">Click Me</a> \n<b>Timeout:</b> 60 sec'],
             'lremname': ['Leech Filename Remname is combination of Regex(s) used for removing or manipulating Filename of the Leech Files', 'Send Leech Filename Remname. Documentation Here : <a href="https://t.me/leechsource">Click Me</a> \n<b>Timeout:</b> 60 sec'],
+            'auto_rename': ['Template based auto rename for leeched files using placeholders like {name}, {year}, {season}, {episode}, {quality}, {extension}', 'Send Auto Rename Format.\nExample:\n<code>{name} {season}{episode} {year} {resolution} {quality} {shortlang} {lib}{extension}</code>\n\n<b>Timeout:</b> 60 sec'],
             'lcaption': ['Leech Caption is the Custom Caption on the Leech Files Uploaded by the bot', 'Send Leech Caption. You can add HTML tags. Documentation Here : <a href="https://t.me/leechsource">Click Me</a> \n<b>Timeout:</b> 60 sec'],
             'ldump': ['Leech Files User Dump for Personal Use as a Storage.', 'Send Leech Dump Channel ID\n➲ <b>Format:</b> \ntitle chat_id/@username\ntitle2 chat_id2/@username2. \n\n<b>NOTE:</b>Make Bot Admin in the Channel else it will not accept\n<b>Timeout:</b> 60 sec'],
             'metadata': ['Your channel name that should be used while editing metadata of the file', 'Send File Metadata\n<b>Timeout:</b> 60 sec'],
@@ -50,6 +51,7 @@ fname_dict = {'rcc': 'RClone',
              'lprefix': 'Prefix',
              'lsuffix': 'Suffix',
              'lremname': 'Remname',
+             'auto_rename': 'Auto Rename',
              'metadata': 'Metadata',
              'lattachment': 'Attachment',
              'mprefix': 'Prefix',
@@ -169,8 +171,8 @@ async def get_user_settings(from_user, key=None, edit_type=None, edit_mode=None)
         lsuffix = 'Not Exists' if (val:=user_dict.get('lsuffix', config_dict.get('LEECH_FILENAME_SUFFIX', ''))) == '' else val
         buttons.ibutton(f"{'✅️' if lsuffix != 'Not Exists' else ''} Leech Suffix", f"userset {user_id} lsuffix")
 
-        lremname = 'Not Exists' if (val:=user_dict.get('lremname', config_dict.get('LEECH_FILENAME_REMNAME', ''))) == '' else val
-        buttons.ibutton(f"{'✅️' if lremname != 'Not Exists' else ''} Leech Remname", f"userset {user_id} lremname")
+        auto_rename = 'Not Exists' if (val:=user_dict.get('auto_rename', '')) == '' else val
+        buttons.ibutton(f"{'✅️' if auto_rename != 'Not Exists' else ''} Auto Rename", f"userset {user_id} auto_rename")
 
         buttons.ibutton("Leech Dump", f"userset {user_id} ldump")
         ldump = 'Not Exists' if (val:=user_dict.get('ldump', '')) == '' else len(val)
@@ -190,7 +192,7 @@ async def get_user_settings(from_user, key=None, edit_type=None, edit_mode=None)
                 LTYPE=ltype, THUMB=thumbmsg, SPLIT_SIZE=split_size,
                 EQUAL_SPLIT=equal_splits, MEDIA_GROUP=media_group,
                 LCAPTION=escape(lcaption), LPREFIX=escape(lprefix),
-                LSUFFIX=escape(lsuffix), LREMNAME=escape(lremname), 
+                LSUFFIX=escape(lsuffix), LREMNAME=escape(auto_rename), 
                 LDUMP=ldump, METADATA=escape(metadata),
                 ATTACHMENT=escape(lattachment))
 
@@ -237,7 +239,7 @@ async def get_user_settings(from_user, key=None, edit_type=None, edit_mode=None)
                 buttons.ibutton("Disable Media Group", f"userset {user_id} mgroup", "header")
             else:
                 buttons.ibutton("Enable Media Group", f"userset {user_id} mgroup", "header")
-        elif key in ['lprefix', 'lremname', 'lsuffix', 'lcaption', 'ldump', 'metadata', 'lattachment']:
+        elif key in ['lprefix', 'lremname', 'lsuffix', 'lcaption', 'ldump', 'metadata', 'lattachment', 'auto_rename']:
             set_exist = 'Not Exists' if (val:=user_dict.get(key, config_dict.get(f'LEECH_FILENAME_{key[1:].upper()}', ''))) == '' else val
             if set_exist != 'Not Exists' and key == "ldump":
                 set_exist = '\n\n' + '\n'.join([f"{index}. <b>{dump}</b> : <code>{ids}</code>" for index, (dump, ids) in enumerate(val.items(), start=1)])
@@ -291,7 +293,7 @@ async def user_settings(client, message):
         if set_arg and (reply_to := message.reply_to_message):
             if message.from_user.id != reply_to.from_user.id:
                 return await editMessage(msg, '<i>Reply to Your Own Message for Setting via Args Directly</i>')
-            if set_arg in ['lprefix', 'lsuffix', 'lremname', 'lcaption', 'ldump', 'yt_opt', 'metadata', 'lattachment'] and reply_to.text:
+            if set_arg in ['lprefix', 'lsuffix', 'lremname', 'lcaption', 'ldump', 'yt_opt', 'metadata', 'lattachment', 'auto_rename'] and reply_to.text:
                 return await set_custom(client, reply_to, msg, set_arg, True)
             elif set_arg == 'thumb' and reply_to.media:
                 return await set_thumb(client, reply_to, msg, set_arg, True)
@@ -304,8 +306,8 @@ async def user_settings(client, message):
     /cmd -s lprefix
 ➲ <b>Leech Filename Suffix :</b>
     /cmd -s lsuffix
-➲ <b>Leech Filename Remname :</b>
-    /cmd -s lremname
+➲ <b>Auto Rename Format :</b>
+    /cmd -s auto_rename
 ➲ <b>Leech Filename Caption :</b>
     /cmd -s lcaption
 ➲ <b>Leech Filename Metadata :</b>
@@ -631,7 +633,7 @@ async def edit_user_settings(client, query):
         pfunc = partial(set_custom, pre_event=query, key=data[2])
         rfunc = partial(update_user_settings, query, data[2], 'mirror' if data[2] in ['ddl_servers', 'user_tds'] else "ddl_servers")
         await event_handler(client, query, pfunc, rfunc)
-    elif data[2] in ['lprefix', 'lsuffix', 'lremname', 'lcaption', 'ldump', 'mprefix', 'msuffix', 'mremname', 'metadata', 'lattachment']:
+    elif data[2] in ['lprefix', 'lsuffix', 'lremname', 'lcaption', 'ldump', 'mprefix', 'msuffix', 'mremname', 'metadata', 'lattachment', 'auto_rename']:
         handler_dict[user_id] = False
         await query.answer()
         edit_mode = len(data) == 4
@@ -641,7 +643,7 @@ async def edit_user_settings(client, query):
         pfunc = partial(set_custom, pre_event=query, key=data[2])
         rfunc = partial(update_user_settings, query, data[2], return_key)
         await event_handler(client, query, pfunc, rfunc)
-    elif data[2] in ['dlprefix', 'dlsuffix', 'dlremname', 'dlcaption', 'dldump', 'dmetadata', 'dlattachment']:
+    elif data[2] in ['dlprefix', 'dlsuffix', 'dlremname', 'dlcaption', 'dldump', 'dmetadata', 'dlattachment', 'dauto_rename']:
         handler_dict[user_id] = False
         await query.answer()
         update_user_ldata(user_id, data[2][1:], {} if data[2] == 'dldump' else '')
