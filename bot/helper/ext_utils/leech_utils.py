@@ -420,7 +420,7 @@ async def format_filename(file_, user_id, dirpath=None, isMirror=False):
     # --- Auto Rename Template Apply (Filename) ---
     if auto_rename and isinstance(auto_rename, str) and auto_rename.strip():
         _meta = _rdx_parse_fields(prefile_)
-        _meta["extension"] = _meta.get("extension", ospath.splitext(file_)[1].lower())
+        _meta["extension"] = _meta.get("extension", ospath.splitext(prefile_)[1].lower())
         _new_base = _rdx_apply_template(auto_rename, _meta)
         _new_base = _rdx_sanitize_filename(_new_base)
         ext_ = ospath.splitext(file_)[1]
