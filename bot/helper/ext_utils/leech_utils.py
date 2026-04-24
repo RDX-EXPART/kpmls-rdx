@@ -399,8 +399,7 @@ async def format_filename(file_, user_id, dirpath=None, isMirror=False):
     remname = config_dict[f'{ctag}_FILENAME_REMNAME'] if (val:=user_dict.get(f'{ftag}remname', '')) == '' else val
     suffix = config_dict[f'{ctag}_FILENAME_SUFFIX'] if (val:=user_dict.get(f'{ftag}suffix', '')) == '' else val
     lcaption = config_dict['LEECH_FILENAME_CAPTION'] if (val:=user_dict.get('lcaption', '')) == '' else val
-    lrename = (config_dict.get('LEECH_AUTO_RENAME', '') if (val:=user_dict.get('lrename',''))=='' else val)
-    lrename = user_dict.get('lrename', '')
+    auto_rename = user_dict.get('auto_rename', '')
  
     prefile_ = file_
     #file_ = re_sub(r'www\S+', '', file_)
@@ -419,13 +418,11 @@ async def format_filename(file_, user_id, dirpath=None, isMirror=False):
     file_ = re_sub(r'(^\s*-\s*|(\s*-\s*){2,})', '', file_)
         
     # --- Auto Rename Template Apply (Filename) ---
-    if lrename and isinstance(lrename, str) and lrename.strip():
+    if auto_rename and isinstance(auto_rename, str) and auto_rename.strip():
         _meta = _rdx_parse_fields(file_)
-        # add extension explicitly (some templates use it)
         _meta["extension"] = _meta.get("extension", ospath.splitext(file_)[1].lower())
-        _new_base = _rdx_apply_template(lrename, _meta)
+        _new_base = _rdx_apply_template(auto_rename, _meta)
         _new_base = _rdx_sanitize_filename(_new_base)
-        # keep extension if user forgot it
         ext_ = ospath.splitext(file_)[1]
         if ext_ and not _new_base.lower().endswith(ext_.lower()):
             _new_base = _new_base + ext_
