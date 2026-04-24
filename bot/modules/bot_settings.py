@@ -1076,7 +1076,7 @@ async def edit_bot_settings(client, query):
     data = query.data.split()
     message = query.message
     user_id = query.from_user.id
-    if len(data) > 1:
+    if len(data) > 2:
         if data[2] in ['SUDO_USERS', 'CMD_SUFFIX', 'OWNER_ID', 'USER_SESSION_STRING', 'TELEGRAM_HASH', 'TELEGRAM_API', 'AUTHORIZED_CHATS', 'DATABASE_URL', 'BOT_TOKEN', 'DOWNLOAD_DIR'] and user_id not in [OWNER_ID, DEV_ID]:
             return await query.answer(f'Only Owner Can View/Edit {data[2]} Settings !', show_alert=True)
     
