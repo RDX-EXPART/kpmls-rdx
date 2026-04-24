@@ -245,7 +245,7 @@ async def split_file(path, size, file_, dirpath, split_size, listener, start_tim
 _RDX_LANGS = [
     "Hindi", "English", "Bhojpuri", "Bangla", "Bengali", "Tamil", "Telugu",
     "Malayalam", "Kannada", "Marathi", "Punjabi", "Urdu", "Korean", "Japanese"
-]
+, "Turkish", "Russian", "Portuguese", "Spanish", "French", "tagalog", "Filipino", "Indonesian", "Thai", "Chinese"]
 _RDX_OTT = {"NF", "AMZN", "DSNP", "HMAX", "ATVP", "ZEE5", "SONY", "AHA", "VOOT", "TG"}
 _RDX_QUAL = ["WEB-DL", "WEBRip", "BluRay", "HDRip", "DVDRip", "CAM"]
 _RDX_RES = ["480p", "720p", "1080p", "1440p", "2160p", "4K"]
@@ -340,19 +340,53 @@ def _rdx_parse_fields(raw_filename: str) -> dict:
 
     # Languages, including short forms
     lang_map = {
-        'hindi': 'Hindi', 'hin': 'Hindi', 'hi': 'Hindi',
-        'english': 'English', 'eng': 'English', 'en': 'English',
-        'bhojpuri': 'Bhojpuri',
-        'bangla': 'Bangla', 'bengali': 'Bangla', 'ben': 'Bangla', 'bn': 'Bangla',
-        'tamil': 'Tamil', 'tam': 'Tamil', 'ta': 'Tamil',
-        'telugu': 'Telugu', 'tel': 'Telugu', 'te': 'Telugu',
-        'malayalam': 'Malayalam', 'mal': 'Malayalam', 'ml': 'Malayalam',
-        'kannada': 'Kannada', 'kan': 'Kannada', 'kn': 'Kannada',
-        'marathi': 'Marathi', 'mar': 'Marathi', 'mr': 'Marathi',
-        'punjabi': 'Punjabi', 'pan': 'Punjabi', 'pa': 'Punjabi',
-        'urdu': 'Urdu', 'ur': 'Urdu',
-        'korean': 'Korean', 'kor': 'Korean', 'ko': 'Korean',
-        'japanese': 'Japanese', 'jpn': 'Japanese', 'ja': 'Japanese',
+    # Indian languages
+    'hindi': 'Hindi', 'hin': 'Hindi', 'hi': 'Hindi',
+    'english': 'English', 'eng': 'English', 'en': 'English',
+    'bhojpuri': 'Bhojpuri',
+    'bangla': 'Bangla', 'bengali': 'Bangla', 'ben': 'Bangla', 'bn': 'Bangla',
+    'tamil': 'Tamil', 'tam': 'Tamil', 'ta': 'Tamil',
+    'telugu': 'Telugu', 'tel': 'Telugu', 'te': 'Telugu',
+    'malayalam': 'Malayalam', 'mal': 'Malayalam', 'ml': 'Malayalam',
+    'kannada': 'Kannada', 'kan': 'Kannada', 'kn': 'Kannada',
+    'marathi': 'Marathi', 'mar': 'Marathi', 'mr': 'Marathi',
+    'punjabi': 'Punjabi', 'pan': 'Punjabi', 'pa': 'Punjabi',
+    'urdu': 'Urdu', 'ur': 'Urdu',
+    'gujarati': 'Gujarati', 'guj': 'Gujarati', 'gu': 'Gujarati',
+    'odia': 'Odia', 'oriya': 'Odia', 'or': 'Odia',
+    'assamese': 'Assamese', 'asm': 'Assamese', 'as': 'Assamese',
+
+    # Asian
+    'chinese': 'Chinese', 'chi': 'Chinese', 'zh': 'Chinese',
+    'mandarin': 'Chinese', 'cantonese': 'Chinese',
+    'korean': 'Korean', 'kor': 'Korean', 'ko': 'Korean',
+    'japanese': 'Japanese', 'jpn': 'Japanese', 'ja': 'Japanese',
+    'thai': 'Thai', 'tha': 'Thai', 'th': 'Thai',
+    'indonesian': 'Indonesian', 'ind': 'Indonesian', 'id': 'Indonesian',
+    'malay': 'Malay', 'msa': 'Malay', 'ms': 'Malay',
+    'vietnamese': 'Vietnamese', 'vie': 'Vietnamese', 'vi': 'Vietnamese',
+    'filipino': 'Filipino', 'tagalog': 'Filipino', 'tl': 'Filipino',
+
+    # European
+    'french': 'French', 'fre': 'French', 'fra': 'French', 'fr': 'French',
+    'spanish': 'Spanish', 'spa': 'Spanish', 'es': 'Spanish',
+    'german': 'German', 'ger': 'German', 'deu': 'German', 'de': 'German',
+    'italian': 'Italian', 'ita': 'Italian', 'it': 'Italian',
+    'portuguese': 'Portuguese', 'por': 'Portuguese', 'pt': 'Portuguese',
+    'russian': 'Russian', 'rus': 'Russian', 'ru': 'Russian',
+    'turkish': 'Turkish', 'tur': 'Turkish', 'tr': 'Turkish',
+    'dutch': 'Dutch', 'nld': 'Dutch', 'nl': 'Dutch',
+    'polish': 'Polish', 'pol': 'Polish', 'pl': 'Polish',
+    'swedish': 'Swedish', 'swe': 'Swedish', 'sv': 'Swedish',
+    'norwegian': 'Norwegian', 'nor': 'Norwegian', 'no': 'Norwegian',
+    'danish': 'Danish', 'dan': 'Danish', 'da': 'Danish',
+    'finnish': 'Finnish', 'fin': 'Finnish', 'fi': 'Finnish',
+    'greek': 'Greek', 'ell': 'Greek', 'el': 'Greek',
+
+    # Middle East / others
+    'arabic': 'Arabic', 'ara': 'Arabic', 'ar': 'Arabic',
+    'persian': 'Persian', 'farsi': 'Persian', 'fa': 'Persian',
+    'hebrew': 'Hebrew', 'heb': 'Hebrew', 'he': 'Hebrew',
     }
     langs = []
     for k, v in lang_map.items():
