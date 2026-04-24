@@ -265,7 +265,7 @@ class VidEcxecutor:
         full_cmd = list(cmd) + [out_path]
         LOGGER.info(f'FFMEPG CMD: {cmd}')
         
-        # --- set up FFMpeg progress tracker ---
+        # --- set up ffmpeg progress tracker ---
         if not isinstance(self.listener.ffmpeg, FFMpegNew):
             self.listener.ffmpeg = FFMpegNew(self.listener)
         else:

@@ -96,6 +96,7 @@ class MirrorLeechListener:
         self.folder_name = folder_name
         self._subprocess = None
         self.ffmpeg = None
+        self.is_cancelled = False
         self.source_msg = ''
         self.__setModeEng()
         self.__parseSource()
