@@ -11,8 +11,8 @@ class FfmpegStatus:
         self._obj = obj
         self._cstatus = status
         self.engine = 'FFMPEG'
-        self.__name = name
-        self.__size = size
+        self.__name = listener.name
+        self.__size = listener.
         self.__gid = gid
         self.__listener = listener
         self.upload_details = listener.upload_details
