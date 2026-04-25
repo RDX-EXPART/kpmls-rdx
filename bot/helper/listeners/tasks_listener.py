@@ -187,7 +187,7 @@ class MirrorLeechListener:
                                     0
                                 ]
                                 des_path = f"{DOWNLOAD_DIR}{des_id}{self.folder_name}"
-                                #logger.info(f"Moving files from {self.uid} to {des_id}")
+                                #LOGGER.info(f"Moving files from {self.uid} to {des_id}")
                                 await move_and_merge(spath, des_path, self.uid)
                                 multi_links = True
                             break

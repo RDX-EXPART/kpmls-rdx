@@ -1,3 +1,5 @@
+from time import time
+
 from bot import LOGGER
 from bot.helper.utils import (
     get_readable_file_size,
@@ -12,7 +14,7 @@ class FfmpegStatus:
         self._cstatus = status
         self.engine = 'FFMPEG'
         self.__name = listener.name
-        self.__size = listener.
+        self.__size = listener.size
         self.__gid = gid
         self.__listener = listener
         self.upload_details = listener.upload_details
