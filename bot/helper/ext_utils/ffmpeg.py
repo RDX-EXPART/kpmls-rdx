@@ -41,8 +41,8 @@ async def edit_metadata(listener, base_dir: str, media_file: str, outfile: str, 
         outfile
     ]
   
-    listener.suproc = await create_subprocess_exec(*cmd, stderr=PIPE)
-    code = await listener.suproc.wait()
+    listener._subprocess = await create_subprocess_exec(*cmd, stderr=PIPE)
+    code = await listener._subprocess.wait()
     
     if code == 0:
         await clean_target(media_file)
@@ -50,7 +50,7 @@ async def edit_metadata(listener, base_dir: str, media_file: str, outfile: str, 
         await move(outfile, base_dir)
     else:
         await clean_target(outfile)
-        LOGGER.error('%s. Changing metadata failed, Path %s', await listener.suproc.stderr.read().decode(), media_file)
+        LOGGER.error('%s. Changing metadata failed, Path %s', await listener._subprocess.stderr.read().decode(), media_file)
 
 
 ########-------- Attachment -------------#########
@@ -85,12 +85,12 @@ async def edit_attachment(listener, base_dir: str, media_file: str, outfile: str
         '-map', '0:t?', 
         outfile
     ]  
-    listener.suproc = await create_subprocess_exec(*cmd, stderr=PIPE)
-    code = await listener.suproc.wait()
+    listener._subprocess = await create_subprocess_exec(*cmd, stderr=PIPE)
+    code = await listener._subprocess.wait()
     if code == 0:
         await clean_target(media_file)
         listener.seed = False
         await move(outfile, base_dir)
     else:
         await clean_target(outfile)
-        LOGGER.error('%s. Changing failed, Path %s', await listener.suproc.stderr.read().decode(), media_file)
+        LOGGER.error('%s. Changing failed, Path %s', await listener._subprocess.stderr.read().decode(), media_file)

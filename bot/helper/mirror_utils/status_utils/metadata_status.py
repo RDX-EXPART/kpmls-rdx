@@ -65,12 +65,12 @@ class MetadataStatus:
 
     async def cancel_download(self):
         LOGGER.info(f'Cancelling Metadata Adding: {self.__name}')
-        if self.__listener.suproc is not None:
+        if self.__listener._subprocess is not None:
             try:
-                self.__listener.suproc.kill()
+                self.__listener._subprocess.kill()
             except:
                 pass
-        self.__listener.suproc = 'cancelled'
+        self.__listener._subprocess = 'cancelled'
         await self.__listener.onUploadError('Metadata Adding stopped by user!')
 
     def eng(self):

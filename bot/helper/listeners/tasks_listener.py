@@ -71,7 +71,6 @@ class MirrorLeechListener:
         self.user_id = self.message.from_user.id
         self.user_dict = user_data.get(self.user_id, {})
         self.isPM = config_dict['BOT_PM'] or self.user_dict.get('bot_pm')
-        self.suproc = None
         self.sameDir = sameDir
         self.rcFlags = rcFlags
         self.upPath = upPath
@@ -253,16 +252,16 @@ class MirrorLeechListener:
                                     "7z", "x", f"-p{pswd}", f_path, f"-o{t_path}", "-aot", "-xr!@PaxHeader"]
                                 if not pswd:
                                     del cmd[2]
-                                if self.suproc == 'cancelled' or self.suproc is not None and self.suproc.returncode == -9:
+                                if self._subprocess == 'cancelled' or self._subprocess is not None and self._subprocess.returncode == -9:
                                     return
-                                self.suproc = await create_subprocess_exec(*cmd)
-                                code = await self.suproc.wait()
+                                self._subprocess = await create_subprocess_exec(*cmd)
+                                code = await self._subprocess.wait()
                                 if code == -9:
                                     return
                                 elif code != 0:
                                     LOGGER.error(
                                         'Unable to extract archive splits!')
-                        if not self.seed and self.suproc is not None and self.suproc.returncode == 0:
+                        if not self.seed and self._subprocess is not None and self._subprocess.returncode == 0:
                             for file_ in files:
                                 if is_archive_split(file_) or is_archive(file_):
                                     del_path = ospath.join(dirpath, file_)
@@ -278,10 +277,10 @@ class MirrorLeechListener:
                            f"-o{up_path}", "-aot", "-xr!@PaxHeader"]
                     if not pswd:
                         del cmd[2]
-                    if self.suproc == 'cancelled':
+                    if self._subprocess == 'cancelled':
                         return
-                    self.suproc = await create_subprocess_exec(*cmd)
-                    code = await self.suproc.wait()
+                    self._subprocess = await create_subprocess_exec(*cmd)
+                    code = await self._subprocess.wait()
                     if code == -9:
                         return
                     elif code == 0:
@@ -318,12 +317,12 @@ class MirrorLeechListener:
                 base_dir, file_name = ospath.split(meta_path)
                 outfile = ospath.join(self.newDir, file_name)
                 await edit_metadata(self, base_dir, meta_path, outfile, metadata)
-                if self.suproc == 'cancelled':
+                if self._subprocess == 'cancelled':
                     return
             elif await aiopath.isdir(meta_path):
                 for dirpath, _, files in await sync_to_async(walk, meta_path):
                     for file in files:
-                        if self.suproc == 'cancelled':
+                        if self._subprocess == 'cancelled':
                             return
                         video_file = ospath.join(dirpath, file)
                         if (await get_document_type(video_file))[0]:
@@ -340,12 +339,12 @@ class MirrorLeechListener:
                 base_dir, file_name = ospath.split(meta_path)
                 outfile = ospath.join(self.newDir, file_name)
                 await edit_attachment(self, base_dir, meta_path, outfile, attachment)
-                if self.suproc == 'cancelled':
+                if self._subprocess == 'cancelled':
                     return
             elif await aiopath.isdir(meta_path):
                 for dirpath, _, files in await sync_to_async(walk, meta_path):
                     for file in files:
-                        if self.suproc == 'cancelled':
+                        if self._subprocess == 'cancelled':
                             return
                         video_file = ospath.join(dirpath, file)
                         if (await get_document_type(video_file))[0]:
@@ -379,10 +378,10 @@ class MirrorLeechListener:
                 if not pswd:
                     del cmd[3]
                 LOGGER.info(f'Zip: orig_path: {dl_path}, zip_path: {up_path}')
-            if self.suproc == 'cancelled':
+            if self._subprocess == 'cancelled':
                 return
-            self.suproc = await create_subprocess_exec(*cmd)
-            code = await self.suproc.wait()
+            self._subprocess = await create_subprocess_exec(*cmd)
+            code = await self._subprocess.wait()
             if code == -9:
                 return
             elif not self.seed:

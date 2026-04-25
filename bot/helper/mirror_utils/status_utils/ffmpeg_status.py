@@ -26,10 +26,16 @@ class FfmpegStatus:
 
     def speed(self):
         return f"{get_readable_file_size(self._obj.speed_raw)}/s"
+    
+    def speed_raw(self):
+        return self._obj.speed_raw / (time() - self.__start_time)
 
     def processed_bytes(self):
         return get_readable_file_size(self._obj.processed_bytes)
-
+    
+    def processed_raw(self):
+        return self._obj.processed_bytes
+        
     def progress(self):
         return f"{round(self._obj.progress_raw, 2)}%"
 
@@ -51,13 +57,18 @@ class FfmpegStatus:
     def task(self):
         return self
 
-    async def cancel_task(self):
-        LOGGER.info(f"Cancelling {self._cstatus}: {self.__listener.name}")
-        self.__listener.is_cancelled = True
-        if self.__listener._subprocess and self.__listener._subprocess.returncode is None:
-            try:
-                self.__listener._subprocess.kill()
-            except Exception:
-                pass
-        await self.__listener.on_upload_error(f"{self._cstatus} stopped by user!")
+    def download(self):
+        return self
 
+    async def cancel_download(self):
+        LOGGER.info(f'Cancelling Extract: {self.__name}')
+        if self.__listener._subprocess is not None:
+            self.__listener._subprocess.kill()
+        else:
+            self.__listener._subprocess = 'cancelled'
+        await self.__listener.onUploadError('Ffmpeg stopped by user!')
+
+    def eng(self):
+        return EngineStatus().STATUS_SPLIT_MERGE
+        
+    

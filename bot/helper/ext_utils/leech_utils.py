@@ -161,7 +161,7 @@ async def take_ss(video_file, duration=None, total=1, gen_ss=False):
 
 
 async def split_file(path, size, file_, dirpath, split_size, listener, start_time=0, i=1, inLoop=False, multi_streams=True):
-    if listener.suproc == 'cancelled' or listener.suproc is not None and listener.suproc.returncode == -9:
+    if listener._subprocess == 'cancelled' or listener._subprocess is not None and listener._subprocess.returncode == -9:
         return False
     if listener.seed and not listener.newDir:
         dirpath = f"{dirpath}/splited_files_mltb"
@@ -189,14 +189,14 @@ async def split_file(path, size, file_, dirpath, split_size, listener, start_tim
             if not multi_streams:
                 del cmd[10]
                 del cmd[10]
-            if listener.suproc == 'cancelled' or listener.suproc is not None and listener.suproc.returncode == -9:
+            if listener._subprocess == 'cancelled' or listener._subprocess is not None and listener._subprocess.returncode == -9:
                 return False
-            listener.suproc = await create_subprocess_exec(*cmd, stderr=PIPE)
-            code = await listener.suproc.wait()
+            listener._subprocess = await create_subprocess_exec(*cmd, stderr=PIPE)
+            code = await listener._subprocess.wait()
             if code == -9:
                 return False
             elif code != 0:
-                err = (await listener.suproc.stderr.read()).decode().strip()
+                err = (await listener._subprocess.stderr.read()).decode().strip()
                 try:
                     await aioremove(out_path)
                 except Exception:
@@ -231,13 +231,13 @@ async def split_file(path, size, file_, dirpath, split_size, listener, start_tim
             i += 1
     else:
         out_path = ospath.join(dirpath, f"{file_}.")
-        listener.suproc = await create_subprocess_exec("split", "--numeric-suffixes=1", "--suffix-length=3",
+        listener._subprocess = await create_subprocess_exec("split", "--numeric-suffixes=1", "--suffix-length=3",
                                                        f"--bytes={split_size}", path, out_path, stderr=PIPE)
-        code = await listener.suproc.wait()
+        code = await listener._subprocess.wait()
         if code == -9:
             return False
         elif code != 0:
-            err = (await listener.suproc.stderr.read()).decode().strip()
+            err = (await listener._subprocess.stderr.read()).decode().strip()
             LOGGER.error(err)
     return True
 
