@@ -6,11 +6,7 @@ class KPSMLStyle:
     ST_BN1_URL = 'https://t.me/fileleechgroup'
     ST_BN2_NAME = 'Updates 🔥'
     ST_BN2_URL = 'https://telegram.me/rdxmovie_hd'
-    ST_MSG = '''<b>╔══════════════════════════╗
-║     🧿 𝗥𝗗𝗫 𝗟𝗘𝗘𝗖𝗛 𝗦𝗬𝗦𝗧𝗘𝗠 🧿     ║
-╚══════════════════════════╝</b>
-
-✨ <b>Welcome to RDX Leech Bot</b> ✨
+    ST_MSG = '''✨ <b>Welcome to RDX Leech Bot</b> ✨
 
 🚀 <b>Fast • Powerful • Reliable</b>
 ⚡ Mirror Direct Links | TG Files | Torrents | Magnet
