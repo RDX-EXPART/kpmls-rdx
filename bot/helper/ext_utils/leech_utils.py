@@ -13,6 +13,9 @@ from asyncio.subprocess import PIPE
 from telegraph import upload_file
 from langcodes import Language
 
+from aiohttp import ClientSession
+from PIL import Image
+
 from bot import bot_cache, LOGGER, MAX_SPLIT_SIZE, config_dict, user_data
 from bot.modules.mediainfo import parseinfo
 from bot.helper.ext_utils.bot_utils import cmd_exec, sync_to_async, get_readable_file_size, get_readable_time
