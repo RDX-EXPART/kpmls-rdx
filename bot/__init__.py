@@ -569,6 +569,10 @@ FILELION_API = environ.get('FILELION_API', '')
 if len(FILELION_API) == 0:
     FILELION_API = ''
 
+TMDB_API_KEY = environ.get('TMDB_API_KEY', '')
+if len(TMDB_API_KEY) == 0:
+    TMDB_API_KEY = ''
+
 IMDB_TEMPLATE = environ.get('IMDB_TEMPLATE', '')
 if len(IMDB_TEMPLATE) == 0:
     IMDB_TEMPLATE = '''<b>Title: </b> {title} [{year}]
@@ -634,6 +638,7 @@ config_dict = {'ANIME_TEMPLATE': ANIME_TEMPLATE,
                'REAL_DEBRID_API': REAL_DEBRID_API,
                'DEBRID_LINK_API': DEBRID_LINK_API,
                'FILELION_API': FILELION_API,
+               'TMDB_API_KEY': TMDB_API_KEY,
                'DELETE_LINKS': DELETE_LINKS,
                'DEFAULT_UPLOAD': DEFAULT_UPLOAD,
                'DOWNLOAD_DIR': DOWNLOAD_DIR,
