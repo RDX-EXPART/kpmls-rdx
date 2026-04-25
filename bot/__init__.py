@@ -569,10 +569,6 @@ FILELION_API = environ.get('FILELION_API', '')
 if len(FILELION_API) == 0:
     FILELION_API = ''
 
-TMDB_API_KEY = environ.get('TMDB_API_KEY', '')
-if len(TMDB_API_KEY) == 0:
-    TMDB_API_KEY = ''
-
 IMDB_TEMPLATE = environ.get('IMDB_TEMPLATE', '')
 if len(IMDB_TEMPLATE) == 0:
     IMDB_TEMPLATE = '''<b>Title: </b> {title} [{year}]
