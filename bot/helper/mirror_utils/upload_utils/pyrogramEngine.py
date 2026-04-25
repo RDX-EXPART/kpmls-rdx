@@ -19,7 +19,7 @@ from bot.helper.telegram_helper.button_build import ButtonMaker
 from bot.helper.telegram_helper.message_utils import sendCustomMsg, editReplyMarkup, sendMultiMessage, chat_info, deleteMessage, get_tg_link_content
 from bot.helper.ext_utils.fs_utils import clean_unwanted, is_archive, get_base_name
 from bot.helper.ext_utils.bot_utils import get_readable_file_size, is_telegram_link, is_url, sync_to_async, download_image_url
-from bot.helper.ext_utils.leech_utils import get_audio_thumb, get_media_info, get_document_type, take_ss, get_ss, get_mediainfo_link, format_filename, get_tmdb_poster_thumb
+from bot.helper.ext_utils.leech_utils import get_audio_thumb, get_media_info, get_document_type, take_ss, get_ss, get_mediainfo_link, format_filename
 
 LOGGER = getLogger(__name__)
 getLogger("pyrogram").setLevel(ERROR)
@@ -201,7 +201,8 @@ class TgUploader:
         try:
             file_, cap_mono = await format_filename(prefile_, self.__user_id, dirpath)
         except Exception as err:
-            return await self.__listener.onUploadError(f'Error in Format Filename : {err}')
+            await self.__listener.onUploadError(f'Error in Format Filename : {err}')
+            raise
         if prefile_ != file_:
             if self.__listener.seed and not self.__listener.newDir and not dirpath.endswith("/splited_files_mltb"):
                 dirpath = f'{dirpath}/copied_mltb'
@@ -379,17 +380,6 @@ class TgUploader:
             if self.__leech_utils['thumb']:
                 thumb = await self.get_custom_thumb(self.__leech_utils['thumb'])
             
-            user_dict = user_data.get(self.__user_id, {})
-            thumb_choice = getattr(self.__listener, "thumb_choice", None)
-            selected_thumb_path = getattr(self.__listener, "selected_thumb_path", None)
-
-            if is_video and thumb is None and user_dict.get('auto_thumb', False):
-                if selected_thumb_path and await aiopath.exists(selected_thumb_path):
-                    thumb = selected_thumb_path
-                elif thumb_choice in ["tmdb", "gk", "ott"]:
-                    # Fallback: if menu selection did not save a local poster, use TMDB first result.
-                    thumb = await get_tmdb_poster_thumb(file)
-
             if not is_image and thumb is None:
                 file_name = ospath.splitext(file)[0]
                 thumb_path = f"{self.__path}/yt-dlp-thumb/{file_name}.jpg"
