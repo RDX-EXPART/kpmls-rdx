@@ -274,7 +274,10 @@ async def stop_signals():
         await bot.stop()
 
 
-bot_run = bot.loop.run_until_complete
-bot_run(main())
-bot_run(idle())
-bot_run(stop_signals())
+try: 
+    bot_run = bot.loop.run_until_complete
+    bot_run(main())
+    bot_run(idle())
+    bot_run(stop_signals())
+except Exception:
+    bot_run(stop_signals())
