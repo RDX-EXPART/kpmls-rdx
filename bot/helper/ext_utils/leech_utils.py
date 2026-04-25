@@ -710,3 +710,79 @@ def get_md5_hash(up_path):
         for byte_block in iter(lambda: f.read(4096), b""):
             md5_hash.update(byte_block)
         return md5_hash.hexdigest()
+
+async def get_tmdb_poster_thumb(file_name):
+    """
+    Fetch poster from TMDB using cleaned file name.
+    Requires TMDB_API_KEY in config.env / config_dict.
+    Returns local jpg path or None.
+    """
+    api_key = config_dict.get("TMDB_API_KEY", "")
+    if not api_key:
+        LOGGER.warning("TMDB_API_KEY not set. Auto poster thumbnail skipped.")
+        return None
+
+    try:
+        from aiohttp import ClientSession
+        from urllib.parse import quote_plus
+
+        meta = _rdx_parse_fields(file_name)
+        query = meta.get("name") or ospath.splitext(file_name)[0]
+        year = meta.get("year", "")
+
+        query = re_sub(r"\s+", " ", query).strip()
+        if not query:
+            return None
+
+        search_url = (
+            "https://api.themoviedb.org/3/search/multi"
+            f"?api_key={api_key}"
+            f"&query={quote_plus(query)}"
+            f"{f'&year={year}' if year else ''}"
+        )
+
+        async with ClientSession() as session:
+            async with session.get(search_url, timeout=15) as resp:
+                if resp.status != 200:
+                    LOGGER.warning(f"TMDB search failed: {resp.status}")
+                    return None
+                data = await resp.json()
+
+            results = data.get("results") or []
+            poster_path = None
+
+            for item in results:
+                if item.get("media_type") in ("movie", "tv") and item.get("poster_path"):
+                    poster_path = item["poster_path"]
+                    break
+
+            if not poster_path:
+                LOGGER.warning(f"TMDB poster not found for: {query}")
+                return None
+
+            poster_url = f"https://image.tmdb.org/t/p/w500{poster_path}"
+
+            thumb_dir = "Thumbnails"
+            if not await aiopath.isdir(thumb_dir):
+                await mkdir(thumb_dir)
+
+            out_path = ospath.join(thumb_dir, f"tmdb_{int(time())}.jpg")
+
+            async with session.get(poster_url, timeout=20) as img_resp:
+                if img_resp.status != 200:
+                    LOGGER.warning(f"TMDB poster download failed: {img_resp.status}")
+                    return None
+                img_bytes = await img_resp.read()
+
+        from io import BytesIO
+        await sync_to_async(
+            Image.open(BytesIO(img_bytes)).convert("RGB").save,
+            out_path,
+            "JPEG"
+        )
+
+        return out_path if await aiopath.exists(out_path) else None
+
+    except Exception as e:
+        LOGGER.warning(f"TMDB poster thumbnail error for {file_name}: {e}")
+        return None
