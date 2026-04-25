@@ -161,6 +161,14 @@ async def get_user_settings(from_user, key=None, edit_type=None, edit_mode=None)
 
         thumbmsg = "Exists" if await aiopath.exists(thumbpath) else "Not Exists"
         buttons.ibutton(f"{'✅️' if thumbmsg == 'Exists' else ''} Thumbnail", f"userset {user_id} thumb")
+
+        auto_thumb = "Enabled" if user_dict.get('auto_thumb', False) else "Disabled"
+        poster_msg = "Exists" if await aiopath.exists(posterpath) else "Not Exists"
+
+        buttons.ibutton(
+          f"{'✅️' if auto_thumb == 'Enabled' or poster_msg == 'Exists' else ''} Auto Thumbnail",
+          f"userset {user_id} auto_thumb_menu"
+        )       
         
         split_size = get_readable_file_size(config_dict['LEECH_SPLIT_SIZE']) + ' (Default)' if user_dict.get('split_size', '') == '' else get_readable_file_size(user_dict['split_size'])
         equal_splits = 'Enabled' if user_dict.get('equal_splits', config_dict.get('EQUAL_SPLITS')) else 'Disabled'
