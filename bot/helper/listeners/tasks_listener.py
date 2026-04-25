@@ -493,18 +493,18 @@ class MirrorLeechListener:
             await update_all_messages()
             await RCTransfer.upload(up_path, self.size)
 
-    async def onUploadComplete(self, link, self.size, files, folders, mime_type, self.name, rclonePath='', private=False):
+    async def onUploadComplete(self, link, size, files, folders, mime_type, name, rclonePath='', private=False):
         try:
             if self.isSuperGroup and config_dict['INCOMPLETE_TASK_NOTIFIER'] and DATABASE_URL:
                 await DbManger().rm_complete_task(self.message.link)
             user_id = self.message.from_user.id
-            self.name, _ = await format_filename(self.name, user_id, isMirror=not self.isLeech)
+            name, _ = await format_filename(name, user_id, isMirror=not self.isLeech)
             user_dict = user_data.get(user_id, {})
-            msg = BotTheme('NAME', Name="Task has been Completed!"if config_dict['SAFE_MODE'] and self.isSuperGroup else escape(self.name))
-            msg += BotTheme('SIZE', Size=get_readable_file_size(self.size))
+            msg = BotTheme('NAME', Name="Task has been Completed!"if config_dict['SAFE_MODE'] and self.isSuperGroup else escape(name))
+            msg += BotTheme('SIZE', Size=get_readable_file_size(size))
             msg += BotTheme('ELAPSE', Time=get_readable_time(time() - self.message.date.timestamp()))
             msg += BotTheme('MODE', Mode=self.upload_details['mode'])
-            LOGGER.info(f'Task Done: {self.name}')
+            LOGGER.info(f'Task Done: {name}')
             
             buttons = ButtonMaker()
             if self.isLeech:
@@ -596,7 +596,7 @@ class MirrorLeechListener:
                     elif not rclonePath and not is_DDL:
                         INDEX_URL = self.index_link if self.drive_id else config_dict['INDEX_URL']
                         if INDEX_URL:
-                            url_path = rutils.quote(f'{self.name}')
+                            url_path = rutils.quote(f'{name}')
                             share_url = f'{INDEX_URL}/{url_path}'
                             if mime_type == "Folder":
                                 share_url += '/'
@@ -626,7 +626,7 @@ class MirrorLeechListener:
                         _btns = ButtonMaker()
                         if config_dict['SAVE_MSG']:
                             _btns.ibutton(BotTheme('SAVE_MSG'), 'save', 'footer')
-                        await editMessage(self.linkslogmsg, (msg + BotTheme('LINKS_SOURCE', On=dispTime, Source=self.source_msg) + BotTheme('L_LL_MSG') + f"\n\n<a href='{log_msg.link}'>{escape(self.name)}</a>\n"), _btns.build_menu(1))
+                        await editMessage(self.linkslogmsg, (msg + BotTheme('LINKS_SOURCE', On=dispTime, Source=self.source_msg) + BotTheme('L_LL_MSG') + f"\n\n<a href='{log_msg.link}'>{escape(name)}</a>\n"), _btns.build_menu(1))
                 
                 # <Section : MESSAGE LOGS>
                 if self.isPM and self.isSuperGroup:
@@ -661,7 +661,7 @@ class MirrorLeechListener:
                     if self.newDir:
                         await clean_target(self.newDir)
                     elif self.compress:
-                        await clean_target(f"{self.dir}/{self.name}")
+                        await clean_target(f"{self.dir}/{name}")
                     async with queue_dict_lock:
                         if self.uid in non_queued_up:
                             non_queued_up.remove(self.uid)
