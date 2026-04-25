@@ -78,6 +78,7 @@ async def get_user_settings(from_user, key=None, edit_type=None, edit_mode=None)
     name = from_user.mention(style="html")
     buttons = ButtonMaker()
     thumbpath = f"Thumbnails/{user_id}.jpg"
+    posterpath = f"Posters/{user_id}.jpg"        
     rclone_path = f'wcl/{user_id}.conf'
     user_dict = user_data.get(user_id, {})
     if key is None:
