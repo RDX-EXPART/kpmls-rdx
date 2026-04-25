@@ -8,11 +8,19 @@ from bot.helper.ext_utils.bot_utils import MirrorStatus
 
 class FfmpegStatus:
     def __init__(self, listener, obj, gid, status=""):
-        self.listener = listener
         self._obj = obj
-        self._gid = gid
         self._cstatus = status
         self.engine = 'FFMPEG'
+        self.__name = name
+        self.__size = size
+        self.__gid = gid
+        self.__listener = listener
+        self.upload_details = listener.upload_details
+        self.__uid = listener.uid
+        self.__start_time = time()
+        self.message = listener.message
+        
+        
 
     def speed(self):
         return f"{get_readable_file_size(self._obj.speed_raw)}/s"
@@ -24,13 +32,13 @@ class FfmpegStatus:
         return f"{round(self._obj.progress_raw, 2)}%"
 
     def gid(self):
-        return self._gid
+        return self.__gid
 
     def name(self):
-        return self.listener.name
+        return self.__listener.name
 
     def size(self):
-        return get_readable_file_size(self.listener.size)
+        return get_readable_file_size(self.__listener.size)
 
     def eta(self):
         return get_readable_time(self._obj.eta_raw) if self._obj.eta_raw else 0
@@ -42,12 +50,12 @@ class FfmpegStatus:
         return self
 
     async def cancel_task(self):
-        LOGGER.info(f"Cancelling {self._cstatus}: {self.listener.name}")
-        self.listener.is_cancelled = True
-        if self.listener._subprocess and self.listener._subprocess.returncode is None:
+        LOGGER.info(f"Cancelling {self._cstatus}: {self.__listener.name}")
+        self.__listener.is_cancelled = True
+        if self.__listener._subprocess and self.__listener._subprocess.returncode is None:
             try:
-                self.listener._subprocess.kill()
+                self.__listener._subprocess.kill()
             except Exception:
                 pass
-        await self.listener.on_upload_error(f"{self._cstatus} stopped by user!")
+        await self.__listener.on_upload_error(f"{self._cstatus} stopped by user!")
 
