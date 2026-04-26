@@ -364,7 +364,7 @@ def get_readable_message():
         try:
             in_mode = download.upload_details.get("mode")
             if in_mode:
-                msg += f"<b> In Mode » {escape(str(in_mode))}</b>\╰ Out Mode » Leech</b>\n"
+                msg += f"<b>┊ In Mode » {escape(str(in_mode))}</b>╰ Out Mode » Leech</b>\n"
         except Exception:
             pass
 
