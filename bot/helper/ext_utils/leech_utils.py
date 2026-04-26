@@ -1,3 +1,4 @@
+from html import escape as html_escape
 from hashlib import md5
 from time import strftime, gmtime, time
 from re import IGNORECASE, sub as re_sub, search as re_search
@@ -161,7 +162,7 @@ async def take_ss(video_file, duration=None, total=1, gen_ss=False):
 
 
 async def split_file(path, size, file_, dirpath, split_size, listener, start_time=0, i=1, inLoop=False, multi_streams=True):
-    if listener._subprocess == 'cancelled' or listener._subprocess is not None and listener._subprocess.returncode == -9:
+    if listener.suproc == 'cancelled' or listener.suproc is not None and listener.suproc.returncode == -9:
         return False
     if listener.seed and not listener.newDir:
         dirpath = f"{dirpath}/splited_files_mltb"
@@ -189,14 +190,14 @@ async def split_file(path, size, file_, dirpath, split_size, listener, start_tim
             if not multi_streams:
                 del cmd[10]
                 del cmd[10]
-            if listener._subprocess == 'cancelled' or listener._subprocess is not None and listener._subprocess.returncode == -9:
+            if listener.suproc == 'cancelled' or listener.suproc is not None and listener.suproc.returncode == -9:
                 return False
-            listener._subprocess = await create_subprocess_exec(*cmd, stderr=PIPE)
-            code = await listener._subprocess.wait()
+            listener.suproc = await create_subprocess_exec(*cmd, stderr=PIPE)
+            code = await listener.suproc.wait()
             if code == -9:
                 return False
             elif code != 0:
-                err = (await listener._subprocess.stderr.read()).decode().strip()
+                err = (await listener.suproc.stderr.read()).decode().strip()
                 try:
                     await aioremove(out_path)
                 except Exception:
@@ -231,15 +232,289 @@ async def split_file(path, size, file_, dirpath, split_size, listener, start_tim
             i += 1
     else:
         out_path = ospath.join(dirpath, f"{file_}.")
-        listener._subprocess = await create_subprocess_exec("split", "--numeric-suffixes=1", "--suffix-length=3",
+        listener.suproc = await create_subprocess_exec("split", "--numeric-suffixes=1", "--suffix-length=3",
                                                        f"--bytes={split_size}", path, out_path, stderr=PIPE)
-        code = await listener._subprocess.wait()
+        code = await listener.suproc.wait()
         if code == -9:
             return False
         elif code != 0:
-            err = (await listener._subprocess.stderr.read()).decode().strip()
+            err = (await listener.suproc.stderr.read()).decode().strip()
             LOGGER.error(err)
     return True
+# ================== RDX AUTO RENAME HELPERS ==================
+_RDX_LANGS = [
+    "Hindi", "English", "Bhojpuri", "Bangla", "Bengali", "Tamil", "Telugu",
+    "Malayalam", "Kannada", "Marathi", "Punjabi", "Urdu", "Korean", "Japanese"
+]
+_RDX_OTT = {"NF", "AMZN", "DSNP", "HMAX", "ATVP", "ZEE5", "SONY", "AHA", "VOOT", "TG"}
+_RDX_QUAL = ["WEB-DL", "WEBRip", "BluRay", "HDRip", "DVDRip", "CAM"]
+_RDX_RES = ["480p", "720p", "1080p", "1440p", "2160p", "4K"]
+_RDX_LIB = ["x264", "x265", "HEVC", "AVC", "AV1"]
+_RDX_SUB = ["ESub", "MSub", "HSub", "Sub"]
+
+def _rdx_parse_fields(raw_filename: str) -> dict:
+    name_only, ext = ospath.splitext(raw_filename)
+    ext = ext.lower()
+
+    text = name_only
+
+    # Generic website/source remover
+    # Examples: www.1TamilMV.LTD, Vegamovies.is, HDHub4u, MoviesMod, MovieVerse, BollyFlix etc.
+    text = re_sub(
+        r'\b(?:www\.)?[a-z0-9][a-z0-9-]*'
+        r'(?:movies?|movie|flix|hub|mod|mv|hd|web|dl|rip|ott|cinema|verse|world|zone|mart|wap|links?|drive|cloud|series)'
+        r'[a-z0-9-]*\.(?:com|net|org|in|cc|co|xyz|lol|ltd|is|tv|to|me|info|site|live|pro|dev|foo)\b',
+        ' ',
+        text,
+        flags=IGNORECASE
+    )
+    text = re_sub(
+        r'\b\d*[a-z0-9]*'
+        r'(?:movies?|movie|flix|hub|mod|mv|hd|web|dl|rip|ott|cinema|verse|world|zone|mart|wap|links?|drive|cloud|series)'
+        r'[a-z0-9]*\b',
+        ' ',
+        text,
+        flags=IGNORECASE
+    )
+    text = re_sub(
+        r'\b(com|net|org|in|cc|co|xyz|lol|ltd|is|tv|to|me|info|site|live|pro|dev|foo)\b',
+        ' ',
+        text,
+        flags=IGNORECASE
+    )
+    text = re_sub(r'\b(www|frl|immo|rls|source|original|untouched|true)\b', ' ', text, flags=IGNORECASE)
+
+    # Normalize separators/brackets for parsing
+    search_text = text.replace('.', ' ').replace('_', ' ').replace('-', ' ')
+    search_text = re_sub(r'[\[\]\(\)\{\},+]', ' ', search_text)
+    search_text = re_sub(r'\s+', ' ', search_text).strip()
+
+    # Season / Episode: S05E01, S05 E01
+    season = episode = ''
+    m = re_search(r'\b(?:S|Season)\s*(\d{1,2})\s*(?:E|EP|Episode)?\s*\(?\s*(\d{1,3})(?:\s*(?:-|to|–)\s*\d{1,3})?\s*\)?\b', search_text, IGNORECASE)
+    if m:
+        season = f"S{int(m.group(1)):02d}"
+        episode = f"E{int(m.group(2)):02d}"
+
+    # Year
+    ym = re_search(r'\b(19\d{2}|20\d{2})\b', search_text)
+    year = ym.group(1) if ym else ''
+
+    # Resolution
+    rm = re_search(r'\b(480|540|720|1080|1440|2160|4320)p\b|\b4K\b', search_text, IGNORECASE)
+    resolution = f"{rm.group(1)}p" if rm and rm.group(1) else ('4K' if rm else '')
+
+    # Quality
+    quality = ''
+    for q in [
+        'TRUE WEB-DL',
+        'WEB-DL', 'WEBDL', 'WEB DL', 'WEBRip',
+        'BluRay', 'BRRip', 'BDRip', 'BD-Rip', 'BD Rip',
+        'HDRip', 'HQ HDRip',
+        'DVDRip', 'HDTV', 'HDTVRip',
+        'SDTV-Rip', 'HDTV-Rip', 'SDTVRip', 'SDTV',
+        'DVDScr', 'PRE-HD', 'PreDVD', 'YTRip', 'HDTS', 'HDTC',
+        'CAMRip', 'HQSprint', 'HQ SPrint', 'HDCAMRip', 'HDCAM', 'TELESYNC', 'TSQRip', 'CAM'
+    ]:
+        q_pattern = re_sub(r'[-\s]+', r'[- ]?', q)
+        if re_search(rf'\b{q_pattern}\b', search_text, IGNORECASE):
+            quality = 'WEB-DL' if q in ['TRUE WEB-DL', 'WEBDL', 'WEB DL'] else 'HDRip' if q == 'HQ HDRip' else q
+            break
+
+    # OTT / Source
+    ott = ''
+    for o in ['NF', 'AMZN', 'DSNP', 'HMAX', 'ATVP', 'ZEE5', 'SONY', 'AHA', 'VOOT', 'TG']:
+        if re_search(rf'\b{o}\b', search_text, IGNORECASE):
+            ott = o
+            break
+
+    # Codec library
+    lib = ''
+    lm = re_search(r'\b(x264|x265|HEVC|AVC|AV1|H\.264|H\.265)\b', search_text, IGNORECASE)
+    if lm:
+        lib = lm.group(1).replace('H.264', 'x264').replace('H.265', 'x265')
+
+    # Audio
+    audio = ''
+    am = re_search(r'\b(DD\+?5\.1|DDP5\.1|DDP\d?(?:\.\d)?|AAC|8CH|6CH|2CH|5\.1|7\.1|2\.0|ATMOS)\b', search_text, IGNORECASE)
+    if am:
+        audio = am.group(1).upper()
+
+    # Subtitle short
+    shortsub = ''
+    for ssub in ['ESub', 'MSub', 'HSub', 'Sub']:
+        if re_search(rf'\b{ssub}\b', search_text, IGNORECASE):
+            shortsub = ssub
+            break
+
+    # Languages, including short forms
+    lang_map = {
+        # Indian languages
+        'hindi': 'Hindi', 'hin': 'Hindi', 'hi': 'Hindi',
+        'english': 'English', 'eng': 'English', 'en': 'English',
+        'bhojpuri': 'Bhojpuri',
+        'bangla': 'Bangla', 'bengali': 'Bangla', 'ben': 'Bangla', 'bn': 'Bangla',
+        'tamil': 'Tamil', 'tam': 'Tamil', 'ta': 'Tamil',
+        'telugu': 'Telugu', 'tel': 'Telugu', 'te': 'Telugu',
+        'malayalam': 'Malayalam', 'mal': 'Malayalam', 'ml': 'Malayalam',
+        'kannada': 'Kannada', 'kan': 'Kannada', 'kn': 'Kannada',
+        'marathi': 'Marathi', 'mar': 'Marathi', 'mr': 'Marathi',
+        'punjabi': 'Punjabi', 'pan': 'Punjabi', 'pa': 'Punjabi',
+        'urdu': 'Urdu', 'ur': 'Urdu',
+        'gujarati': 'Gujarati', 'guj': 'Gujarati', 'gu': 'Gujarati',
+        'odia': 'Odia', 'oriya': 'Odia', 'or': 'Odia',
+        'assamese': 'Assamese', 'asm': 'Assamese', 'as': 'Assamese',
+        'sanskrit': 'Sanskrit', 'san': 'Sanskrit', 'sa': 'Sanskrit',
+        # Asian
+        'chinese': 'Chinese', 'chi': 'Chinese', 'zh': 'Chinese',
+        'mandarin': 'Chinese', 'cantonese': 'Chinese',
+        'korean': 'Korean', 'kor': 'Korean', 'ko': 'Korean',
+        'japanese': 'Japanese', 'jpn': 'Japanese', 'ja': 'Japanese',
+        'thai': 'Thai', 'tha': 'Thai', 'th': 'Thai',
+        'indonesian': 'Indonesian', 'ind': 'Indonesian', 'id': 'Indonesian',
+        'malay': 'Malay', 'msa': 'Malay', 'ms': 'Malay',
+        'vietnamese': 'Vietnamese', 'vie': 'Vietnamese', 'vi': 'Vietnamese',
+        'filipino': 'Filipino', 'tagalog': 'Filipino', 'tl': 'Filipino',
+        # European
+        'french': 'French', 'fre': 'French', 'fra': 'French', 'fr': 'French',
+        'spanish': 'Spanish', 'spa': 'Spanish', 'es': 'Spanish',
+        'german': 'German', 'ger': 'German', 'deu': 'German', 'de': 'German',
+        'italian': 'Italian', 'ita': 'Italian', 'it': 'Italian',
+        'portuguese': 'Portuguese', 'por': 'Portuguese', 'pt': 'Portuguese',
+        'russian': 'Russian', 'rus': 'Russian', 'ru': 'Russian',
+        'turkish': 'Turkish', 'tur': 'Turkish', 'tr': 'Turkish',
+        'dutch': 'Dutch', 'nld': 'Dutch', 'nl': 'Dutch',
+        'polish': 'Polish', 'pol': 'Polish', 'pl': 'Polish',
+        'swedish': 'Swedish', 'swe': 'Swedish', 'sv': 'Swedish',
+        'norwegian': 'Norwegian', 'nor': 'Norwegian', 'no': 'Norwegian',
+        'danish': 'Danish', 'dan': 'Danish', 'da': 'Danish',
+        'finnish': 'Finnish', 'fin': 'Finnish', 'fi': 'Finnish',
+        'greek': 'Greek', 'ell': 'Greek', 'el': 'Greek',
+        # Middle East / others
+        'arabic': 'Arabic', 'ara': 'Arabic', 'ar': 'Arabic',
+        'persian': 'Persian', 'farsi': 'Persian', 'fa': 'Persian',
+        'hebrew': 'Hebrew', 'heb': 'Hebrew', 'he': 'Hebrew',
+    }
+    langs = []
+    for k, v in sorted(lang_map.items(), key=lambda kv: len(kv[0]), reverse=True):
+        if re_search(rf'\b{k}\b', search_text, IGNORECASE) and v not in langs:
+            langs.append(v)
+    languages = ' '.join(langs)
+
+    if len(langs) == 1:
+        shortlang = langs[0]
+    elif len(langs) == 2:
+        shortlang = 'Dual'
+    elif len(langs) > 2:
+        shortlang = f'Multi{len(langs)}'
+    else:
+        shortlang = ''
+
+    # Part name
+    part = ''
+    pm = re_search(r'\bP(\d{2})\b|\.part0*(\d+)', search_text, IGNORECASE)
+    if pm:
+        part_no = pm.group(1) or pm.group(2)
+        part = f"P{int(part_no):02d}"
+
+    # Clean title only
+    title = search_text
+    # GK-style title boundary:
+    # For movies, title ends before year/resolution/quality.
+    # For series, title ends before season, so episode titles won't enter {name}.
+    boundary = re_search(
+        r'\b(?:S\s*\d{1,2}|Season\s*\d{1,2}|19\d{2}|20\d{2}|144p|240p|360p|480p|540p|576p|720p|1080p|1440p|2160p|4320p|4K|2K|TRUE WEB[- ]?DL|WEB[- ]?DL|WEBDL|WEBRip|HDRip|BluRay|BRRip|DVDRip|HDTV|CAMRip)\b',
+        title,
+        IGNORECASE
+    )
+    if boundary:
+        title = title[:boundary.start()].strip()
+
+    remove_patterns = [
+        r'\b(19\d{2}|20\d{2})\b',
+        r'\bS\s*\d{1,2}\s*(?:E|EP)?\s*\(?\s*\d{0,3}(?:\s*(?:-|to|–)\s*\d{1,3})?\s*\)?\b',
+        r'\bEP\s*\(?\s*\d{1,3}\s*(?:-|to|–)\s*\d{1,3}\s*\)?\b',
+        r'\bEpisode\s*\(?\s*\d{1,3}\s*(?:-|to|–)\s*\d{1,3}\s*\)?\b',
+        r'\b(480|540|720|1080|1440|2160|4320)p\b',
+        r'\b4K\b',
+        r'\bWEB[- ]?DL\b',
+        r'\bWEBDL\b',
+        r'\bWEB DL\b',
+        r'\bWEBRip\b',
+        r'\bHQ\b',
+        r'\bTRUE\b',
+        r'\bTRUE WEB[- ]?DL\b',
+        r'\bHDRip\b',
+        r'\bBluRay\b',
+        r'\bBD[- ]?Rip\b',
+        r'\bBDRip\b',
+        r'\bBD Rip\b',
+        r'\bBRRip\b',
+        r'\bDVDRip\b',
+        r'\bHDTV\b',
+        r'\bCAMRip\b',
+        r'\bCAM\b',
+        r'\bNF\b|\bAMZN\b|\bDSNP\b|\bHMAX\b|\bATVP\b|\bZEE5\b|\bSONY\b|\bAHA\b|\bVOOT\b|\bTG\b',
+        r'\b(x264|x265|HEVC|AVC|AV1|H\.264|H\.265)\b',
+        r'\b(DD\+?5\.1|DDP5\.1|DDP\d?(?:\.\d)?|AAC|8CH|6CH|2CH|5\.1|7\.1|2\.0|ATMOS)\b',
+        r'\b\d+(?:\.\d+)?\s*(GB|MB|KB)\b',
+        r'\b\d+\s*Kbps\b',
+        r'\b(ESub|MSub|HSub|Sub)\b',
+    ]
+    for pat in remove_patterns:
+        title = re_sub(pat, ' ', title, flags=IGNORECASE)
+
+    for lg in sorted(lang_map.keys(), key=len, reverse=True):
+        title = re_sub(rf'\b{lg}\b', ' ', title, flags=IGNORECASE)
+
+    # Remove broken leftovers like Hi / 2 0 / 5 1
+    title = re_sub(r'\b(Hi|Hin|Eng|En|Tam|Tel|Mal|Kan|Ml|Kn|Te|Ta|Chi|Zh|Kor|Ko|Jpn|Ja|Tha|Th|Ind|Id|Vie|Vi|Fre|Fra|Fr|Spa|Es|Ger|Deu|De|Rus|Ru|Ara|Ar|Gu|Guj|Ben|Bn|Mar|Mr|Pan|Pa|Por|Pt|Ita|It|Tur|Tr|Nld|Nl|Swe|Sv|Nor|No|Dan|Da|Fin|Fi)\b', ' ', title, flags=IGNORECASE)
+    title = re_sub(r'\b\d{1,3}\s+\d{1,3}\b', ' ', title)
+    title = re_sub(r'\s*\+\s*', ' ', title)
+    title = re_sub(r'\s+', ' ', title).strip(' -._')
+
+    return {
+        'RDX': raw_filename,
+        'file_name': raw_filename,
+        'filename': raw_filename,
+        'raw_name': name_only,
+        'extension': ext,
+        'name': title,
+        'year': year,
+        'resolution': resolution,
+        'quality': quality,
+        'ott': ott,
+        'season': season,
+        'episode': episode,
+        'audio': audio,
+        'lib': lib,
+        'languages': languages,
+        'subtitles': '',
+        'shortsub': shortsub,
+        'shortlang': shortlang,
+        'part': part,
+        'duration': '',
+        'file_size': '',
+    }
+
+
+def _rdx_apply_template(tpl: str, meta: dict) -> str:
+    # safe, only {key} tokens. Unknown tokens left as-is.
+    def repl(m):
+        k = m.group(1)
+        v = meta.get(k, m.group(0))
+        return str(v) if v is not None else ""
+    out = re_sub(r"\{([a-zA-Z0-9_]+)\}", repl, tpl)
+    out = re_sub(r"\s+", " ", out).strip()
+    return out
+
+def _rdx_sanitize_filename(name: str) -> str:
+    # remove forbidden filename chars (safe for most FS)
+    name = re_sub(r'[\\/:*?"<>|]+', " ", name)
+    name = re_sub(r"\s+", " ", name).strip()
+    return name
+# ============================================================
+
 
 async def format_filename(file_, user_id, dirpath=None, isMirror=False):
     user_dict = user_data.get(user_id, {})
@@ -248,6 +523,7 @@ async def format_filename(file_, user_id, dirpath=None, isMirror=False):
     remname = config_dict[f'{ctag}_FILENAME_REMNAME'] if (val:=user_dict.get(f'{ftag}remname', '')) == '' else val
     suffix = config_dict[f'{ctag}_FILENAME_SUFFIX'] if (val:=user_dict.get(f'{ftag}suffix', '')) == '' else val
     lcaption = config_dict['LEECH_FILENAME_CAPTION'] if (val:=user_dict.get('lcaption', '')) == '' else val
+    auto_rename = user_dict.get('auto_rename', '')
  
     prefile_ = file_
     #file_ = re_sub(r'www\S+', '', file_)
@@ -255,9 +531,77 @@ async def format_filename(file_, user_id, dirpath=None, isMirror=False):
     # Remove URLs starting with "www"
     file_ = re_sub(r'www\S+', '', file_, flags=IGNORECASE)
 
+    # ----- AUTO RENAME (filename) -----
     # Remove leading/trailing dashes and extra spaces
     # file_ = re_sub(r'^\s*-\s*', '', file_)
     file_ = re_sub(r'(^\s*-\s*|(\s*-\s*){2,})', '', file_)
+        
+    # --- Auto Rename Template Apply (Filename) ---
+    if auto_rename and isinstance(auto_rename, str) and auto_rename.strip():
+        _meta = _rdx_parse_fields(prefile_)
+        _meta["extension"] = _meta.get("extension", ospath.splitext(prefile_)[1].lower())
+
+        # GK-style series pack title override:
+        # For extracted packs, episode filenames often contain episode titles.
+        # Use parent folder/pack title as {name} when available.
+        if dirpath and _meta.get("season") and _meta.get("episode"):
+            with suppress(Exception):
+                _parent_name = ospath.basename(dirpath.rstrip("/"))
+                _parent_meta = _rdx_parse_fields(_parent_name)
+                if _parent_meta.get("name"):
+                    pname = _parent_meta["name"].strip()
+                    if (
+                        len(pname) > 3
+                        and not pname.isdigit()
+                        and not re_search(r'^(tmp|temp|download|downloads|splited|splited_files_mltb|\d+)$', pname, IGNORECASE)
+                    ):
+                        _meta["name"] = pname
+
+        # GK-style media metadata merge via ffprobe.
+        # Uses actual video stream tags for languages/subtitles/resolution/duration/size when available.
+        if dirpath:
+            up_path = ospath.join(dirpath, prefile_)
+            if await aiopath.exists(up_path):
+                try:
+                    dur, qual, lang, subs = await get_media_info(up_path, True)
+                    if qual:
+                        _meta["resolution"] = qual
+                    if lang:
+                        _name_langs = _meta.get("languages", "").split()
+                        _probe_langs = [x.strip() for x in lang.split(",") if x.strip()]
+                        final_langs = []
+                        seen_langs = set()
+                        for lg in _name_langs + _probe_langs:
+                            key = lg.casefold()
+                            if key and key not in seen_langs:
+                                final_langs.append(lg)
+                                seen_langs.add(key)
+                        if final_langs:
+                            _meta["languages"] = ' '.join(final_langs)
+                            if len(final_langs) == 1:
+                                _meta["shortlang"] = final_langs[0]
+                            elif len(final_langs) == 2:
+                                _meta["shortlang"] = "Dual"
+                            elif len(final_langs) > 2:
+                                _meta["shortlang"] = f"Multi{len(final_langs)}"
+                    if subs:
+                        _meta["subtitles"] = subs
+                        _subs = [x.strip() for x in subs.split(",") if x.strip()]
+                        _meta["shortsub"] = "MSub" if len(_subs) > 1 else "ESub"
+                    if dur:
+                        _meta["duration"] = get_readable_time(dur)
+                    _meta["file_size"] = get_readable_file_size(await aiopath.getsize(up_path))
+                except Exception as e:
+                    LOGGER.warning(f"Auto Rename MediaInfo failed for {up_path}: {e}")
+
+        _new_base = _rdx_apply_template(auto_rename, _meta)
+        _new_base = _rdx_sanitize_filename(_new_base)
+        ext_ = ospath.splitext(prefile_)[1]
+        if ext_ and not _new_base.lower().endswith(ext_.lower()):
+            _new_base = _new_base + ext_
+        if _new_base:
+            file_ = _new_base
+
         
     if remname:
         if not remname.startswith('|'):

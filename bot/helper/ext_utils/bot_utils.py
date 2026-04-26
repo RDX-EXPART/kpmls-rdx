@@ -341,34 +341,34 @@ def get_readable_message():
         }
         status_icon = status_emoji_map.get(status_text, "⚙️")
         
-        msg += f"╭ Task By 👤 {user_mention} (#ID{uid})</b>\n"
-        msg += f"┊ {bar}\n"
-        msg += f"┊ Done » {download.processed_bytes()}</b>\n"
-        msg += f"┊ Total » {download.size()}</b>\n"
-        msg += f"┊ Status » {status_text}</b>\n"
-        msg += f"┊ Speed » {download.speed()}\n"
-        msg += f"┊ ETA » {download.eta()}</b>\n"
+        msg += f"<b>╭ Task By 👤 {user_mention} (#ID{uid})</b>\n"
+        msg += f"<b>┊ {bar}\n"
+        msg += f"<b>┊ Done » {download.processed_bytes()}</b>\n"
+        msg += f"<b>┊ Total » {download.size()}</b>\n"
+        msg += f"<b>┊ Status » {status_text}</b>\n"
+        msg += f"<b>┊ Speed » {download.speed()}\n"
+        msg += f"<b>┊ ETA » {download.eta()}</b>\n"
 
         
         try:
             seeders = download.seeders_num()
             leechers = download.leechers_num()
             if seeders is not None and leechers is not None:
-                msg += f"┊╴ <b>🌱 Seeders »</b> {seeders} | <b>👥 Leechers »</b> {leechers}\n"
+                msg += f"┊ 🌱 Seeders »</b> {seeders} | <b>👥 Leechers »</b> {leechers}\n"
         except Exception:
             pass
 
 
-        msg += f"┊ Engine » {download.eng()}</b>\n"
+        msg += f"<b>┊ Engine » {download.eng()}</b>\n"
 
         try:
             in_mode = download.upload_details.get("mode")
             if in_mode:
-                msg += f"┊ In Mode » {escape(str(in_mode))}</b>\n┊ Out Mode » Leech</b>\n"
+                msg += f"<b> In Mode » {escape(str(in_mode))}</b>\╰ Out Mode » Leech</b>\n"
         except Exception:
             pass
 
-        msg += f"╰ Stop 📛 » /{BotCommands.CancelMirror}_{download.gid()}</b>\n\n"
+        msg += f"<b>⋗ Stop 📛 » /{BotCommands.CancelMirror}_{download.gid()}</b>\n\n"
         
 
     if len(msg) == 0:
@@ -403,11 +403,11 @@ def get_readable_message():
     up = get_readable_time(time() - botStartTime)
 
     msg += "\n\n<b>🔸 𝗥𝗗𝗫 𝗦𝗧𝗔𝗧𝗦 🔹</b>\n"
-    msg += "┄┄┄┄┄┄┄┄┄┄┄\n"
+    msg += "┄┄┄┄┄┄┄┄┄┄┄┄┄┄\n"
     
-    msg += f"<b>🖥️CPU »</b> {cpu}% ┃ <b>💿FREE »</b> {free_gb}\n"
-    msg += f"<b>🧠RAM »</b> {ram}% ┃ <b>🟢UP »</b> {up}\n"
-    msg += f"<b>🔻DL »</b> {get_readable_file_size(dl_speed)}/s ┃ <b>🔺UL »</b> {get_readable_file_size(up_speed)}/s\n"
+    msg += f"<b>CPU »</b> {cpu}% ┃ <b>FREE »</b> {free_gb}\n"
+    msg += f"<b>RAM »</b> {ram}% ┃ <b>UP »</b> {up}\n"
+    msg += f"<b>DL »</b> {get_readable_file_size(dl_speed)}/s ┃ <b>UL »</b> {get_readable_file_size(up_speed)}/s\n"
 
     return msg, button
 
