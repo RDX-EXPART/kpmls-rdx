@@ -452,6 +452,10 @@ async def event_handler(client, query, pfunc, rfunc, photo=False, document=False
         else:
             mtype = event.text
         user = event.from_user or event.sender_chat
+
+        if user is None or event.chat is None:
+           return False
+                
         return bool(user.id == user_id and event.chat.id == query.message.chat.id and mtype)
         
     handler = client.add_handler(MessageHandler(
@@ -464,7 +468,6 @@ async def event_handler(client, query, pfunc, rfunc, photo=False, document=False
     client.remove_handler(*handler)
 
 
-@new_thread
 async def edit_user_settings(client, query):
     from_user = query.from_user
     user_id = from_user.id
