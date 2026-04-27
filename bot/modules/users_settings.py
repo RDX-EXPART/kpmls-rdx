@@ -462,8 +462,9 @@ async def event_handler(client, query, pfunc, rfunc, photo=False, document=False
             handler_dict[user_id] = False
             await rfunc()
     client.remove_handler(*handler)
+            
 
-
+@new_thread
 async def edit_user_settings(client, query):
     from_user = query.from_user
     user_id = from_user.id
