@@ -19,8 +19,16 @@ def is_youtube_link(text: str) -> bool:
 def is_real_media(message) -> bool:
     if not message.media:
         return False
+
     media_type = message.media.value
-    return media_type not in ["web_page"]
+    if media_type in ["web_page", "webpage"]:
+        return False
+
+    media = getattr(message, media_type, None)
+    if media is None:
+        return False
+
+    return hasattr(media, "file_unique_id")
 
 
 async def auto_start_filter(_, __, message):
@@ -56,11 +64,13 @@ async def auto_start_func(client, message):
 
     if is_youtube_link(text):
         message.text = f"/yl {text}"
+        message.reply_to_message = None
         await _ytdl(client, message, isLeech=True)
         return
 
     if is_url(text) or is_magnet(text):
         message.text = f"/l {text}"
+        message.reply_to_message = None
         _mirror_leech(client, message, isQbit=is_magnet(text), isLeech=True)
         return
 
