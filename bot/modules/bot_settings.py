@@ -1085,12 +1085,12 @@ async def edit_bot_settings(client, query):
     
     if data[1] == 'close':
         handler_dict[message.chat.id] = False
-        await query.answer()
+        #await query.answer()
         await deleteMessage(message)
         await deleteMessage(message.reply_to_message)
     elif data[1] == 'back':
         handler_dict[message.chat.id] = False
-        await query.answer()
+        ##await query.answer()
         key = data[2] if len(data) == 3 else None
         if key is None:
             globals()['START'] = 0
@@ -1098,7 +1098,7 @@ async def edit_bot_settings(client, query):
     elif data[1] in ['var', 'aria', 'qbit']:
         try:
             await query.answer()
-        except Exception:
+        except Exception as e:
             pass
         await update_buttons(message, data[1])
     elif data[1] == 'resetvar':
@@ -1163,7 +1163,7 @@ async def edit_bot_settings(client, query):
         if aria2_defaults[data[2]] == aria2_options[data[2]]:
             await query.answer('Value already same as you added in aria.sh!')
             return
-        await query.answer()
+        #await query.answer()
         value = aria2_defaults[data[2]]
         aria2_options[data[2]] = value
         await update_buttons(message, 'aria')
@@ -1178,7 +1178,7 @@ async def edit_bot_settings(client, query):
             await DbManger().update_aria2(data[2], value)
     elif data[1] == 'emptyaria':
         handler_dict[message.chat.id] = False
-        await query.answer()
+        #await query.answer()
         aria2_options[data[2]] = ''
         await update_buttons(message, 'aria')
         downloads = await sync_to_async(aria2.get_downloads)
@@ -1192,7 +1192,7 @@ async def edit_bot_settings(client, query):
             await DbManger().update_aria2(data[2], '')
     elif data[1] == 'emptyqbit':
         handler_dict[message.chat.id] = False
-        await query.answer()
+        #await query.answer()
         await sync_to_async(get_client().app_set_preferences, {data[2]: value})
         qbit_options[data[2]] = ''
         await update_buttons(message, 'qbit')
@@ -1200,7 +1200,7 @@ async def edit_bot_settings(client, query):
             await DbManger().update_qbittorrent(data[2], '')
     elif data[1] == 'private':
         handler_dict[message.chat.id] = False
-        await query.answer()
+        #await query.answer()
         await update_buttons(message, data[1])
         pfunc = partial(update_private_file, pre_message=message)
         rfunc = partial(update_buttons, message)
@@ -1217,7 +1217,7 @@ async def edit_bot_settings(client, query):
             await DbManger().update_config({data[2]: value})
     elif data[1] == 'editvar':
         handler_dict[message.chat.id] = False
-        await query.answer()
+        #await query.answer()
         edit_mode = len(data) == 4
         await update_buttons(message, data[2], data[1], edit_mode)
         if data[2] in bool_vars or not edit_mode:
@@ -1228,7 +1228,7 @@ async def edit_bot_settings(client, query):
     elif data[1] == 'showvar':
         value = config_dict[data[2]]
         if len(str(value)) > 200:
-            await query.answer()
+            #await query.answer()
             with BytesIO(str.encode(value)) as out_file:
                 out_file.name = f"{data[2]}.txt"
                 await sendFile(message, out_file)
@@ -1238,7 +1238,7 @@ async def edit_bot_settings(client, query):
         await query.answer(f'{value}', show_alert=True)
     elif data[1] == 'editaria' and (STATE == 'edit' or data[2] == 'newkey'):
         handler_dict[message.chat.id] = False
-        await query.answer()
+        #await query.answer()
         await update_buttons(message, data[2], data[1])
         pfunc = partial(edit_aria, pre_message=message, key=data[2])
         rfunc = partial(update_buttons, message, 'aria')
@@ -1246,7 +1246,7 @@ async def edit_bot_settings(client, query):
     elif data[1] == 'editaria' and STATE == 'view':
         value = aria2_options[data[2]]
         if len(str(value)) > 200:
-            await query.answer()
+            #await query.answer()
             with BytesIO(str.encode(value)) as out_file:
                 out_file.name = f"{data[2]}.txt"
                 await sendFile(message, out_file)
@@ -1256,7 +1256,7 @@ async def edit_bot_settings(client, query):
         await query.answer(f'{value}', show_alert=True)
     elif data[1] == 'editqbit' and STATE == 'edit':
         handler_dict[message.chat.id] = False
-        await query.answer()
+        #await query.answer()
         await update_buttons(message, data[2], data[1])
         pfunc = partial(edit_qbit, pre_message=message, key=data[2])
         rfunc = partial(update_buttons, message, 'var')
@@ -1264,7 +1264,7 @@ async def edit_bot_settings(client, query):
     elif data[1] == 'editqbit' and STATE == 'view':
         value = qbit_options[data[2]]
         if len(str(value)) > 200:
-            await query.answer()
+            #await query.answer()
             with BytesIO(str.encode(value)) as out_file:
                 out_file.name = f"{data[2]}.txt"
                 await sendFile(message, out_file)
@@ -1273,20 +1273,20 @@ async def edit_bot_settings(client, query):
             value = None
         await query.answer(f'{value}', show_alert=True)
     elif data[1] == 'edit':
-        await query.answer()
+        #await query.answer()
         globals()['STATE'] = 'edit'
         await update_buttons(message, data[2])
     elif data[1] == 'view':
-        await query.answer()
+        #await query.answer()
         globals()['STATE'] = 'view'
         await update_buttons(message, data[2])
     elif data[1] == 'start':
-        await query.answer()
+        #await query.answer()
         if START != int(data[3]):
             globals()['START'] = int(data[3])
             await update_buttons(message, data[2])
     elif data[1] == 'push':
-        await query.answer()
+        #await query.answer()
         filename = data[2].rsplit('.zip', 1)[0]
         if await aiopath.exists(filename):
             await (await create_subprocess_shell(f"git add -f {filename} \
