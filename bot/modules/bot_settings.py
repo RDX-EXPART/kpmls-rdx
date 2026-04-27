@@ -818,6 +818,7 @@ async def update_buttons(message, key=None, edit_type=None, edit_mode=None):
 
 
 async def edit_variable(_, message, pre_message, key):
+    LOGGER.info('Called')
     handler_dict[message.chat.id] = False
     value = message.text
     if key == 'RSS_DELAY':
@@ -1062,8 +1063,10 @@ async def event_handler(client, query, pfunc, rfunc, document=False):
     async def event_filter(_, __, event):
         user = event.from_user or event.sender_chat
         return bool(user.id == query.from_user.id and event.chat.id == chat_id and (event.text or event.document and document))
+    
     handler = client.add_handler(MessageHandler(
         pfunc, filters=create(event_filter)), group=-1)
+    
     while handler_dict[chat_id]:
         await sleep(0.5)
         if time() - start_time > 60:
