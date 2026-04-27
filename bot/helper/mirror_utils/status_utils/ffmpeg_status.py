@@ -5,7 +5,7 @@ from bot.helper.utils import (
     get_readable_file_size,
     get_readable_time,
 )
-from bot.helper.ext_utils.bot_utils import MirrorStatus
+from bot.helper.ext_utils.bot_utils import MirrorStatus, EngineStatus
 
 
 class FfmpegStatus:
