@@ -16,6 +16,21 @@ def is_youtube_link(text: str) -> bool:
     return bool(search(r"(youtube\.com|youtu\.be)", text, flags=0))
 
 
+def is_real_media(message) -> bool:
+    if not message.media:
+        return False
+
+    media_type = message.media.value
+    if media_type in ["web_page", "webpage"]:
+        return False
+
+    media = getattr(message, media_type, None)
+    if media is None:
+        return False
+
+    return hasattr(media, "file_unique_id")
+
+
 async def auto_start_filter(_, __, message):
     if not message.from_user or message.from_user.is_bot:
         return False
@@ -29,7 +44,7 @@ async def auto_start_filter(_, __, message):
     if text.startswith("/"):
         return False
 
-    if message.media:
+    if is_real_media(message):
         return True
 
     if is_url(text) or is_magnet(text):
@@ -41,23 +56,22 @@ async def auto_start_filter(_, __, message):
 async def auto_start_func(client, message):
     text = (message.text or message.caption or "").strip()
 
-    # media file auto leech
-    if message.media:
+    if is_real_media(message):
         message.text = "/l"
         message.reply_to_message = message
-        await _mirror_leech(client, message, isLeech=True)
+        _mirror_leech(client, message, isLeech=True)
         return
 
-    # youtube auto leech
     if is_youtube_link(text):
         message.text = f"/yl {text}"
+        message.reply_to_message = None
         await _ytdl(client, message, isLeech=True)
         return
 
-    # magnet / normal link auto leech
     if is_url(text) or is_magnet(text):
         message.text = f"/l {text}"
-        await _mirror_leech(client, message, isQbit=is_magnet(text), isLeech=True)
+        message.reply_to_message = None
+        _mirror_leech(client, message, isQbit=is_magnet(text), isLeech=True)
         return
 
 

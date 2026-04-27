@@ -451,7 +451,7 @@ async def event_handler(client, query, pfunc, rfunc, photo=False, document=False
             mtype = event.document
         else:
             mtype = event.text
-        user = event.from_user or event.sender_chat
+        user = event.from_user or event.sender_chat    
         return bool(user.id == user_id and event.chat.id == query.message.chat.id and mtype)
         
     handler = client.add_handler(MessageHandler(
@@ -462,7 +462,7 @@ async def event_handler(client, query, pfunc, rfunc, photo=False, document=False
             handler_dict[user_id] = False
             await rfunc()
     client.remove_handler(*handler)
-
+            
 
 @new_thread
 async def edit_user_settings(client, query):
