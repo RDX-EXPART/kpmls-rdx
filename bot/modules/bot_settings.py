@@ -1096,7 +1096,10 @@ async def edit_bot_settings(client, query):
             globals()['START'] = 0
         await update_buttons(message, key)
     elif data[1] in ['var', 'aria', 'qbit']:
-        await query.answer()
+        try:
+            await query.answer()
+        except Exception:
+            pass
         await update_buttons(message, data[1])
     elif data[1] == 'resetvar':
         handler_dict[message.chat.id] = False
