@@ -229,77 +229,129 @@ class MirrorLeechListener:
 
         if self.extract:
             pswd = self.extract if isinstance(self.extract, str) else ''
+            processed = set()
+        
             try:
                 if await aiopath.isfile(dl_path):
                     up_path = get_base_name(dl_path)
+        
                 LOGGER.info(f"Extracting: {self.name}")
+        
                 async with download_dict_lock:
                     download_dict[self.uid] = ExtractStatus(
-                        self.name, self.size, gid, self)
+                        self.name, self.size, gid, self
+                    )
+        
                 if await aiopath.isdir(dl_path):
                     if self.seed:
                         self.newDir = f"{self.dir}10000"
                         up_path = f"{self.newDir}/{self.name}"
                     else:
                         up_path = dl_path
-                    for dirpath, _, files in await sync_to_async(walk, dl_path, topdown=False):
-                        for file_ in files:
-                            if is_first_archive_split(file_) or is_archive(file_) and not file_.endswith('.rar'):
-                                f_path = ospath.join(dirpath, file_)
-                                t_path = dirpath.replace(
-                                    self.dir, self.newDir) if self.seed else dirpath
-                                cmd = [
-                                    "7z", "x", f"-p{pswd}", f_path, f"-o{t_path}", "-aot", "-xr!@PaxHeader"]
-                                if not pswd:
-                                    del cmd[2]
-                                if self._subprocess == 'cancelled' or self._subprocess is not None and self._subprocess.returncode == -9:
-                                    return
-                                self._subprocess = await create_subprocess_exec(*cmd)
-                                code = await self._subprocess.wait()
-                                if code == -9:
-                                    return
-                                elif code != 0:
-                                    LOGGER.error(
-                                        'Unable to extract archive splits!')
-                        if not self.seed and self._subprocess is not None and self._subprocess.returncode == 0:
+        
+                    queue = [dl_path]
+        
+                    while queue:
+                        current = queue.pop(0)
+        
+                        if current in processed:
+                            continue
+                        processed.add(current)
+        
+                        for dirpath, _, files in await sync_to_async(walk, current, topdown=False):
                             for file_ in files:
-                                if is_archive_split(file_) or is_archive(file_):
-                                    del_path = ospath.join(dirpath, file_)
-                                    try:
-                                        await aioremove(del_path)
-                                    except:
+                                if is_first_archive_split(file_) or (is_archive(file_) and not file_.endswith('.rar')):
+                                    f_path = ospath.join(dirpath, file_)
+        
+                                    if f_path in processed:
+                                        continue
+        
+                                    t_path = dirpath.replace(self.dir, self.newDir) if self.seed else dirpath
+        
+                                    cmd = [
+                                        "7z", "x", f"-p{pswd}", f_path,
+                                        f"-o{t_path}", "-aot", "-xr!@PaxHeader"
+                                    ]
+                                    if not pswd:
+                                        del cmd[2]
+        
+                                    if self._subprocess == 'cancelled' or (
+                                        self._subprocess is not None and self._subprocess.returncode == -9
+                                    ):
                                         return
+        
+                                    self._subprocess = await create_subprocess_exec(*cmd)
+                                    code = await self._subprocess.wait()
+        
+                                    if code == -9:
+                                        return
+                                    elif code != 0:
+                                        LOGGER.error(f'Unable to extract: {f_path}')
+                                        continue
+        
+                                    # enqueue extracted directory for recursive scan
+                                    queue.append(t_path)
+        
+                                    if not self.seed:
+                                        try:
+                                            await aioremove(f_path)
+                                        except:
+                                            pass
+        
                 else:
                     if self.seed:
                         self.newDir = f"{self.dir}10000"
                         up_path = up_path.replace(self.dir, self.newDir)
-                    cmd = ["7z", "x", f"-p{pswd}", dl_path,
-                           f"-o{up_path}", "-aot", "-xr!@PaxHeader"]
-                    if not pswd:
-                        del cmd[2]
-                    if self._subprocess == 'cancelled':
-                        return
-                    self._subprocess = await create_subprocess_exec(*cmd)
-                    code = await self._subprocess.wait()
-                    if code == -9:
-                        return
-                    elif code == 0:
-                        LOGGER.info(f"Extracted Path: {up_path}")
+        
+                    queue = [dl_path]
+        
+                    while queue:
+                        current = queue.pop(0)
+        
+                        if current in processed:
+                            continue
+                        processed.add(current)
+        
+                        target = get_base_name(current)
+                        if self.seed:
+                            target = target.replace(self.dir, self.newDir)
+        
+                        cmd = [
+                            "7z", "x", f"-p{pswd}", current,
+                            f"-o{target}", "-aot", "-xr!@PaxHeader"
+                        ]
+                        if not pswd:
+                            del cmd[2]
+        
+                        if self._subprocess == 'cancelled':
+                            return
+        
+                        self._subprocess = await create_subprocess_exec(*cmd)
+                        code = await self._subprocess.wait()
+        
+                        if code == -9:
+                            return
+                        elif code != 0:
+                            LOGGER.error(f'Unable to extract archive: {current}')
+                            continue
+        
+                        LOGGER.info(f"Extracted Path: {target}")
+        
+                        queue.append(target)
+        
                         if not self.seed:
                             try:
-                                await aioremove(dl_path)
+                                await aioremove(current)
                             except:
-                                return
-                    else:
-                        LOGGER.error(
-                            'Unable to extract archive! Uploading anyway')
-                        self.newDir = ""
-                        up_path = dl_path
+                                pass
+        
+                        up_path = target
+        
             except NotSupportedExtractionArchive:
                 LOGGER.info("Not any valid archive, uploading file as it is.")
                 self.newDir = ""
                 up_path = dl_path
-        
+                
         if self.vidMode:
             up_path = up_path or dl_path
             up_path = await VidEcxecutor(self, up_path, gid).execute()
