@@ -108,7 +108,7 @@ class YtSelection:
             buttons.ibutton('Best Videos', 'ytq bv*+ba/b')
             buttons.ibutton('Best Audios', 'ytq ba/b')
             buttons.ibutton('Cancel', 'ytq cancel', 'footer')
-            self.__main_buttons = buttons.build_menu(3)
+            self.__main_buttons = buttons.build(3)
             msg = f'Choose Playlist Videos Quality:\nTimeout: {get_readable_time(self.__timeout-(time()-self.__time))}'
         else:
             format_dict = result.get('formats')
@@ -154,7 +154,7 @@ class YtSelection:
             buttons.ibutton('Best Video', 'ytq bv*+ba/b')
             buttons.ibutton('Best Audio', 'ytq ba/b')
             buttons.ibutton('Cancel', 'ytq cancel', 'footer')
-            self.__main_buttons = buttons.build_menu(2)
+            self.__main_buttons = buttons.build(2)
             msg = f'Choose Video Quality:\nTimeout: {get_readable_time(self.__timeout-(time()-self.__time))}'
         self.__reply_to = await sendMessage(self.__message, msg, self.__main_buttons)
         await wrap_future(future)
@@ -177,7 +177,7 @@ class YtSelection:
             buttons.ibutton(button_name, f'ytq sub {b_name} {tbr}')
         buttons.ibutton('Back', 'ytq back', 'footer')
         buttons.ibutton('Cancel', 'ytq cancel', 'footer')
-        subbuttons = buttons.build_menu(2)
+        subbuttons = buttons.build(2)
         msg = f'Choose Bit rate for <b>{b_name}</b>:\nTimeout: {get_readable_time(self.__timeout-(time()-self.__time))}'
         await editMessage(self.__reply_to, msg, subbuttons)
 
@@ -190,7 +190,7 @@ class YtSelection:
             buttons.ibutton(f'{q}K-mp3', f'ytq {audio_format}')
         buttons.ibutton('Back', 'ytq back')
         buttons.ibutton('Cancel', 'ytq cancel')
-        subbuttons = buttons.build_menu(3)
+        subbuttons = buttons.build(3)
         msg = f'Choose mp3 Audio{i} Bitrate:\nTimeout: {get_readable_time(self.__timeout-(time()-self.__time))}'
         await editMessage(self.__reply_to, msg, subbuttons)
 
@@ -202,7 +202,7 @@ class YtSelection:
             buttons.ibutton(frmt, f'ytq aq {audio_format}')
         buttons.ibutton('Back', 'ytq back', 'footer')
         buttons.ibutton('Cancel', 'ytq cancel', 'footer')
-        subbuttons = buttons.build_menu(3)
+        subbuttons = buttons.build(3)
         msg = f'Choose Audio{i} Format:\nTimeout: {get_readable_time(self.__timeout-(time()-self.__time))}'
         await editMessage(self.__reply_to, msg, subbuttons)
 
@@ -214,7 +214,7 @@ class YtSelection:
             buttons.ibutton(qual, f'ytq {audio_format}')
         buttons.ibutton('Back', 'ytq aq back')
         buttons.ibutton('Cancel', 'ytq aq cancel')
-        subbuttons = buttons.build_menu(5)
+        subbuttons = buttons.build(5)
         msg = f'Choose Audio{i} Qaulity:\n0 is best and 10 is worst\nTimeout: {get_readable_time(self.__timeout-(time()-self.__time))}'
         await editMessage(self.__reply_to, msg, subbuttons)
 
@@ -374,7 +374,7 @@ async def _ytdl(client, message, isLeech=False, sameDir=None, bulk=[]):
     if not is_url(link):
         btn = ButtonMaker()
         btn.ibutton('Cʟɪᴄᴋ Hᴇʀᴇ Tᴏ Rᴇᴀᴅ Mᴏʀᴇ ...', f'kpsmlx {message.from_user.id} help YT')
-        await sendMessage(message, YT_HELP_MESSAGE[0], btn.build_menu(1))
+        await sendMessage(message, YT_HELP_MESSAGE[0], btn.build(1))
         await delete_links(message)
         return
 
@@ -389,7 +389,7 @@ async def _ytdl(client, message, isLeech=False, sameDir=None, bulk=[]):
         for __i, __msg in enumerate(error_msg, 1):
             final_msg += f'\n<b>{__i}</b>: {__msg}\n'
         if error_button is not None:
-            error_button = error_button.build_menu(2)
+            error_button = error_button.build(2)
         await sendMessage(message, final_msg, error_button)
         await delete_links(message)
         return

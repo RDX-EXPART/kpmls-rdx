@@ -20,7 +20,7 @@ async def list_buttons(user_id, isRecursive=True):
     buttons.ibutton("Both", f"list_types {user_id} both {isRecursive}")
     buttons.ibutton(f"{'✅️' if isRecursive else ''} Recursive", f"list_types {user_id} rec {isRecursive}")
     buttons.ibutton("Cancel", f"list_types {user_id} cancel")
-    return buttons.build_menu(2)
+    return buttons.build(2)
 
 
 async def _list_drive(key, message, user_id, item_type, isRecursive):
@@ -69,7 +69,7 @@ async def drive_list(_, message):
     user_id = message.from_user.id
     msg, btn = await checking_access(user_id)
     if msg is not None:
-        await sendMessage(message, msg, btn.build_menu(1))
+        await sendMessage(message, msg, btn.build(1))
         return
     buttons = await list_buttons(user_id)
     await sendMessage(message, '<b>Choose drive list options:</b>', buttons, 'IMAGES')

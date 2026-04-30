@@ -40,7 +40,7 @@ async def imdb_search(_, message):
             for movie in movies: # Refurbished Soon !!
                 buttons.ibutton(f"🎬 {movie.get('title')} ({movie.get('year')})", f"imdb {user_id} movie {movie.movieID}")
         buttons.ibutton("🚫 Close 🚫", f"imdb {user_id} close")
-        await editMessage(k, '<b><i>Here What I found on IMDb.com</i></b>', buttons.build_menu(1))
+        await editMessage(k, '<b><i>Here What I found on IMDb.com</i></b>', buttons.build(1))
     else:
         await sendMessage(message, '<i>Send Movie / TV Series Name along with /imdb Command or send IMDB URL</i>')
 

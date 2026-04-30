@@ -33,7 +33,7 @@ async def mydramalist_search(_, message):
         for drama in mdl['results']['dramas']:
             buttons.ibutton(f"🎬 {drama.get('title')} ({drama.get('year')})", f"mdl {user_id} drama {drama.get('slug')}")
         buttons.ibutton("🚫 Close 🚫", f"mdl {user_id} close")
-        await editMessage(temp, '<b><i>Dramas found on MyDramaList :</i></b>', buttons.build_menu(1))
+        await editMessage(temp, '<b><i>Dramas found on MyDramaList :</i></b>', buttons.build(1))
     else:
         await sendMessage(message, f'<i>Send Movie / TV Series Name along with /{BotCommands.MyDramaListCommand} Command</i>')
 
@@ -139,12 +139,12 @@ async def mdl_callback(_, query):
             cap = "<i>No Data Received</i>"
         if mdl.get('poster'):
             try: #Invoke Raw Functions
-                await message.reply_to_message.reply_photo(mdl["poster"], caption=cap, reply_markup=buttons.build_menu(1))
+                await message.reply_to_message.reply_photo(mdl["poster"], caption=cap, reply_markup=buttons.build(1))
             except (MediaEmpty, PhotoInvalidDimensions, WebpageMediaEmpty):
                 poster = mdl["poster"].replace('f.jpg?v=1', 'c.jpg?v=1')
-                await sendMessage(message.reply_to_message, cap, buttons.build_menu(1), poster)
+                await sendMessage(message.reply_to_message, cap, buttons.build(1), poster)
         else:
-            await sendMessage(message.reply_to_message, cap, buttons.build_menu(1), 'https://te.legra.ph/file/5af8d90a479b0d11df298.jpg')
+            await sendMessage(message.reply_to_message, cap, buttons.build(1), 'https://te.legra.ph/file/5af8d90a479b0d11df298.jpg')
         await message.delete()
     else:
         await query.answer()

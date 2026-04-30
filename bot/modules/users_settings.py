@@ -86,7 +86,7 @@ async def get_user_settings(from_user, key=None, edit_type=None, edit_mode=None)
 
         text = BotTheme('USER_SETTING', NAME=name, ID=user_id, USERNAME=f'@{from_user.username}', LANG=Language.get(lc).display_name() if (lc := from_user.language_code) else "N/A", DC=from_user.dc_id)
         
-        button = buttons.build_menu(1)
+        button = buttons.build(1)
     elif key == 'universal':
         ytopt = 'Not Exists' if (val:=user_dict.get('yt_opt', config_dict.get('YT_DLP_OPTIONS', ''))) == '' else val
         buttons.ibutton(f"{'✅️' if ytopt != 'Not Exists' else ''} YT-DLP Options", f"userset {user_id} yt_opt")
@@ -112,7 +112,7 @@ async def get_user_settings(from_user, key=None, edit_type=None, edit_mode=None)
         text = BotTheme('UNIVERSAL', NAME=name, YT=escape(ytopt), DT=f"{dailytas} / {dailytl}", LAST_USED=lastused, BOT_PM=bot_pm, MEDIAINFO=mediainfo, SAVE_MODE=save_mode, USESS=u_sess)
         buttons.ibutton("Back", f"userset {user_id} back", "footer")
         buttons.ibutton("Close", f"userset {user_id} close", "footer")
-        button = buttons.build_menu(2)
+        button = buttons.build(2)
     elif key == 'mirror':
         buttons.ibutton("RClone", f"userset {user_id} rcc")
         rccmsg = "Exists" if await aiopath.exists(rclone_path) else "Not Exists"
@@ -142,7 +142,7 @@ async def get_user_settings(from_user, key=None, edit_type=None, edit_mode=None)
 
         buttons.ibutton("Back", f"userset {user_id} back", "footer")
         buttons.ibutton("Close", f"userset {user_id} close", "footer")
-        button = buttons.build_menu(2)
+        button = buttons.build(2)
     elif key == 'leech':
         if user_dict.get('as_doc', False) or 'as_doc' not in user_dict and config_dict['AS_DOCUMENT']:
             ltype = "DOCUMENT"
@@ -198,7 +198,7 @@ async def get_user_settings(from_user, key=None, edit_type=None, edit_mode=None)
 
         buttons.ibutton("Back", f"userset {user_id} back", "footer")
         buttons.ibutton("Close", f"userset {user_id} close", "footer")
-        button = buttons.build_menu(2)
+        button = buttons.build(2)
     elif key == "ddl_servers":
         ddl_serv, serv_list = 0, []
         if (ddl_dict := user_dict.get('ddl_servers', False)):
@@ -213,7 +213,7 @@ async def get_user_settings(from_user, key=None, edit_type=None, edit_mode=None)
             buttons.ibutton(f"{'✅️' if btn in serv_list else ''} {fname_dict[btn]}", f"userset {user_id} {btn}")
         buttons.ibutton("Back", f"userset {user_id} back mirror", "footer")
         buttons.ibutton("Close", f"userset {user_id} close", "footer")
-        button = buttons.build_menu(2)
+        button = buttons.build(2)
     elif edit_type:
         text = f"㊂ <b><u>{fname_dict[key]} Settings :</u></b>\n\n"
         if key == 'rcc':
@@ -277,7 +277,7 @@ async def get_user_settings(from_user, key=None, edit_type=None, edit_mode=None)
             buttons.ibutton("↻ Delete", f"userset {user_id} d{key}")
         buttons.ibutton("Back", f"userset {user_id} back {edit_type}", "footer")
         buttons.ibutton("Close", f"userset {user_id} close", "footer")
-        button = buttons.build_menu(2)
+        button = buttons.build(2)
     return text, button
 
 
@@ -489,7 +489,7 @@ async def edit_user_settings(client, query):
         await query.answer()
         buttons = ButtonMaker()
         buttons.ibutton('Cʟᴏsᴇ', f'kpsmlx {user_id} close')
-        await sendMessage(message, from_user.mention, buttons.build_menu(1), thumb_path)
+        await sendMessage(message, from_user.mention, buttons.build(1), thumb_path)
         await update_user_settings(query, 'thumb', 'leech')
     elif data[2] == 'show_tds':
         handler_dict[user_id] = False
@@ -671,7 +671,7 @@ async def edit_user_settings(client, query):
         buttons.ibutton('Yes', f"userset {user_id} reset_now y")
         buttons.ibutton('No', f"userset {user_id} reset_now n")
         buttons.ibutton("Close", f"userset {user_id} close", "footer")
-        await editMessage(message, 'Do you want to Reset Settings ?', buttons.build_menu(2))
+        await editMessage(message, 'Do you want to Reset Settings ?', buttons.build(2))
     elif data[2] == 'reset_now':
         handler_dict[user_id] = False
         if data[3] == 'n':
@@ -719,7 +719,7 @@ async def send_users_settings(client, message):
         msg = f'<u><b>Total Users / Chats Data Saved :</b> {len(user_data)}</u>'
         buttons = ButtonMaker()
         buttons.ibutton("Close", f"userset {message.from_user.id} close")
-        button = buttons.build_menu(1)
+        button = buttons.build(1)
         for user, data in user_data.items():
             msg += f'\n\n<code>{user}</code>:'
             if data:
@@ -741,7 +741,7 @@ async def send_users_settings(client, message):
             buttons = ButtonMaker()
             buttons.ibutton("Delete Data", f"userset {message.from_user.id} user_del {userid}")
             buttons.ibutton("Close", f"userset {message.from_user.id} close")
-            button = buttons.build_menu(1)
+            button = buttons.build(1)
             for key, value in data.items():
                 if key in ['token', 'time', 'ddl_servers', 'usess']:
                     continue

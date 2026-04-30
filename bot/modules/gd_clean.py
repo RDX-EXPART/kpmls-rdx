@@ -45,7 +45,7 @@ async def driveclean(_, message):
 3. Delete files of custom folder via giving link along with cmd, but it should have delete permissions.
 4. Move to Bin Moves all your files to trash but can be restored again if have permissions.</i>
     
-<code>Choose the Required Action below to Clean your Drive!</code>''', buttons.build_menu(2))
+<code>Choose the Required Action below to Clean your Drive!</code>''', buttons.build(2))
 
 
 @new_task

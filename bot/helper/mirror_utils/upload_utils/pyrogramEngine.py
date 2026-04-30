@@ -99,7 +99,7 @@ class TgUploader:
         if config_dict['SAVE_MSG'] and (config_dict['LEECH_LOG_ID'] or not self.__listener.isPrivate):
             buttons.ibutton(BotTheme('SAVE_MSG'), 'save', 'footer')
         if self.__has_buttons:
-            return buttons.build_menu(1)
+            return buttons.build(1)
         return None
 
     async def __copy_file(self):

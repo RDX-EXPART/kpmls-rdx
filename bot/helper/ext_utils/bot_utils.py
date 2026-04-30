@@ -174,7 +174,7 @@ def bt_selection_buttons(id_):
         buttons.ubutton("Select Files", f"{BASE_URL}/app/files/{id_}?pin_code={pincode}")
     buttons.ibutton("Cancel", f"btsel rm {gid} {id_}")
     buttons.ibutton("Done Selecting", f"btsel done {gid} {id_}")
-    return buttons.build_menu(2)
+    return buttons.build(2)
 
 
 async def get_telegraph_list(telegraph_content):
@@ -184,7 +184,7 @@ async def get_telegraph_list(telegraph_content):
     buttons = ButtonMaker()
     buttons.ubutton("🔎 VIEW", f"https://te.legra.ph/{path[0]}")
     buttons, _ = extra_btns(buttons)
-    return buttons.build_menu(1)
+    return buttons.build(1)
 
 def handleIndex(index, dic):
     while True:
@@ -392,10 +392,10 @@ def get_readable_message():
         buttons.ibutton("◀️ Prev", "status pre")
         buttons.ibutton(f"🔁 {PAGE_NO}/{PAGES}", "status ref")
         buttons.ibutton("Next ▶️", "status nex")
-        button = buttons.build_menu(3)
+        button = buttons.build(3)
     else:
         buttons.ibutton("🔄 Refresh", "status ref")
-        button = buttons.build_menu(1)
+        button = buttons.build(1)
 
     free_gb = get_readable_file_size(disk_usage(config_dict['DOWNLOAD_DIR']).free)
     free_p = round(100 - disk_usage(config_dict['DOWNLOAD_DIR']).percent, 1)
@@ -716,7 +716,7 @@ async def get_stats(event, key="home"):
                 BT = ('∞' if (val := config_dict['BOT_MAX_TASKS']) == '' else val),
         )
     btns.ibutton('Close', f'kpsmlx {user_id} close')
-    return msg, btns.build_menu(2)
+    return msg, btns.build(2)
 
 
 async def getdailytasks(user_id, increase_task=False, upleech=0, upmirror=0, check_mirror=False, check_leech=False):

@@ -808,7 +808,7 @@ async def get_buttons(key=None, edit_type=None, edit_mode=None, mess=None):
         buttons.ibutton('Empty String', f"botset emptyqbit {key}")
         buttons.ibutton('Close', "botset close")
         msg = f'Send a valid value for {key}. Timeout: 60 sec'
-    button = buttons.build_menu(1) if key is None else buttons.build_menu(2)
+    button = buttons.build(1) if key is None else buttons.build(2)
     return msg, button
 
 
@@ -1042,7 +1042,7 @@ async def update_private_file(_, message, pre_message):
             msg = '<i>Do you want to Upload (Git Push) your file to <b>UPSTREAM_REPO</b> ?</i>'
             buttons.ibutton('Yes!', f"botset push {file_name}")
             buttons.ibutton('No!', "botset close")
-            await sendMessage(message, msg, buttons.build_menu(2))
+            await sendMessage(message, msg, buttons.build(2))
         else:
             await deleteMessage(message)
     if file_name == 'wcl.conf':

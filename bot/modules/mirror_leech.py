@@ -232,7 +232,7 @@ async def _mirror_leech(client, message, isQbit=False, isLeech=False, sameDir=No
         btn = ButtonMaker()
         btn.ibutton('Cʟɪᴄᴋ Hᴇʀᴇ Tᴏ Rᴇᴀᴅ Mᴏʀᴇ ...', f'kpsmlx {message.from_user.id} help MIRROR')
         await remove_from_same_dir(message.id, sameDir, folder_name)
-        await sendMessage(message, MIRROR_HELP_MESSAGE[0], btn.build_menu(1))
+        await sendMessage(message, MIRROR_HELP_MESSAGE[0], btn.build(1))
         await delete_links(message)
         return
 
@@ -247,7 +247,7 @@ async def _mirror_leech(client, message, isQbit=False, isLeech=False, sameDir=No
         for __i, __msg in enumerate(error_msg, 1):
             final_msg += f'\n<b>{__i}</b>: {__msg}\n'
         if error_button is not None:
-            error_button = error_button.build_menu(2)
+            error_button = error_button.build(2)
         await remove_from_same_dir(message.id, sameDir, folder_name)
         await sendMessage(message, final_msg, error_button)
         await delete_links(message)
@@ -422,7 +422,7 @@ async def kpsmlxcb(_, query):
             endLine = "\n----------<b>END LOG</b>----------"
             btn = ButtonMaker()
             btn.ibutton('Cʟᴏsᴇ', f'kpsmlx {user_id} close')
-            await sendMessage(message, startLine + escape(Loglines) + endLine, btn.build_menu(1))
+            await sendMessage(message, startLine + escape(Loglines) + endLine, btn.build(1))
             await editReplyMarkup(message, None)
         except Exception as err:
             LOGGER.error(f"TG Log Display : {str(err)}")
@@ -435,7 +435,7 @@ async def kpsmlxcb(_, query):
         if resp['status'] == 201:
             btn = ButtonMaker()
             btn.ubutton('📨 Web Paste (SB)', f"https://spaceb.in/{resp['payload']['id']}")
-            await editReplyMarkup(message, btn.build_menu(1))
+            await editReplyMarkup(message, btn.build(1))
         else:
             LOGGER.error(f"Web Paste Failed : {str(err)}")
     elif data[2] == "botpm":
@@ -445,7 +445,7 @@ async def kpsmlxcb(_, query):
         btn = ButtonMaker()
         btn.ibutton('Cʟᴏsᴇ', f'kpsmlx {user_id} close')
         if data[3] == "CLONE":
-            await editMessage(message, CLONE_HELP_MESSAGE[1], btn.build_menu(1))
+            await editMessage(message, CLONE_HELP_MESSAGE[1], btn.build(1))
         elif data[3] == "MIRROR":
             if len(data) == 4:
                 msg = MIRROR_HELP_MESSAGE[1][:4000]
@@ -453,23 +453,23 @@ async def kpsmlxcb(_, query):
             else:
                 msg = MIRROR_HELP_MESSAGE[1][4000:]
                 btn.ibutton('Pʀᴇ Pᴀɢᴇ', f'kpsmlx {user_id} help MIRROR')
-            await editMessage(message, msg, btn.build_menu(2))
+            await editMessage(message, msg, btn.build(2))
         if data[3] == "YT":
-            await editMessage(message, YT_HELP_MESSAGE[1], btn.build_menu(1))
+            await editMessage(message, YT_HELP_MESSAGE[1], btn.build(1))
     elif data[2] == "guide":
         btn = ButtonMaker()
         btn.ibutton('Bᴀᴄᴋ', f'kpsmlx {user_id} guide home')
         btn.ibutton('Cʟᴏsᴇ', f'kpsmlx {user_id} close')
         if data[3] == "basic":
-            await editMessage(message, help_string[0], btn.build_menu(2))
+            await editMessage(message, help_string[0], btn.build(2))
         elif data[3] == "users":
-            await editMessage(message, help_string[1], btn.build_menu(2))
+            await editMessage(message, help_string[1], btn.build(2))
         elif data[3] == "miscs":
-            await editMessage(message, help_string[3], btn.build_menu(2))
+            await editMessage(message, help_string[3], btn.build(2))
         elif data[3] == "admin":
             if not await CustomFilters.sudo('', query):
                 return await query.answer('Not Sudo or Owner!', show_alert=True)
-            await editMessage(message, help_string[2], btn.build_menu(2))
+            await editMessage(message, help_string[2], btn.build(2))
         else:
             buttons = ButtonMaker()
             buttons.ibutton('Basic', f'kpsmlx {user_id} guide basic')
@@ -477,7 +477,7 @@ async def kpsmlxcb(_, query):
             buttons.ibutton('Mics', f'kpsmlx {user_id} guide miscs')
             buttons.ibutton('Owner & Sudos', f'kpsmlx {user_id} guide admin')
             buttons.ibutton('Close', f'kpsmlx {user_id} close')
-            await editMessage(message, "㊂ <b><i>Help Guide Menu!</i></b>\n\n<b>NOTE: <i>Click on any CMD to see more minor detalis.</i></b>", buttons.build_menu(2))
+            await editMessage(message, "㊂ <b><i>Help Guide Menu!</i></b>\n\n<b>NOTE: <i>Click on any CMD to see more minor detalis.</i></b>", buttons.build(2))
         await query.answer()
     elif data[2] == "stats":
         msg, btn = await get_stats(query, data[3])

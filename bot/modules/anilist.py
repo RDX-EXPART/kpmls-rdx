@@ -285,11 +285,11 @@ async def anilist(_, msg, aniid=None, u_id=None):
             template = config_dict['ANIME_TEMPLATE']
             LOGGER.error(f"AniList Error: {e}")
         if aniid:
-            return template, btns.build_menu(3)
+            return template, btns.build(3)
         try:
-            await sendMessage(msg, template, btns.build_menu(3), photo=title_img)
+            await sendMessage(msg, template, btns.build(3), photo=title_img)
         except Exception:
-            await sendMessage(msg, template, btns.build_menu(3), photo='https://te.legra.ph/file/8a5155c0fc61cc2b9728c.jpg')
+            await sendMessage(msg, template, btns.build(3), photo='https://te.legra.ph/file/8a5155c0fc61cc2b9728c.jpg')
   
   
 async def setAnimeButtons(client, query):
@@ -339,7 +339,7 @@ async def setAnimeButtons(client, query):
         msg, btns = await anilist(client, message, siteid, data[1])
         await editMessage(message, msg, btns)
         return
-    await editMessage(message, msg, btns.build_menu(1))
+    await editMessage(message, msg, btns.build(1))
     return
 
 
@@ -369,7 +369,7 @@ async def character(_, message, aniid=None, u_id=None):
             btn = ButtonMaker()
             sptext = description.split('~!', 1)[1].rsplit('!~', 1)[0].replace('~!', '').replace('!~', '')
             btn.ibutton("🔍 View Spoiler", f"cha {user_id} spoil {siteid}")
-            rlp_mk = btn.build_menu(1)
+            rlp_mk = btn.build(1)
             description = description.split('~!', 1)[0]
         if len(description) > 700:  
             description = f"{description[:700]}...."
@@ -399,7 +399,7 @@ async def setCharacButtons(client, query):
         await query.answer("Alert !! Shh")
         if len(sptext) > 900:
             sptext = f"{sptext[:900]}..."
-        await editMessage(message, f"<b>Spoiler Ahead :</b>\n\n<tg-spoiler>{markdown(sptext).replace('<p>', '').replace('</p>', '')}</tg-spoiler>", btns.build_menu(1))
+        await editMessage(message, f"<b>Spoiler Ahead :</b>\n\n<tg-spoiler>{markdown(sptext).replace('<p>', '').replace('</p>', '')}</tg-spoiler>", btns.build(1))
     elif data[2] == "home":
         await query.answer()
         msg, btns = await character(client, message, data[3], data[1])
@@ -436,10 +436,10 @@ async def manga(_, message):
         msg += f"\n\n_{json.get('description', None)}_"
         msg = msg.replace('<br>', '').replace('<i>', '').replace('</i>', '')
         try:
-            await sendMessage(message, msg, buttons.build_menu(1), image)
+            await sendMessage(message, msg, buttons.build(1), image)
         except Exception:
             msg += f" [〽️]({image})"
-            await sendMessage(message, msg, buttons.build_menu(1))
+            await sendMessage(message, msg, buttons.build(1))
 
 
 async def anime_help(_, message):

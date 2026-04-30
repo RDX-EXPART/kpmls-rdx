@@ -109,7 +109,7 @@ async def confirm_category(client, query):
             buttons.ibutton(f'{"✅️" if cat_name == _name else ""} {_name}', f"scat {user_id} {msg_id} {_name.replace(' ', '_')}")
     buttons.ibutton('Cancel', f'scat {user_id} {msg_id} scancel', 'footer')
     buttons.ibutton(f'Done ({get_readable_time(60 - (time() - bot_cache[msg_id][4]))})', f'scat {user_id} {msg_id} sdone', 'footer')
-    await editMessage(query.message, f"<b>Select the category where you want to upload</b>\n\n<i><b>Upload Category:</b></i> <code>{cat_name}</code>\n\n<b>Timeout:</b> 60 sec", buttons.build_menu(3))
+    await editMessage(query.message, f"<b>Select the category where you want to upload</b>\n\n<i><b>Upload Category:</b></i> <code>{cat_name}</code>\n\n<b>Timeout:</b> 60 sec", buttons.build(3))
 
 
 @new_task
@@ -139,7 +139,7 @@ async def confirm_dump(client, query):
     buttons.ibutton('Upload in All', f'dcat {user_id} {msg_id} All', 'header')
     buttons.ibutton('Cancel', f'dcat {user_id} {msg_id} dcancel', 'footer')
     buttons.ibutton(f'Done ({get_readable_time(60 - (time() - bot_cache[msg_id][3]))})', f'dcat {user_id} {msg_id} ddone', 'footer')
-    await editMessage(query.message, f"<b>Select the category where you want to upload</b>\n\n<i><b>Upload Category:</b></i> <code>{cat_name}</code>\n\n<b>Timeout:</b> 60 sec", buttons.build_menu(3))
+    await editMessage(query.message, f"<b>Select the category where you want to upload</b>\n\n<i><b>Upload Category:</b></i> <code>{cat_name}</code>\n\n<b>Timeout:</b> 60 sec", buttons.build(3))
 
 
 bot.add_handler(MessageHandler(change_category, filters=command(BotCommands.CategorySelect) & CustomFilters.authorized))

@@ -43,7 +43,7 @@ async def start(client, message):
     buttons = ButtonMaker()
     buttons.ubutton(BotTheme('ST_BN1_NAME'), BotTheme('ST_BN1_URL'))
     buttons.ubutton(BotTheme('ST_BN2_NAME'), BotTheme('ST_BN2_URL'))
-    reply_markup = buttons.build_menu(2)
+    reply_markup = buttons.build(2)
     if len(message.command) > 1 and message.command[1] == "kpsmlx":
         await deleteMessage(message)
     elif len(message.command) > 1 and config_dict['TOKEN_TIMEOUT']:
@@ -58,7 +58,7 @@ async def start(client, message):
         elif config_dict['LOGIN_PASS'] is not None and data['token'] == config_dict['LOGIN_PASS']:
             return await sendMessage(message, BotTheme('LOGGED_PASSWORD'))
         buttons.ibutton(BotTheme('ACTIVATE_BUTTON'), f'pass {input_token}', 'header')
-        reply_markup = buttons.build_menu(2)
+        reply_markup = buttons.build(2)
         msg = BotTheme('TOKEN_MSG', token=input_token, validity=get_readable_time(int(config_dict["TOKEN_TIMEOUT"])))
         return await sendMessage(message, msg, reply_markup)
     elif await CustomFilters.authorized(client, message):
@@ -130,7 +130,7 @@ async def log(_, message):
     buttons = ButtonMaker()
     buttons.ibutton(BotTheme('LOG_DISPLAY_BT'), f'kpsmlx {message.from_user.id} logdisplay')
     buttons.ibutton(BotTheme('WEB_PASTE_BT'), f'kpsmlx {message.from_user.id} webpaste')
-    await sendFile(message, 'log.txt', buttons=buttons.build_menu(1))
+    await sendFile(message, 'log.txt', buttons=buttons.build(1))
 
 
 async def search_images():
@@ -168,7 +168,7 @@ async def bot_help(client, message):
     buttons.ibutton(BotTheme('MICS_BT'), f'kpsmlx {user_id} guide miscs')
     buttons.ibutton(BotTheme('O_S_BT'), f'kpsmlx {user_id} guide admin')
     buttons.ibutton(BotTheme('CLOSE_BT'), f'kpsmlx {user_id} close')
-    await sendMessage(message, BotTheme('HELP_HEADER'), buttons.build_menu(2))
+    await sendMessage(message, BotTheme('HELP_HEADER'), buttons.build(2))
 
 
 async def restart_notification():

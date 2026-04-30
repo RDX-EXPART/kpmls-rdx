@@ -178,7 +178,7 @@ class RcloneList:
         if self.path:
             buttons.ibutton('Back To Root', 'rcq root', position='footer')
         buttons.ibutton('Cancel', 'rcq cancel', position='footer')
-        button = buttons.build_menu(f_cols=2)
+        button = buttons.build(f_cols=2)
         msg = 'Choose Path:' + ('\nTransfer Type: <i>Download</i>' if self.list_status ==
                                 'rcd' else '\nTransfer Type: <i>Upload</i>')
         if self.list_status == 'rcu':
@@ -241,7 +241,7 @@ class RcloneList:
             if self.__rc_user and self.__rc_owner:
                 buttons.ibutton('Back', 'rcq back re', position='footer')
             buttons.ibutton('Cancel', 'rcq cancel', position='footer')
-            button = buttons.build_menu(2)
+            button = buttons.build(2)
             await self.__send_list_message(msg, button)
 
     async def list_config(self):
@@ -254,7 +254,7 @@ class RcloneList:
             buttons.ibutton('Owner Config', 'rcq owner')
             buttons.ibutton('My Config', 'rcq user')
             buttons.ibutton('Cancel', 'rcq cancel')
-            button = buttons.build_menu(2)
+            button = buttons.build(2)
             await self.__send_list_message(msg, button)
         else:
             self.config_path = 'wcl.conf' if self.__rc_owner else self.user_rcc_path

@@ -112,7 +112,7 @@ async def __search(key, site, message, method):
     link = await __getResult(search_results, key, message, method)
     buttons = ButtonMaker()
     buttons.ubutton("🔎 VIEW", link)
-    button = buttons.build_menu(1)
+    button = buttons.build(1)
     await editMessage(message, msg, button)
 
 
@@ -190,7 +190,7 @@ def __api_buttons(user_id, method):
     for data, name in SITES.items():
         buttons.ibutton(name, f"torser {user_id} {data} {method}")
     buttons.ibutton("Cancel", f"torser {user_id} cancel")
-    return buttons.build_menu(2)
+    return buttons.build(2)
 
 
 async def __plugin_buttons(user_id):
@@ -206,7 +206,7 @@ async def __plugin_buttons(user_id):
                         f"torser {user_id} {siteName} plugin")
     buttons.ibutton('All', f"torser {user_id} all plugin")
     buttons.ibutton("Cancel", f"torser {user_id} cancel")
-    return buttons.build_menu(2)
+    return buttons.build(2)
 
 
 async def torrentSearch(_, message):
@@ -216,7 +216,7 @@ async def torrentSearch(_, message):
     SEARCH_PLUGINS = config_dict['SEARCH_PLUGINS']
     msg, btn = await checking_access(user_id)
     if msg is not None:
-        await sendMessage(message, msg, btn.build_menu(1))
+        await sendMessage(message, msg, btn.build(1))
         return
     if SITES is None and not SEARCH_PLUGINS:
         await sendMessage(message, "No API link or search PLUGINS added for this function")
@@ -226,13 +226,13 @@ async def torrentSearch(_, message):
         buttons.ibutton('Trending', f"torser {user_id} apitrend")
         buttons.ibutton('Recent', f"torser {user_id} apirecent")
         buttons.ibutton("Cancel", f"torser {user_id} cancel")
-        button = buttons.build_menu(2)
+        button = buttons.build(2)
         await sendMessage(message, "Send a search key along with command", button)
     elif SITES is not None and SEARCH_PLUGINS:
         buttons.ibutton('Api', f"torser {user_id} apisearch")
         buttons.ibutton('Plugins', f"torser {user_id} plugin")
         buttons.ibutton("Cancel", f"torser {user_id} cancel")
-        button = buttons.build_menu(2)
+        button = buttons.build(2)
         await sendMessage(message, 'Choose tool to search:', button)
     elif SITES is not None:
         button = __api_buttons(user_id, "apisearch")

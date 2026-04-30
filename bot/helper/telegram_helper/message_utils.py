@@ -491,7 +491,7 @@ async def open_category_btns(message):
             if _tick: _tick, cat_name = False, _name
     buttons.ibutton('Cancel', f'scat {user_id} {msg_id} scancel', 'footer')
     buttons.ibutton(f'Done (60)', f'scat {user_id} {msg_id} sdone', 'footer')
-    prompt = await sendMessage(message, f'<b>Select the category where you want to upload</b>\n\n<i><b>Upload Category:</b></i> <code>{cat_name}</code>\n\n<b>Timeout:</b> 60 sec', buttons.build_menu(3))
+    prompt = await sendMessage(message, f'<b>Select the category where you want to upload</b>\n\n<i><b>Upload Category:</b></i> <code>{cat_name}</code>\n\n<b>Timeout:</b> 60 sec', buttons.build(3))
     start_time = time()
     bot_cache[msg_id] = [None, None, False, False, start_time]
     while time() - start_time <= 60:
@@ -519,7 +519,7 @@ async def open_dump_btns(message):
     buttons.ibutton('Upload in All', f'dcat {user_id} {msg_id} All', 'header')
     buttons.ibutton('Cancel', f'dcat {user_id} {msg_id} dcancel', 'footer')
     buttons.ibutton(f'Done (60)', f'dcat {user_id} {msg_id} ddone', 'footer')
-    prompt = await sendMessage(message, f'<b>Select the Dump category where you want to upload</b>\n\n<i><b>Upload Category:</b></i> <code>{cat_name}</code>\n\n<b>Timeout:</b> 60 sec', buttons.build_menu(3))
+    prompt = await sendMessage(message, f'<b>Select the Dump category where you want to upload</b>\n\n<i><b>Upload Category:</b></i> <code>{cat_name}</code>\n\n<b>Timeout:</b> 60 sec', buttons.build(3))
     start_time = time()
     bot_cache[msg_id] = [None, False, False, start_time]
     while time() - start_time <= 60:

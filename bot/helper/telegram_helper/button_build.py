@@ -33,7 +33,7 @@ class ButtonMaker:
         elif position == 'footer':
             self.__footer_button.append(InlineKeyboardButton(text=key, callback_data=data))
 
-    def build_menu(self, b_cols=1, h_cols=8, fb_cols=2, lb_cols=2, f_cols=8):
+    def build(self, b_cols=1, h_cols=8, fb_cols=2, lb_cols=2, f_cols=8):
         menu = [self.__button[i:i+b_cols]
                 for i in range(0, len(self.__button), b_cols)]
         if self.__header_button:

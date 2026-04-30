@@ -75,7 +75,7 @@ async def cancell_all_buttons(_, message):
     buttons.ibutton("Paused", f"canall {MirrorStatus.STATUS_PAUSED}")
     buttons.ibutton("All", "canall all")
     buttons.ibutton("Close", "canall close")
-    button = buttons.build_menu(2)
+    button = buttons.build(2)
     can_msg = await sendMessage(message, 'Choose tasks to cancel.', button)
     await auto_delete_message(message, can_msg)
 
