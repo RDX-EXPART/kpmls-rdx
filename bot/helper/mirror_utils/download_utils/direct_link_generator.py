@@ -208,15 +208,16 @@ def _safe_int(value):
             return int(v)
     return 0
 
+    return next(iter(links.values()))
 def _pick_best_link(links: dict):
     priority = (
         "instant dl",
         "fast cloud / zipdisk",
         "fast cloud",
-        "fsl",
-        "fsl server",
-        "10gbps",
         "fslv2",
+        "fsl server",
+        "fsl",
+        "10gbps",
         "zipdisk",
         "direct download",
         "cloud resume download",
