@@ -213,6 +213,10 @@ def _pick_best_link(links: dict):
         "instant dl",
         "fast cloud / zipdisk",
         "fast cloud",
+        "fsl",
+        "fsl server",
+        "10gbps",
+        "fslv2",
         "zipdisk",
         "direct download",
         "cloud resume download",
@@ -227,6 +231,7 @@ def _pick_best_link(links: dict):
 
     for p in priority:
         if p in lowered:
+            logger.info(f'Link: {lowered[p]}')
             return lowered[p]
 
     return next(iter(links.values()))
