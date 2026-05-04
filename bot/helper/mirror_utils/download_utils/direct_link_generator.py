@@ -180,6 +180,10 @@ def direct_link_generator(link):
         return sbembed(link)
     elif is_index_link(link) and link.endswith('/'):
         return gd_index(link, auth)
+    elif any(x in domain for x in ["hubcloud.one", "hubcloud.foo"]):
+        return hubcloud(link)
+    elif domain.lower().endswith("gdflix.net") or domain.lower().endswith("gdflix.dev"):
+        return gdflix(link)
     elif is_share_link(link):
         if 'gdtot' in domain:
             return gdtot(link)
@@ -193,6 +197,129 @@ def direct_link_generator(link):
         raise DirectDownloadLinkException('ERROR: R.I.P Zippyshare')
     else:
         raise DirectDownloadLinkException(f'No Direct link function found for {link}')
+
+
+def _safe_int(value):
+    if isinstance(value, int):
+        return value
+    if isinstance(value, str):
+        v = value.replace(",", "").strip()
+        if v.isdigit():
+            return int(v)
+    return 0
+
+def _pick_best_link(links: dict):
+    priority = (
+        "instant dl",
+        "fast cloud / zipdisk",
+        "fast cloud",
+        "zipdisk",
+        "direct download",
+        "cloud resume download",
+        "quick download",
+        "gofile",
+        "pixeldrain",
+        "megaup",
+        "telegram",
+    )
+
+    lowered = {k.lower(): v for k, v in links.items()}
+
+    for p in priority:
+        if p in lowered:
+            return lowered[p]
+
+    return next(iter(links.values()))
+
+def gdflix(url):
+    try:
+        data = get(f"{FSUB_API}/api/bypass?url={url}").json()
+    except Exception as e:
+        raise DirectDownloadLinkException(f"ERROR: {e.__class__.__name__}")
+
+    if not isinstance(data, dict):
+        raise DirectDownloadLinkException("Invalid GDFlix response")
+
+    # ---------- SINGLE ----------
+    if "files" not in data:
+        links = data.get("links", {})
+        if not links:
+            raise DirectDownloadLinkException("No links found")
+
+        best = _pick_best_link(links)
+        return best
+
+    # ---------- PACK ----------
+    files = data.get("files", [])
+    if not files:
+        raise DirectDownloadLinkException("Empty pack")
+
+    details = {
+        "contents": [],
+        "title": "GDFlix_Pack",
+        "total_size": 0,
+    }
+
+    for f in files:
+        name = f.get("name") or "GDFlix_File"
+        size = f.get("size") or 0
+        links = f.get("links", {})
+
+        if not links:
+            continue
+
+        best = _pick_best_link(links)
+
+        size_bytes = _safe_int(size)
+
+        details["contents"].append({
+            "path": "",
+            "filename": name,
+            "url": best,
+        })
+
+        details["total_size"] += size_bytes
+
+    if not details["contents"]:
+        raise DirectDownloadLinkException("No downloadable files")
+
+    return details
+
+def hubcloud(url):
+    try:
+        data = get(f"{FSUB_API}/api/bypass?url={url}").json()
+    except Exception as e:
+        raise DirectDownloadLinkException(f"ERROR: {e.__class__.__name__}")
+
+    if not isinstance(data, dict):
+        raise DirectDownloadLinkException("Invalid HubCloud response")
+
+    links = data.get("links", {})
+    title = data.get("title") or "HubCloud_File"
+    size = data.get("size") or 0
+
+    if not links:
+        raise DirectDownloadLinkException("No links found")
+
+    # ---------- SINGLE ----------
+    if len(links) == 1:
+        return next(iter(links.values()))
+
+    # ---------- MULTI ----------
+    best = _pick_best_link(links)
+
+    details = {
+        "contents": [{
+            "path": "",
+            "filename": title,
+            "url": best,
+        }],
+        "title": title,
+        "total_size": _safe_int(size),
+    }
+
+    return details
+    
 
 
 def real_debrid(url: str, tor=False):

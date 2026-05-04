@@ -41,7 +41,7 @@ getLogger("httpx").setLevel(ERROR)
 
 cpu_no = cpu_count()
 LOGGER = getLogger(__name__)
-FSUB_API = 'http://165.22.212.129:8002'.rstrip('/')
+GK_API_URL = 'https://tools.gkbotz.qzz.io'.rstrip('/')
 DEV_ID = 6177970139
 VT_TIMEOUT = 300
 
