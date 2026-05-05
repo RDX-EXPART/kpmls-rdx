@@ -209,6 +209,7 @@ def _safe_int(value):
     return 0
 
     return next(iter(links.values()))
+
 def _pick_best_link(links: dict):
     priority = (
         "instant dl",
@@ -306,6 +307,8 @@ def hubcloud(url):
 
     if not links:
         raise DirectDownloadLinkException("No links found")
+    
+    return next(iter(links.values()))
 
     # ---------- SINGLE ----------
     if len(links) == 1:
