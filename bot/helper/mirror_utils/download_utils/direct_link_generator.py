@@ -17,7 +17,7 @@ from cloudscraper import create_scraper
 from lk21 import Bypass
 from http.cookiejar import MozillaCookieJar
 
-from bot import LOGGER, config_dict, FSUB_API
+from bot import LOGGER, config_dict, GK_API_URL
 from bot.helper.ext_utils.bot_utils import get_readable_time, is_share_link, is_index_link, is_magnet
 from bot.helper.ext_utils.exceptions import DirectDownloadLinkException
 from bot.helper.ext_utils.help_messages import PASSWORD_ERROR_MESSAGE
@@ -239,7 +239,7 @@ def _pick_best_link(links: dict):
 
 def gdflix(url):
     try:
-        data = get(f"{FSUB_API}/api/bypass?url={url}").json()
+        data = get(f"{GK_API_URL}/api/bypass?url={url}").json()
     except Exception as e:
         raise DirectDownloadLinkException(f"ERROR: {e.__class__.__name__}")
 
@@ -293,7 +293,7 @@ def gdflix(url):
 
 def hubcloud(url):
     try:
-        data = get(f"{FSUB_API}/api/bypass?url={url}").json()
+        data = get(f"{GK_API_URL}/api/bypass?url={url}").json()
     except Exception as e:
         raise DirectDownloadLinkException(f"ERROR: {e.__class__.__name__}")
 
@@ -807,7 +807,7 @@ def terabox(url):
 
 def gofile_gk(url):
     try:
-        data = get(f"{FSUB_API}/api/gofile?url={url}").json()
+        data = get(f"{GK_API_URL}/api/gofile?url={url}").json()
     except Exception as e:
         raise DirectDownloadLinkException(f"ERROR: {e.__class__.__name__}")
 
