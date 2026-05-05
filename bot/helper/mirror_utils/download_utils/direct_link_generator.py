@@ -199,17 +199,40 @@ def direct_link_generator(link):
         raise DirectDownloadLinkException(f'No Direct link function found for {link}')
 
 
-def _safe_int(value):
-    if isinstance(value, int):
-        return value
-    if isinstance(value, str):
-        v = value.replace(",", "").strip()
-        if v.isdigit():
-            return int(v)
-    return 0
+def get_size_bytes(size):
+    if not isinstance(size, str):
+        return 0
 
-    return next(iter(links.values()))
+    s = size.strip().lower()
 
+    match = match(r'^([\d\.]+)\s*([kmgt]?b?)$', s)
+    if not match:
+        return 0
+
+    num_str, unit = match.groups()
+
+    try:
+        value = float(num_str)
+    except ValueError:
+        return 0
+
+    unit = unit.strip()
+
+    if unit in ("b", ""):
+        multiplier = 1
+    elif unit in ("kb", "k"):
+        multiplier = 1024
+    elif unit in ("mb", "m"):
+        multiplier = 1024 ** 2
+    elif unit in ("gb", "g"):
+        multiplier = 1024 ** 3
+    elif unit in ("tb", "t"):
+        multiplier = 1024 ** 4
+    else:
+        return 0
+
+    return int(value * multiplier)
+    
 def _pick_best_link(links: dict):
     priority = (
         "instant dl",
@@ -277,7 +300,7 @@ def gdflix(url):
 
         best = _pick_best_link(links)
 
-        size_bytes = _safe_int(size)
+        size_bytes = get_size_bytes(size)
 
         details["contents"].append({
             "path": "",
@@ -324,7 +347,7 @@ def hubcloud(url):
             "url": best,
         }],
         "title": title,
-        "total_size": _safe_int(size),
+        "total_size": get_size_bytes(size),
     }
 
     return details
