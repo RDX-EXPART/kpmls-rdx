@@ -369,7 +369,7 @@ def get_readable_message():
         except Exception:
             pass
 
-        msg += f"<b>⋗ Stop 📛 » /{BotCommands.CancelMirror}_{download.gid()}</b>\n\n"
+        msg += f"<b>⋗ Stop » /{BotCommands.CancelMirror}_{download.gid()}</b>\n\n"
         
 
     if len(msg) == 0:
