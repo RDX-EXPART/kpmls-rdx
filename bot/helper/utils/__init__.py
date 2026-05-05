@@ -1,4 +1,4 @@
-import aiohttp
+import aiohttp, re
 
 from asyncio import sleep, TimeoutError
 
@@ -181,7 +181,7 @@ def get_size_bytes(size):
 
     s = size.strip().lower()
 
-    _match = match(r'^([\d\.]+)\s*([kmgt]?b?)$', s)
+    _match = re.match(r'^([\d\.]+)\s*([kmgt]?b?)$', s)
     if not _match:
         return 0
 
