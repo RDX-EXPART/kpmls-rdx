@@ -405,6 +405,7 @@ def get_readable_message():
 
     msg += "\n\n<b>🔸 𝗥𝗗𝗫 𝗦𝗧𝗔𝗧𝗦 🔹</b>\n"
     
+    
     msg += f"<b>CPU »</b> {cpu}% ┃ <b>FREE »</b> {free_gb}\n"
     msg += f"<b>RAM »</b> {ram}% ┃ <b>UP »</b> {up}\n"
     msg += f"<b>DL »</b> {get_readable_file_size(dl_speed)}/s ┃ <b>UL »</b> {get_readable_file_size(up_speed)}/s\n"
