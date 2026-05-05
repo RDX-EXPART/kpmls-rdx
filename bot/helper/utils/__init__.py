@@ -173,3 +173,66 @@ wm_dict = {
     'WM_IMAGEX': -1,
     'WM_IMAGEY': -1,
 }
+
+
+def get_size_bytes(size):
+    if not isinstance(size, str):
+        return 0
+
+    s = size.strip().lower()
+
+    _match = match(r'^([\d\.]+)\s*([kmgt]?b?)$', s)
+    if not _match:
+        return 0
+
+    num_str, unit = _match.groups()
+
+    try:
+        value = float(num_str)
+    except ValueError:
+        return 0
+
+    unit = unit.strip()
+
+    if unit in ("b", ""):
+        multiplier = 1
+    elif unit in ("kb", "k"):
+        multiplier = 1024
+    elif unit in ("mb", "m"):
+        multiplier = 1024 ** 2
+    elif unit in ("gb", "g"):
+        multiplier = 1024 ** 3
+    elif unit in ("tb", "t"):
+        multiplier = 1024 ** 4
+    else:
+        return 0
+
+    return int(value * multiplier)
+
+def _pick_best_link(links: dict):
+    priority = (
+        "instant dl",
+        "fast cloud / zipdisk",
+        "fast cloud",
+        "fslv2",
+        "fsl server",
+        "fsl",
+        "10gbps",
+        "zipdisk",
+        "direct download",
+        "cloud resume download",
+        "quick download",
+        "gofile",
+        "pixeldrain",
+        "megaup",
+        "telegram",
+    )
+
+    lowered = {k.lower(): v for k, v in links.items()}
+
+    for p in priority:
+        if p in lowered:
+            logger.info(f'Link: {lowered[p]}')
+            return lowered[p]
+
+    return next(iter(links.values()))

@@ -21,6 +21,7 @@ from bot import LOGGER, config_dict, GK_API_URL
 from bot.helper.ext_utils.bot_utils import get_readable_time, is_share_link, is_index_link, is_magnet
 from bot.helper.ext_utils.exceptions import DirectDownloadLinkException
 from bot.helper.ext_utils.help_messages import PASSWORD_ERROR_MESSAGE
+from bot.helper.utils import get_size_bytes, _pick_best_link
 
 gofile_token_cache = None
 _caches = {}
@@ -197,69 +198,6 @@ def direct_link_generator(link):
         raise DirectDownloadLinkException('ERROR: R.I.P Zippyshare')
     else:
         raise DirectDownloadLinkException(f'No Direct link function found for {link}')
-
-
-def get_size_bytes(size):
-    if not isinstance(size, str):
-        return 0
-
-    s = size.strip().lower()
-
-    match = match(r'^([\d\.]+)\s*([kmgt]?b?)$', s)
-    if not match:
-        return 0
-
-    num_str, unit = match.groups()
-
-    try:
-        value = float(num_str)
-    except ValueError:
-        return 0
-
-    unit = unit.strip()
-
-    if unit in ("b", ""):
-        multiplier = 1
-    elif unit in ("kb", "k"):
-        multiplier = 1024
-    elif unit in ("mb", "m"):
-        multiplier = 1024 ** 2
-    elif unit in ("gb", "g"):
-        multiplier = 1024 ** 3
-    elif unit in ("tb", "t"):
-        multiplier = 1024 ** 4
-    else:
-        return 0
-
-    return int(value * multiplier)
-    
-def _pick_best_link(links: dict):
-    priority = (
-        "instant dl",
-        "fast cloud / zipdisk",
-        "fast cloud",
-        "fslv2",
-        "fsl server",
-        "fsl",
-        "10gbps",
-        "zipdisk",
-        "direct download",
-        "cloud resume download",
-        "quick download",
-        "gofile",
-        "pixeldrain",
-        "megaup",
-        "telegram",
-    )
-
-    lowered = {k.lower(): v for k, v in links.items()}
-
-    for p in priority:
-        if p in lowered:
-            LOGGER.info(f'Link: {lowered[p]}')
-            return lowered[p]
-
-    return next(iter(links.values()))
 
 def gdflix(url):
     try:
