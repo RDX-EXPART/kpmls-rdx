@@ -23,7 +23,7 @@ from bot.helper.utils import request
 # You can override this from config.env with: TMDB_API_KEY=your_key
 TMDB_API_KEY = environ.get("TMDB_API_KEY", "7ca77e33a9a5e93a374e21620a8941f0").strip()
 TMDB_API = "https://api.themoviedb.org/3"
-TMDB_IMG = "https://image.tmdb.org/t/p/w780"
+TMDB_IMG = "https://image.tmdb.org/t/p/w1280"
 POSTER_WAITERS = {}
 
 _BAD_TOKENS = (
@@ -168,8 +168,6 @@ async def _tmdb_image_urls(item, limit=5):
     media_type = item.get("media_type")
     tmdb_id = item.get("id")
     urls = []
-    if item.get("poster_path"):
-        urls.append(f"{TMDB_IMG}{item['poster_path']}")
     if media_type in ("movie", "tv") and tmdb_id:
         data = await _tmdb_request(f"/{media_type}/{tmdb_id}/images", {"include_image_language": "en,null"})
         posters = []
