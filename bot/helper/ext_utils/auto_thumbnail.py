@@ -365,14 +365,38 @@ async def choose_auto_thumb(message, file_name, user_id):
                 return poster
         return None
 
-    sent = await bot.send_photo(
-        chat_id=message.chat.id,
-        photo=urls[0],
-        caption=(
-            "🎬 <b>Choose a poster for your upload.</b>\n\n"
-            f"<b>Name:</b> <code>{escape(title)}</code>\n"
-            "Use Prev/Next, then tap Select This."
-        ),
+    title2 = item.get("title") or item.get("name") or title
+
+rating = item.get("vote_average", "N/A")
+try:
+    rating = round(float(rating), 1)
+except:
+    rating = "N/A"
+
+lang = item.get("original_language", "N/A").upper()
+
+release = (
+    item.get("release_date")
+    or item.get("first_air_date")
+    or ""
+)
+
+year = release[:4] if release else "----"
+
+media = item.get("media_type", "movie").title()
+
+sent = await bot.send_photo(
+    chat_id=message.chat.id,
+    photo=urls[0],
+    caption=(
+        f"🎬 <b>{escape(title2)} ({year})</b>\n\n"
+        f"⭐ <b>Rating:</b> {rating}/10\n"
+        f"🌍 <b>Language:</b> {lang}\n"
+        f"🎭 <b>Type:</b> {media}\n"
+        f"🖼 <b>Poster:</b> Landscape HD\n\n"
+        "⬅️ Previous | Next ➡️\n"
+        "✅ Tap Select Poster"
+    ),
         reply_to_message_id=message.id,
         reply_markup=_poster_buttons(user_id, 0, 0, len(urls)),
     )
