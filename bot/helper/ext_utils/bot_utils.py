@@ -382,7 +382,7 @@ def get_readable_message():
         msg += f"<b>┆ Done » {download.processed_bytes()}</b>\n"
         msg += f"<b>┆ Total » {download.size()}</b>\n"
         msg += f"<b>┆ Status » {status_text}</b>\n"
-        msg += f"<b>┆ Speed » {download.speed()}\n"
+        msg += f"<b>┆ Speed » {download.speed()}</b>\n"
         msg += f"<b>┆ ETA » {download.eta()}</b>\n"
 
         
