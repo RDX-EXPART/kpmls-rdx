@@ -233,7 +233,7 @@ def get_progress_bar_string(pct):
     elif p < 75:  indicator = '🟡'
     else:         indicator = '🔴'
 
-    return f"{indicator}〔{bar}〕"
+    return f"[{bar}] {int(p)}%"
 
 def get_all_versions():
     try:
