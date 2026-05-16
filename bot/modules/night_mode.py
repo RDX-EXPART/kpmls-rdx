@@ -14,8 +14,8 @@ How it works:
 
 Config stored in config_dict:
   NIGHT_MODE        True / False
-  NIGHT_START       "01:00"   (24-h HH:MM, local server time)
-  NIGHT_END         "08:00"
+  NIGHT_START       "23:00"   (24-h HH:MM, local server time)
+  NIGHT_END         "06:00"
   NIGHT_SPEED_LIMIT 1048576   (bytes/s — default 1 MB/s)
 
 The background loop is started from bot/__main__.py (see integration guide).
@@ -44,7 +44,7 @@ from bot.helper.ext_utils.db_handler import DbManger
 # ────────────────────────────────────────────
 NIGHT_MODE_DEFAULTS = {
     'NIGHT_MODE':        False,
-    'NIGHT_START':       '01:00',
+    'NIGHT_START':       '23:00',
     'NIGHT_END':         '08:00',
     'NIGHT_SPEED_LIMIT': 1_048_576,   # 1 MB/s in bytes
 }
