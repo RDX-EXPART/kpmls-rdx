@@ -380,7 +380,7 @@ def add_handlers():
     bot.add_handler(
         MessageHandler(
             nightmode_command,
-            filters=command(BotCommands.NightModeCommand) & CustomFilters.owner,
+            filters=command(BotCommands.NightModeCommand) & CustomFilters.sudo,
         )
     )
     bot.add_handler(
