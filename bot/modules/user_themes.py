@@ -318,7 +318,7 @@ def get_user_progress_bar(pct, user_id: int, length: int = 12) -> str:
     else:
         indicator = style['high']
 
-    return f"{indicator}{bar_str}"
+    return f"[{bar}] {int(p)}%"
 
 
 def get_user_emoji(user_id: int, key: str) -> str:
