@@ -31,47 +31,66 @@ PROGRESS_STYLES = {
         'prefix': '〔', 'suffix': '〕',
         'low': '🟢', 'mid': '🟡', 'high': '🔴',
     },
+
     'classic': {
         'name': '▓ Classic',
         'filled': '▓', 'empty': '░',
         'prefix': '[', 'suffix': ']',
         'low': '🟢', 'mid': '🟡', 'high': '🔴',
     },
+
     'blocks': {
         'name': '█ Blocks',
         'filled': '█', 'empty': '░',
         'prefix': '⟦', 'suffix': '⟧',
         'low': '💚', 'mid': '💛', 'high': '❤️',
     },
+
     'dots': {
         'name': '● Dots',
         'filled': '●', 'empty': '○',
         'prefix': '(', 'suffix': ')',
         'low': '🟢', 'mid': '🟡', 'high': '🔴',
     },
+
     'arrows': {
         'name': '▶ Arrows',
         'filled': '▶', 'empty': '─',
         'prefix': '⟨', 'suffix': '⟩',
         'low': '🚀', 'mid': '⚡', 'high': '🔥',
     },
+
     'fire': {
         'name': '🔥 Fire',
         'filled': '🔥', 'empty': '💧',
         'prefix': '', 'suffix': '',
         'low': '✅', 'mid': '⚠️', 'high': '🆘',
     },
+
     'minimal': {
         'name': '━ Minimal',
         'filled': '━', 'empty': '─',
         'prefix': '', 'suffix': '',
         'low': '◉', 'mid': '◉', 'high': '◉',
     },
+
     'neon': {
         'name': '◆ Neon',
         'filled': '◆', 'empty': '◇',
         'prefix': '【', 'suffix': '】',
         'low': '🔵', 'mid': '🟣', 'high': '🔴',
+    },
+
+    'smooth': {
+        'name': '⚪ Smooth',
+        'filled': '⬤',
+        'empty': '○',
+        'partial': ['○', '◔', '◑', '◕'],
+        'prefix': '[',
+        'suffix': ']',
+        'low': '🟢',
+        'mid': '🟡',
+        'high': '🔴',
     },
 }
 
@@ -86,6 +105,7 @@ EMOJI_PACKS = {
         'size': '📦', 'time': '⏰', 'file': '📁',
         'progress': '📊', 'cancel': '🚫', 'seed': '🌱',
     },
+
     'fire': {
         'name': '🔥 Fire',
         'upload': '🔥', 'download': '⬇️', 'done': '🎉',
@@ -93,6 +113,7 @@ EMOJI_PACKS = {
         'size': '💾', 'time': '⏱️', 'file': '📂',
         'progress': '📈', 'cancel': '💀', 'seed': '🌿',
     },
+
     'space': {
         'name': '🚀 Space',
         'upload': '🛸', 'download': '🌠', 'done': '🌌',
@@ -100,6 +121,7 @@ EMOJI_PACKS = {
         'size': '🪐', 'time': '🕐', 'file': '🗂️',
         'progress': '🔭', 'cancel': '💫', 'seed': '🌍',
     },
+
     'minimal': {
         'name': '· Minimal',
         'upload': '↑', 'download': '↓', 'done': '✓',
@@ -107,12 +129,85 @@ EMOJI_PACKS = {
         'size': '#', 'time': '@', 'file': '/',
         'progress': '%', 'cancel': 'X', 'seed': 'S',
     },
+
     'cute': {
         'name': '🌸 Cute',
         'upload': '🌸', 'download': '💫', 'done': '🌟',
         'error': '😿', 'wait': '🌀', 'speed': '💨',
         'size': '🎀', 'time': '🕐', 'file': '📋',
         'progress': '🌈', 'cancel': '💔', 'seed': '🌺',
+    },
+
+    'neon': {
+        'name': '💜 Neon',
+        'upload': '💜', 'download': '💙', 'done': '🩵',
+        'error': '❤️', 'wait': '🌀', 'speed': '⚡',
+        'size': '💾', 'time': '⌛', 'file': '📂',
+        'progress': '🟣', 'cancel': '🚫', 'seed': '🌱',
+    },
+
+    'cyber': {
+        'name': '🤖 Cyber',
+        'upload': '⬆️', 'download': '⬇️', 'done': '✔️',
+        'error': '⚠️', 'wait': '🛰️', 'speed': '⚙️',
+        'size': '🧩', 'time': '🕓', 'file': '🗄️',
+        'progress': '📡', 'cancel': '⛔', 'seed': '🌐',
+    },
+
+    'royal': {
+        'name': '👑 Royal',
+        'upload': '👑', 'download': '📜', 'done': '🏆',
+        'error': '⚔️', 'wait': '⏳', 'speed': '🐎',
+        'size': '💰', 'time': '🕰️', 'file': '📚',
+        'progress': '✨', 'cancel': '🚷', 'seed': '🌿',
+    },
+
+    'anime': {
+        'name': '🌸 Anime',
+        'upload': '🍥', 'download': '🎴', 'done': '✨',
+        'error': '💢', 'wait': '🌀', 'speed': '💨',
+        'size': '🎒', 'time': '🕐', 'file': '📓',
+        'progress': '🌈', 'cancel': '💔', 'seed': '🌱',
+    },
+
+    'matrix': {
+        'name': '🟢 Matrix',
+        'upload': '🟢', 'download': '🔽', 'done': '☑️',
+        'error': '❎', 'wait': '⌛', 'speed': '⚡',
+        'size': '💽', 'time': '🕒', 'file': '🗃️',
+        'progress': '📗', 'cancel': '🚫', 'seed': '🌱',
+    },
+
+    'ocean': {
+        'name': '🌊 Ocean',
+        'upload': '🚤', 'download': '🐋', 'done': '🏝️',
+        'error': '🌪️', 'wait': '🌊', 'speed': '💧',
+        'size': '⚓', 'time': '🕓', 'file': '🪸',
+        'progress': '🐬', 'cancel': '⛔', 'seed': '🌱',
+    },
+
+    'dark': {
+        'name': '🌑 Dark',
+        'upload': '🖤', 'download': '⬛', 'done': '☠️',
+        'error': '💀', 'wait': '🌑', 'speed': '⚡',
+        'size': '📦', 'time': '⌚', 'file': '🗂️',
+        'progress': '📉', 'cancel': '🚷', 'seed': '🌘',
+    },
+
+    'gaming': {
+        'name': '🎮 Gaming',
+        'upload': '🎯', 'download': '🕹️', 'done': '🏅',
+        'error': '👾', 'wait': '⌛', 'speed': '🚀',
+        'size': '💿', 'time': '⏰', 'file': '📂',
+        'progress': '🎲', 'cancel': '❌', 'seed': '🌱',
+    },
+
+    'premium': {
+        'name': '💎 Premium',
+        'upload': '💎', 'download': '📥', 'done': '👑',
+        'error': '🚫', 'wait': '⏳', 'speed': '⚜️',
+        'size': '💼', 'time': '🕰️', 'file': '🗃️',
+        'progress': '📊', 'cancel': '❎', 'seed': '🌿',
     },
 }
 
