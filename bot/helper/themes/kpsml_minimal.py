@@ -256,52 +256,71 @@ Type {help_command} to get a list of available commands</b>'''
     # ---------------------
 
     # USER Setting --> user_setting.py 
-    USER_SETTING = '''㊂ <b><u>User Settings :</u></b>
-        
-┎<b> Name :</b> {NAME} ( <code>{ID}</code> )
-┠<b> Username :</b> {USERNAME}
-┠<b> Telegram DC :</b> {DC}
-┖<b> Language :</b> {LANG}
+    USER_SETTING = '''╭━━━ ✨💖 𝑼𝒔𝒆𝒓 𝑺𝒆𝒕𝒕𝒊𝒏𝒈𝒔 💖✨ ━━━╮
 
-➲ <u><b>Available Args:</b></u>
-• <b>-s</b> or <b>-set</b>: Set Directly via Arg'''
+👤 <b>Name :</b> {NAME}
+🆔 <code>{ID}</code>
 
-    UNIVERSAL = '''㊂ <b><u>Universal Settings : {NAME}</u></b>
+├ 🌐 Username        ➜ {USERNAME}
+├ 📡 Telegram DC     ➜ <code>{DC}</code>
+├ 🌍 Language        ➜ {LANG}
 
-┎<b> YT-DLP Options :</b> <b><code>{YT}</code></b>
-┠<b> Daily Tasks :</b> <code>{DT}</code> per day
-┠<b> Last Bot Used :</b> <code>{LAST_USED}</code>
-┠<b> User Session :</b> <code>{USESS}</code>
-┠<b> MediaInfo Mode :</b> <code>{MEDIAINFO}</code>
-┠<b> Save Mode :</b> <code>{SAVE_MODE}</code>
-┖<b> User Bot PM :</b> <code>{BOT_PM}</code>'''
+╰━━━ ⚡ Available Args ⚡ ━━━╯
+➜ <b>-s</b> / <b>-set</b> : Set Directly via Arg
+'''
 
-    MIRROR = '''㊂ <b><u>Mirror/Clone Settings : {NAME}</u></b>
 
-┎<b> RClone Config :</b> <i>{RCLONE}</i>
-┠<b> Mirror Prefix :</b> <code>{MPREFIX}</code>
-┠<b> Mirror Suffix :</b> <code>{MSUFFIX}</code>
-┠<b> Mirror Remname :</b> <code>{MREMNAME}</code>
-┠<b> DDL Server(s) :</b> <i>{DDL_SERVER}</i>
-┠<b> User TD Mode :</b> <i>{TMODE}</i>
-┠<b> Total User TD(s) :</b> <i>{USERTD}</i>
-┖<b> Daily Mirror :</b> <code>{DM}</code> per day'''
+UNIVERSAL = '''╭━━━ 🌌💎 𝑼𝒏𝒊𝒗𝒆𝒓𝒔𝒂𝒍 𝑺𝒆𝒕𝒕𝒊𝒏𝒈𝒔 💎🌌 ━━━╮
 
-    LEECH = '''㊂ <b><u>Leech Settings for {NAME}</u></b>
+👤 <b>User :</b> {NAME}
 
-┎<b> Daily Leech : </b><code>{DL}</code> per day
-┠<b> Leech Type :</b> <i>{LTYPE}</i>
-┠<b> Custom Thumbnail :</b> <i>{THUMB}</i>
-┠<b> Leech Split Size :</b> <code>{SPLIT_SIZE}</code>
-┠<b> Equal Splits :</b> <i>{EQUAL_SPLIT}</i>
-┠<b> Media Group :</b> <i>{MEDIA_GROUP}</i>
-┠<b> Leech Caption :</b> <code>{LCAPTION}</code>
-┠<b> Leech Prefix :</b> <code>{LPREFIX}</code>
-┠<b> Leech Suffix :</b> <code>{LSUFFIX}</code>
-┠<b> Leech Remname :</b> <code>{LREMNAME}</code>
-┠<b> Leech Dumps :</b> <code>{LDUMP}</code>
-┠<b> Leech Attachment :</b> <code>{ATTACHMENT}</code>
-┖<b> Leech Metadata :</b> <b><code>{METADATA}</code></b>'''
+├ 🎬 YT-DLP Options  ➜ <code>{YT}</code>
+├ 📦 Daily Tasks     ➜ <code>{DT}</code>
+├ 🕒 Last Used       ➜ <code>{LAST_USED}</code>
+├ 🔑 User Session    ➜ <code>{USESS}</code>
+├ 📑 MediaInfo Mode  ➜ <code>{MEDIAINFO}</code>
+├ 💾 Save Mode       ➜ <code>{SAVE_MODE}</code>
+├ 🤖 User Bot PM     ➜ <code>{BOT_PM}</code>
+
+╰━━━━━━━━━━━━━━━━━━━━━━╯
+'''
+
+
+MIRROR = '''╭━━━ 🪞✨ 𝑴𝒊𝒓𝒓𝒐𝒓 𝑺𝒆𝒕𝒕𝒊𝒏𝒈𝒔 ✨🪞 ━━━╮
+
+👤 <b>User :</b> {NAME}
+
+├ ☁️ RClone Config   ➜ <i>{RCLONE}</i>
+├ 🌸 Mirror Prefix   ➜ <code>{MPREFIX}</code>
+├ 💫 Mirror Suffix   ➜ <code>{MSUFFIX}</code>
+├ 🪄 Mirror Rename   ➜ <code>{MREMNAME}</code>
+├ 🚀 DDL Server      ➜ <i>{DDL_SERVER}</i>
+├ 📂 User TD Mode    ➜ <i>{TMODE}</i>
+├ 🗂️ Total User TD   ➜ <i>{USERTD}</i>
+├ 📦 Daily Mirror    ➜ <code>{DM}</code>
+
+╰━━━━━━━━━━━━━━━━━━━━━━╯
+'''
+
+
+LEECH = '''╭━━━ ✨💖 𝑳𝒆𝒆𝒄𝒉 𝑺𝒆𝒕𝒕𝒊𝒏𝒈𝒔 💖✨ ━━━╮
+
+👤 <b>Name :</b> {NAME}
+🆔 <code>{ID}</code>
+
+├ 📦 Daily Leech     ➜ <code>{DL}</code>
+├ 🎬 Leech Type      ➜ <i>{LTYPE}</i>
+├ 🖼️ Thumbnail       ➜ <i>{THUMB}</i>
+├ ✂️ Split Size      ➜ <code>{SPLIT_SIZE}</code>
+├ ⚖️ Equal Splits    ➜ <i>{EQUAL_SPLIT}</i>
+├ 👥 Media Group     ➜ <i>{MEDIA_GROUP}</i>
+├ 📝 Caption         ➜ <code>{LCAPTION}</code>
+├ 🌸 Prefix          ➜ <code>{LPREFIX}</code>
+├ 💫 Suffix          ➜ <code>{LSUFFIX}</code>
+├ 🪄 Auto Rename     ➜ <code>{LREMNAME}</code>
+├ 📂 Dumps           ➜ <code>{LDUMP}</code>
+├ 📎 Attachment      ➜ <code>{ATTACHMENT}</code>
+╰ 🧬 Metadata        ➜ <code>{METADATA}</code>'''
 
     # AI Caption Settings strings (used in bot_settings module)
     AI_CAPTION_HEADER = '''㊂ <b><u>🤖 AI Caption Settings</u></b>
