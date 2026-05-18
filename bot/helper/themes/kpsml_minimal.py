@@ -367,7 +367,7 @@ class KPSMLStyle:
 ├ 🔢 Total User TD(s) ➜ <i>{USERTD}</i>
 ╰ 📅 Daily Mirror     ➜ <code>{DM}</code> per day'''
 
-    LEECH = '''📥 <b><u>Leech Settings : {NAME}</u></b>
+    LEECH = '''📥 <b><u>Leech Settings : </u></b>
 
 👤 <b>Name</b> ➜ {NAME}  🆔 <code>{ID}</code>
 ├ 📦 Daily Leech   ➜ <code>{DL}</code>
